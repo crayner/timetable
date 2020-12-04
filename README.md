@@ -1,2 +1,3 @@
-# timetable
-Timetable Creator
+# Timetable Creation Manager
+
+Version: Draft
