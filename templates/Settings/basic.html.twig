@@ -1,0 +1,25 @@
+{% trans_default_domain 'messages' %}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="cell medium-cell-block-container">
+        <div class="grid-x grid-padding-x">
+            <div class="cell medium-12 medium-cell-block-y text-center h2">{{ 'Settings: Basic'|trans }}</div>
+        </div>
+    </div>
+    {{ form_start(form) }}
+    <div class="cell medium-cell-block-container">
+        <div class="grid-x grid-margin-x grid-padding-x">
+            <div class="cell medium-4 medium-cell-block-y">
+                {{ form_row(form.staffCount) }}
+            </div>
+            <div class="cell medium-4 medium-cell-block-y">
+            </div>
+            <div class="cell medium-4 medium-cell-block-y align-flex-center">
+                {{ form_row(form.submit) }}
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock body %}

@@ -1,0 +1,16 @@
+.footer {
+    background-color: lightgray;
+    color: white;
+}
+.grid-margin-x > .cell {
+    border: 1px solid lightgray;
+    border-radius: 1rem;
+}
+.align-flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.align-flex-center .button {
+    margin: 0;
+}

@@ -1,0 +1,14 @@
+{% trans_default_domain 'messages' %}
+{% for type, messages in app.session.flashbag.all() %}
+    {% for message in messages %}
+        {% if message is iterable %}
+            {% dump(message) %}
+            <div class="button hollow {{ type }}">{{ message[0]|trans(message[1]|default({}), message[2]|default('messages')) }}</div>
+        {% else %}
+            <div class="button hollow {{ type }}">{{ message|trans }}</div>
+        {% endif %}
+        {# Or even with css class rendering:
+            <div class="flash-{{type}}">{{message}}</div>
+        #}
+    {% endfor %}
+{% endfor %}

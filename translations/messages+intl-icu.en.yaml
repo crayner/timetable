@@ -1,0 +1,29 @@
+'Timetable Creator by Craig Rayner': 'Timetable Creator by Craig Rayner'
+Welcome: Welcome
+welcome:
+    message: This system will (do its best) to generate a timetable based on the information that you provide. At the moment I have no information.
+    warning: Information for your timetable is only kept on the site for a short (less than a day) period. Please ensure that you download and keep your data safe should you wish to return. This site has no manner to retrieve lost data.
+load_form: You can resume previous work by uploading your data file here.
+Created by: Created by
+Download Timetable File: Download Timetable File
+Timetable Name: Timetable Name
+The timetable name must match the dataFile name, or the system will generate a new timetable data file.: The timetable name must match the dataFile name, or the system will generate a new timetable data file.
+Start Now!: Start Now!
+Timetable Data File: Timetable Data File
+If used and valid, this file will be saved to the server for use against the name in the file.: If used and valid, this file will be saved to the server for use against the name in the file.
+Load Timetable: Load Timetable
+'The name "{name}" is not available. Use a different name.': 'The name "{name}" is not available. Use a different name.'
+'Settings: Basic': 'Settings: Basic'
+basic_settings:
+    staff: >-
+        { changed, select,
+            removed     { { count, plural,
+                            one     { One staff member was removed. }
+                            other   { # staff members where removed. }
+                        } }
+            additional  { { count, plural,
+                            one     { One staff member was added. }
+                            other   { # staff members where added. }
+                        } }
+            other       { No changes made to staff numbers. }
+        }
