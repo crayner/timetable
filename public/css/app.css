@@ -14,3 +14,7 @@
 .align-flex-center .button {
     margin: 0;
 }
+.footer {
+    border-radius: 1rem;
+    margin-top: 0.5rem
+}

@@ -15,6 +15,7 @@
 namespace App\Manager;
 
 use App\Items\Line;
+use App\Items\Room;
 use App\Items\Staff;
 use Symfony\Component\Yaml\Yaml;
 
@@ -39,6 +40,11 @@ class TimetableDataManager
      * @var int
      */
     private int $staffCount = 0;
+
+    /**
+     * @var int
+     */
+    private int $roomCount = 0;
 
     /**
      * @var array
@@ -78,6 +84,7 @@ class TimetableDataManager
             'created_at' => $this->getCreatedAt()->format('c'),
             'staff' => $this->getStaff(true),
             'lines' => $this->getLines(true),
+            'rooms' => $this->getRooms(true),
         ];
     }
 
@@ -116,6 +123,7 @@ class TimetableDataManager
         $this->setData($data);
 
         $this->setStaff($this->createStaff());
+        $this->setRooms($this->createRooms());
         $this->setLines($this->createLines());
 
         return true;
@@ -301,6 +309,16 @@ class TimetableDataManager
             }
         }
         $this->setLines($lines);
+
+        $rooms = [];
+        foreach ($this->getRooms() as $item) {
+            if ($item instanceof Room) $rooms[] = $item;
+            if (is_array($item)) {
+                $x = new Room();
+                $rooms[] = $x->deserialise($item);
+            }
+        }
+        $this->setRooms($rooms);
     }
 
     /**
@@ -354,4 +372,80 @@ class TimetableDataManager
         $this->messages[] = $message;
         return $this;
     }
+
+    /**
+     * getRoom
+     * @param bool $serialised
+     * @return array
+     * 11/12/2020 12:47
+     */
+    public function getRooms(bool $serialised = false): array
+    {
+        if ($this->isInjectMissing() && !key_exists('rooms', $this->data)) $this->setRooms($this->createRooms());
+        if ($serialised && key_exists('rooms', $this->data)) {
+            $rooms = [];
+            foreach ($this->data['rooms'] as $item) $rooms[] = $item->serialise();
+            return $rooms;
+        }
+        return $this->data['rooms'];
+    }
+
+    /**
+     * Room.
+     *
+     * @param array $room
+     * @return TimetableDataManager
+     */
+    public function setRooms(array $rooms): TimetableDataManager
+    {
+        $this->data['rooms'] = $rooms;
+        return $this;
+    }
+
+    /**
+     * createRooms
+     * @param int $count
+     * @return array
+     * 14/12/2020 08:52
+     */
+    private function createRooms(int $count = 30): array
+    {
+        $rooms = [];
+        $existing = $this->getRooms();
+        for ($x=0; $x<$count; $x++) {
+            $member = key_exists($x, $existing) ? $existing[$x] : new Room();
+            $member->setName('Room ' . strval($x + 1));
+            $rooms[$x] = $member;
+        }
+        return $rooms;
+    }
+
+    /**
+     * getRoomCount
+     * @return int
+     * 14/12/2020 08:56
+     */
+    public function getRoomCount(): int
+    {
+        return $this->roomCount = count($this->getRooms());
+    }
+
+    /**
+     * setRoomCount
+     * @param int $roomCount
+     * @return $this
+     * 14/12/2020 08:56
+     */
+    public function setRoomCount(int $roomCount): TimetableDataManager
+    {
+        $this->roomCount = $roomCount;
+        if ($roomCount > ($existing = $this->getRoomCount())) {
+            $this->addMessage('warning', ['basic_settings.room', ['changed' => 'additional', 'count' => abs($existing - $roomCount)]]);
+        } elseif ($roomCount < ($existing = $this->getRoomCount())) {
+            $this->addMessage('warning', ['basic_settings.room', ['changed' => 'removed', 'count' => abs($roomCount - $existing)]]);
+        }
+        $this->setRooms($this->createRooms($roomCount));
+        return $this;
+    }
+
 }

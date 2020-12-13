@@ -27,3 +27,15 @@ basic_settings:
                         } }
             other       { No changes made to staff numbers. }
         }
+    room: >-
+        { changed, select,
+            removed     { { count, plural,
+                            one     { One room was removed. }
+                            other   { # rooms where removed. }
+                        } }
+            additional  { { count, plural,
+                            one     { One room was added. }
+                            other   { # rooms where added. }
+                        } }
+            other       { No changes made to room numbers. }
+        }
