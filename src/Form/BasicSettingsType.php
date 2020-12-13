@@ -47,6 +47,11 @@ class BasicSettingsType extends AbstractType
                     'label' => 'Room Count',
                 ]
             )
+            ->add('gradeCount', IntegerType::class,
+                [
+                    'label' => 'Grade/Year/Form Count',
+                ]
+            )
             ->add('submit', SubmitType::class,
                 [
                     'label' => 'Update Basic Settings',

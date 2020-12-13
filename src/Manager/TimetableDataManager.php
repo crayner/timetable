@@ -14,6 +14,7 @@
  */
 namespace App\Manager;
 
+use App\Items\Grade;
 use App\Items\Line;
 use App\Items\Room;
 use App\Items\Staff;
@@ -45,6 +46,11 @@ class TimetableDataManager
      * @var int
      */
     private int $roomCount = 0;
+
+    /**
+     * @var int
+     */
+    private int $gradeCount = 0;
 
     /**
      * @var array
@@ -83,7 +89,7 @@ class TimetableDataManager
             'name' => $this->getName(),
             'created_at' => $this->getCreatedAt()->format('c'),
             'staff' => $this->getStaff(true),
-            'lines' => $this->getLines(true),
+            'grades' => $this->getGrades(true),
             'rooms' => $this->getRooms(true),
         ];
     }
@@ -300,15 +306,15 @@ class TimetableDataManager
         }
         $this->setStaff($staff);
 
-        $lines = [];
-        foreach ($this->getLines() as $item) {
-            if ($item instanceof Line) $lines[] = $item;
+        $grades = [];
+        foreach ($this->getGrades() as $item) {
+            if ($item instanceof Grade) $grades[] = $item;
             if (is_array($item)) {
-                $x = new Line();
-                $lines[] = $x->deserialise($item);
+                $x = new Grade();
+                $grades[] = $x->deserialise($item);
             }
         }
-        $this->setLines($lines);
+        $this->setGrades($grades);
 
         $rooms = [];
         foreach ($this->getRooms() as $item) {
@@ -448,4 +454,78 @@ class TimetableDataManager
         return $this;
     }
 
+    /**
+     * getGrades
+     * @param bool $serialised
+     * @return array
+     * 14/12/2020 09:19
+     */
+    public function getGrades(bool $serialised = false): array
+    {
+        if ($this->isInjectMissing() && !key_exists('grades', $this->data)) $this->setGrades($this->createGrades());
+        if ($serialised && key_exists('grades', $this->data)) {
+            $grades = [];
+            foreach ($this->data['grades'] as $item) $grades[] = $item->serialise();
+            return $grades;
+        }
+        return $this->data['grades'];
+    }
+
+    /**
+     * setGrades
+     * @param array $grades
+     * @return $this
+     * 14/12/2020 09:19
+     */
+    public function setGrades(array $grades): TimetableDataManager
+    {
+        $this->data['grades'] = $grades;
+        return $this;
+    }
+
+    /**
+     * createGrades
+     * @param int $count
+     * @return array
+     * 14/12/2020 09:19
+     */
+    private function createGrades(int $count = 6): array
+    {
+        $grades = [];
+        $existing = $this->getGrades();
+        for ($x=0; $x<$count; $x++) {
+            $member = key_exists($x, $existing) ? $existing[$x] : new Grade();
+            $member->setName('Grade ' . strval($x + 1));
+            $grades[$x] = $member;
+        }
+        return $grades;
+    }
+
+    /**
+     * getGradeCount
+     * @return int
+     * 14/12/2020 08:56
+     */
+    public function getGradeCount(): int
+    {
+        return $this->gradeCount = count($this->getGrades());
+    }
+
+    /**
+     * setGradeCount
+     * @param int $gradeCount
+     * @return $this
+     * 14/12/2020 08:56
+     */
+    public function setGradeCount(int $gradeCount): TimetableDataManager
+    {
+        $this->gradeCount = $gradeCount;
+        if ($gradeCount > ($existing = $this->getGradeCount())) {
+            $this->addMessage('warning', ['basic_settings.grade', ['changed' => 'additional', 'count' => abs($existing - $gradeCount)]]);
+        } elseif ($gradeCount < ($existing = $this->getGradeCount())) {
+            $this->addMessage('warning', ['basic_settings.grade', ['changed' => 'removed', 'count' => abs($gradeCount - $existing)]]);
+        }
+        $this->setGrades($this->createGrades($gradeCount));
+        return $this;
+    }
 }

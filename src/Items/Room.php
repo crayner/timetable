@@ -91,5 +91,4 @@ class Room
         $this->size = $data['size'];
         return $this;
     }
-
 }

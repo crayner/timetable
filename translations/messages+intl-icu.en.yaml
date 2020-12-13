@@ -39,3 +39,19 @@ basic_settings:
                         } }
             other       { No changes made to room numbers. }
         }
+    grade: >-
+        { changed, select,
+            removed     { { count, plural,
+                            one     { One grade/year/form was removed. }
+                            other   { # grades/years/forms where removed. }
+                        } }
+            additional  { { count, plural,
+                            one     { One grade/year/form was added. }
+                            other   { # grades/years/forms where added. }
+                        } }
+            other       { No changes made to grade/year/form numbers. }
+        }
+Staff Count: Staff Count
+Room Count: Room Count
+Grade/Year/Form Count: Grade/Year/Form Count
+Update Basic Settings: Update Basic Settings
