@@ -51,7 +51,27 @@ basic_settings:
                         } }
             other       { No changes made to grade/year/form numbers. }
         }
+    day: >-
+        { changed, select,
+            removed     { { count, plural,
+                            one     { One day was removed. }
+                            other   { # days where removed. }
+                        } }
+            additional  { { count, plural,
+                            one     { One day was added. }
+                            other   { # days where added. }
+                        } }
+            other       { No changes made to day numbers. }
+        }
+    periods: >-
+        { count, plural,
+            one     { Each day was set to one period. }
+            other   { Each day was set to # periods. }
+        }
+Number of Days in the Timetable: 'Number of Days in the Timetable.'
+Periods in a Day: 'Periods in a Day'
+If changed, this value is applied to all days.: 'If changed, this value is applied to all days.'
 Staff Count: Staff Count
 Room Count: Room Count
-Grade/Year/Form Count: Grade/Year/Form Count
+Grade/Year/Form Count: 'Grade/Year/Form Count'
 Update Basic Settings: Update Basic Settings

@@ -98,7 +98,7 @@ class DefaultController extends AbstractController
     {
         $form = $this->createForm(LoadTimetableType::class, null, ['action' => $this->generateUrl('home')]);
 
-        if ($request->getMethod() === 'POST') $form->handleRequest($request);
+        $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 

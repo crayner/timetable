@@ -44,11 +44,13 @@ class TimetableValidatorManager
     }
 
     /**
-     * @return string
+     * getName
+     * @return string|null
+     * 14/12/2020 12:06
      */
-    public function getName(): string
+    public function getName(): ?string
     {
-        return $this->name;
+        return isset($this->name) ? $this->name : null;
     }
 
     /**
@@ -97,10 +99,6 @@ class TimetableValidatorManager
         $this->getDataManager()->setData($data);
 
         if (empty($this->getDataManager()->getName())) return false;
-
-        if (empty($this->getDataManager()->getStaff())) return false;
-
-        if (empty($this->getDataManager()->getLines())) return false;
 
         if ($this->getDataManager()->getCreatedAt() === null || $this->getDataManager()->getCreatedAt()->format('c') < date('c', strtotime('-1 Day'))) return false;
 

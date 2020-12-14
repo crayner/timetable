@@ -161,7 +161,6 @@ class TimetableManager
     public function setName(string $name): TimetableManager
     {
         if ($name === '_unknown_') return $this;
-
         if (!$this->isNameValid($name))
         {
             if ($this->getSession()->has('timetable_name')) $this->getSession()->remove('timetable_name');
@@ -198,6 +197,7 @@ class TimetableManager
      */
     public function getResponse(Environment $twig): Response
     {
+        dump($this->getName(),$this->isFileValid());
         if ($this->getName() === null || !$this->isFileValid()) {
             return new RedirectResponse($this->getUrl('begin'));
         }
@@ -410,7 +410,6 @@ dump($data);
     {
         foreach ($this->getMessages() as $message) {
             $flashBag->add($message['type'], $message['message']);
-            dump($message);
         }
         return $this;
     }

@@ -20,6 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Range;
 
 /**
  * Class BasicSettingsType
@@ -50,6 +51,20 @@ class BasicSettingsType extends AbstractType
             ->add('gradeCount', IntegerType::class,
                 [
                     'label' => 'Grade/Year/Form Count',
+                ]
+            )
+            ->add('dayCount', IntegerType::class,
+                [
+                    'label' => 'Number of Days in the Timetable',
+                ]
+            )
+            ->add('periods', IntegerType::class,
+                [
+                    'label' => 'Periods in a Day',
+                    'help' => 'If changed, this value is applied to all days.',
+                    'constraints' => [
+                        new Range(['min' => 1]),
+                    ],
                 ]
             )
             ->add('submit', SubmitType::class,

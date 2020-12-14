@@ -14,6 +14,7 @@
  */
 namespace App\Manager;
 
+use App\Items\Day;
 use App\Items\Grade;
 use App\Items\Line;
 use App\Items\Room;
@@ -53,6 +54,16 @@ class TimetableDataManager
     private int $gradeCount = 0;
 
     /**
+     * @var int
+     */
+    private int $dayCount = 5;
+
+    /**
+     * @var int
+     */
+    private int $periods;
+
+    /**
      * @var array
      */
     private array $messages = [];
@@ -81,7 +92,7 @@ class TimetableDataManager
     /**
      * getSerializedData
      * @return array
-     * 11/12/2020 13:40
+     * 14/12/2020 10:22
      */
     public function getSerializedData(): array
     {
@@ -91,6 +102,8 @@ class TimetableDataManager
             'staff' => $this->getStaff(true),
             'grades' => $this->getGrades(true),
             'rooms' => $this->getRooms(true),
+            'days' => $this->getDays(true),
+            'periods' => $this->getPeriods(),
         ];
     }
 
@@ -130,7 +143,8 @@ class TimetableDataManager
 
         $this->setStaff($this->createStaff());
         $this->setRooms($this->createRooms());
-        $this->setLines($this->createLines());
+        $this->setGrades($this->createGrades());
+        $this->setDays($this->createDays());
 
         return true;
     }
@@ -325,6 +339,16 @@ class TimetableDataManager
             }
         }
         $this->setRooms($rooms);
+
+        $days = [];
+        foreach ($this->getDays() as $item) {
+            if ($item instanceof Day) $days[] = $item;
+            if (is_array($item)) {
+                $x = new Day();
+                $days[] = $x->deserialise($item);
+            }
+        }
+        $this->setDays($days);
     }
 
     /**
@@ -526,6 +550,109 @@ class TimetableDataManager
             $this->addMessage('warning', ['basic_settings.grade', ['changed' => 'removed', 'count' => abs($gradeCount - $existing)]]);
         }
         $this->setGrades($this->createGrades($gradeCount));
+        return $this;
+    }
+
+    /**
+     * getDays
+     * @param bool $serialised
+     * @return array
+     * 14/12/2020 10:19
+     */
+    public function getDays(bool $serialised = false): array
+    {
+        if ($this->isInjectMissing() && !key_exists('days', $this->data)) $this->setDays($this->createDays());
+        if ($serialised && key_exists('days', $this->data)) {
+            $days = [];
+            foreach ($this->data['days'] as $item) $days[] = $item->serialise();
+            return $days;
+        }
+        return $this->data['days'];
+    }
+
+    /**
+     * setDays
+     * @param array $days
+     * @return $this
+     * 14/12/2020 10:19
+     */
+    public function setDays(array $days): TimetableDataManager
+    {
+        $this->data['days'] = $days;
+        return $this;
+    }
+
+    /**
+     * createDays
+     * @param int $count
+     * @return array
+     * 14/12/2020 10:19
+     */
+    private function createDays(int $count = 5): array
+    {
+        $days = [];
+        $existing = $this->getDays();
+        for ($x=0; $x<$count; $x++) {
+            $member = key_exists($x, $existing) ? $existing[$x] : new Day();
+            $member->setName('Day ' . strval($x + 1));
+            $days[$x] = $member;
+        }
+        return $days;
+    }
+
+    /**
+     * getDayCount
+     * @return int
+     * 14/12/2020 10:19
+     */
+    public function getDayCount(): int
+    {
+        return $this->dayCount = count($this->getDays());
+    }
+
+    /**
+     * setDayCount
+     * @param int $dayCount
+     * @return $this
+     * 14/12/2020 10:19
+     */
+    public function setDayCount(int $dayCount): TimetableDataManager
+    {
+        $this->dayCount = $dayCount;
+        if ($dayCount > ($existing = $this->getDayCount())) {
+            $this->addMessage('warning', ['basic_settings.day', ['changed' => 'additional', 'count' => abs($existing - $dayCount)]]);
+        } elseif ($dayCount < ($existing = $this->getDayCount())) {
+            $this->addMessage('warning', ['basic_settings.day', ['changed' => 'removed', 'count' => abs($dayCount - $existing)]]);
+        }
+        $this->setDays($this->createDays($dayCount));
+        return $this;
+    }
+
+    /**
+     * getPeriods
+     * @return int
+     * 14/12/2020 10:41
+     */
+    public function getPeriods(): int
+    {
+        return $this->periods = isset($this->periods) ? $this->periods : (key_exists('periods', $this->data) ? $this->data['periods'] : 6) ;
+    }
+
+    /**
+     * setPeriods
+     * @param int $periods
+     * @return TimetableDataManager
+     * 14/12/2020 10:41
+     */
+    public function setPeriods(int $periods): TimetableDataManager
+    {
+        if ($this->getPeriods() !== $periods && $periods > 0) {
+            $this->periods = $periods;
+            foreach ($this->getDays() as $day) {
+                $day->setPeriods($periods);
+            }
+            $this->addMessage('warning', ['basic_settings.periods', ['count' => $periods]]);
+        }
         return $this;
     }
 }
