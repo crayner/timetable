@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraint;
  * @package App\Validator
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class Days extends Constraint
+class DuplicateName extends Constraint
 {
     const DUPLICATE_NAME_ERROR = '3e398a9b-6d9a-4a93-b824-032eb91bb82a';
 

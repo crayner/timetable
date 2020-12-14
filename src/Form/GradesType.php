@@ -2,15 +2,16 @@
 /**
  * Created by PhpStorm.
  *
- * timetable
- * (c) 2020 Craig Rayner <craig@craigrayner.com>
+ * Timetable Creator
+ * (c) 2020-2020 Craig Rayner <craig@craigrayner.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * User: craig
- * Date: 14/12/2020
- * Time: 12:17
+ * Licence: MIT
+ * User: Craig Rayner
+ * Date: 15/12/2020
+ * Time: 08:29
  */
 namespace App\Form;
 
@@ -23,32 +24,32 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class DaysType
+ * Class GradesType
  * @package App\Form
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class DaysType extends AbstractType
+class GradesType extends AbstractType
 {
     /**
      * buildForm
+     * 15/12/2020 08:32
      * @param FormBuilderInterface $builder
      * @param array $options
-     * 14/12/2020 14:28
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('days', CollectionType::class,
+            ->add('grades', CollectionType::class,
                 [
-                    'entry_type' => DayType::class,
+                    'entry_type' => GradeType::class,
                     'constraints' => [
                         new DuplicateName(),
                     ],
                 ]
             )
-            ->add('saveDays', SubmitType::class,
+            ->add('saveGrades', SubmitType::class,
                 [
-                    'label' => 'Save Days',
+                    'label' => 'Save Grades',
                 ]
             )
         ;
@@ -56,8 +57,8 @@ class DaysType extends AbstractType
 
     /**
      * configureOptions
+     * 15/12/2020 08:31
      * @param OptionsResolver $resolver
-     * 14/12/2020 14:26
      */
     public function configureOptions(OptionsResolver $resolver)
     {

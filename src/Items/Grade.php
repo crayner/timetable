@@ -19,12 +19,18 @@ namespace App\Items;
  * @package App\Items
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class Grade
+class Grade implements NameInterface
 {
     /**
      * @var string
      */
     private string $name;
+
+    /**
+     * @var int
+     * When zero, this value is not used as a check.
+     */
+    private int $studentCount = 0;
 
     /**
      * @return string
@@ -47,6 +53,28 @@ class Grade
     }
 
     /**
+     * getStudentCount
+     * 15/12/2020 08:28
+     * @return int
+     */
+    public function getStudentCount(): int
+    {
+        return $this->studentCount;
+    }
+
+    /**
+     * setStudentCount
+     * 15/12/2020 08:28
+     * @param int $studentCount
+     * @return $this
+     */
+    public function setStudentCount(int $studentCount): Grade
+    {
+        $this->studentCount = $studentCount;
+        return $this;
+    }
+
+    /**
      * serialise
      * @return string[]
      * 14/12/2020 09:35
@@ -55,6 +83,7 @@ class Grade
     {
         return [
             'name' => $this->getName(),
+            'studentCount' => $this->getStudentCount(),
         ];
     }
 
@@ -67,6 +96,7 @@ class Grade
     public function deserialise(array $data): Grade
     {
         $this->name = $data['name'];
+        $this->studentCount = $data['studentCount'];
         return $this;
     }
 }

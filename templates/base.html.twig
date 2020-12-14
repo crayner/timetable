@@ -20,14 +20,20 @@
                 {% block header %}
                     <div class="cell shrink header medium-cell-block-container text-center h1">{{ 'Timetable Creator by Craig Rayner'|trans }}</div>
                 {% endblock header %}
-                {% include 'flash.html.twig' %}
-                {% block body %}{% endblock body %}
+                <div class="cell medium-auto medium-cell-block-container">
+                    <div class="grid-x grid-padding-x">
+                        <div class="cell medium-12 medium-cell-block-y">
+                            {% include 'flash.html.twig' %}
+                            {% block body %}{% endblock body %}
+                        </div>
+                    </div>
+                </div>
                 {% block footer %}
                     <div class="cell shrink footer">
                         <div class="grid-x grid-padding-x grid-margin-y">
                             <div class="cell medium-4 medium-cell-block-y text-left"></div>
                             <div class="cell medium-4 medium-cell-block-y text-center">{{ 'Created by'|trans }} Craig Rayner<br />
-                            &copy; 2020
+                                &copy; 2020
                             </div>
                             <div class="cell medium-4 medium-cell-block-y align-flex-center">
                                 {% if app.request.session.get('timetable_name')|default('') is not same as('') %}
@@ -39,6 +45,7 @@
                 {% endblock footer %}
             </div>
         </div>
+
         {% block javascripts %}
             <script src="{{ asset('js/vendor/jquery.js') }}"></script>
             <script src="{{ asset('js/vendor/what-input.js') }}"></script>

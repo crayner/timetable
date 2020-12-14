@@ -16,6 +16,8 @@
 namespace App\Validator;
 
 use App\Items\Day;
+use App\Items\NameInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -24,19 +26,21 @@ use Symfony\Component\Validator\ConstraintValidator;
  * @package App\Validator
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class DaysValidator extends ConstraintValidator
+class DuplicateNameValidator extends ConstraintValidator
 {
     /**
      * validate
      * 14/12/2020 16:11
      * @param mixed $value
-     * @param \Symfony\Component\Validator\Constraint $constraint
+     * @param Constraint $constraint
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!$value instanceof ArrayCollection) return;
+
         foreach ($value as $q=>$item)
         {
-            $duplicates = $value->filter(function(Day $day) use ($item) {
+            $duplicates = $value->filter(function(NameInterface $day) use ($item) {
                 if ($day !== $item && $item->getName() === $day->getName()) return $day;
             });
 
@@ -44,7 +48,7 @@ class DaysValidator extends ConstraintValidator
                 $key = $value->indexOf($duplicates->first());
                 if ($q < $key) {
                     $this->context->buildViolation($constraint->message)
-                        ->setCode(Days::DUPLICATE_NAME_ERROR)
+                        ->setCode(DuplicateName::DUPLICATE_NAME_ERROR)
                         ->setTranslationDomain('messages')
                         ->atPath('[' . $key . '].name')
                         ->addViolation();
