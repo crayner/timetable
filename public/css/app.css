@@ -25,3 +25,6 @@ small.error + input {
     border-color: #cc4b37;
     color: #cc4b37;
 }
+.justify-left {
+    justify-content: left;
+}

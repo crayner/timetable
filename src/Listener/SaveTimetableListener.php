@@ -59,6 +59,6 @@ class SaveTimetableListener implements EventSubscriberInterface
      */
     public function onTerminate(TerminateEvent $event)
     {
-        $this->manager->getDataManager()->writeFile();
+        if ($this->manager->isSaveOnTerminate()) $this->manager->getDataManager()->writeFile();
     }
 }

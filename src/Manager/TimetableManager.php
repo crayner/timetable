@@ -70,7 +70,15 @@ class TimetableManager
      */
     private TimetableValidatorManager $validatorManager;
 
+    /**
+     * @var array
+     */
     private array $messages = [];
+
+    /**
+     * @var bool
+     */
+    private bool $saveOnTerminate = true;
 
     /**
      * TimetableManager constructor.
@@ -86,6 +94,7 @@ class TimetableManager
             ->setDataManager($dataManager)
             ->setValidatorManager($validatorManager)
             ->getSession();
+        $this->loadData();
     }
 
     /**
@@ -144,7 +153,7 @@ class TimetableManager
      */
     public function getName(): ?string
     {
-        if (!isset($this->name) && $this->getSession()->has('timetable_name')) {
+        if (!isset($this->name) && $this->getSession() && $this->getSession()->has('timetable_name')) {
             $this->setName($this->getSession()->get('timetable_name'));
         } else if (!isset($this->name)) {
             return null;
@@ -369,7 +378,6 @@ class TimetableManager
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-dump($data);
         }
 
         return $this->addFlashMessages($this->getSession()->getBag('flashes'));
@@ -413,4 +421,31 @@ dump($data);
         }
         return $this;
     }
+
+    /**
+     * Load Data
+     */
+    public function loadData()
+    {
+        if ($this->isNameValid()) $this->isFileValid();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSaveOnTerminate(): bool
+    {
+        return $this->saveOnTerminate;
+    }
+
+    /**
+     * @param bool $saveOnTerminate
+     * @return TimetableManager
+     */
+    public function setSaveOnTerminate(bool $saveOnTerminate): TimetableManager
+    {
+        $this->saveOnTerminate = $saveOnTerminate;
+        return $this;
+    }
+
 }

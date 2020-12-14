@@ -19,6 +19,7 @@ use App\Items\Grade;
 use App\Items\Line;
 use App\Items\Room;
 use App\Items\Staff;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -102,7 +103,7 @@ class TimetableDataManager
             'staff' => $this->getStaff(true),
             'grades' => $this->getGrades(true),
             'rooms' => $this->getRooms(true),
-            'days' => $this->getDays(true),
+            'days' => $this->getDays(true)->toArray(),
             'periods' => $this->getPeriods(),
         ];
     }
@@ -348,7 +349,7 @@ class TimetableDataManager
                 $days[] = $x->deserialise($item);
             }
         }
-        $this->setDays($days);
+        $this->setDays(new ArrayCollection($days));
     }
 
     /**
@@ -554,29 +555,27 @@ class TimetableDataManager
     }
 
     /**
-     * getDays
      * @param bool $serialised
-     * @return array
-     * 14/12/2020 10:19
+     * @return \Doctrine\Common\Collections\ArrayCollection
      */
-    public function getDays(bool $serialised = false): array
+    public function getDays(bool $serialised = false): ArrayCollection
     {
         if ($this->isInjectMissing() && !key_exists('days', $this->data)) $this->setDays($this->createDays());
         if ($serialised && key_exists('days', $this->data)) {
             $days = [];
             foreach ($this->data['days'] as $item) $days[] = $item->serialise();
-            return $days;
+            return new ArrayCollection($days);
         }
-        return $this->data['days'];
+        return $this->data['days'] instanceof ArrayCollection ? $this->data['days'] : new ArrayCollection($this->data['days']);
     }
 
     /**
      * setDays
-     * @param array $days
+     * 14/12/2020 15:11
+     * @param \Doctrine\Common\Collections\ArrayCollection $days
      * @return $this
-     * 14/12/2020 10:19
      */
-    public function setDays(array $days): TimetableDataManager
+    public function setDays(ArrayCollection $days): TimetableDataManager
     {
         $this->data['days'] = $days;
         return $this;
@@ -584,20 +583,39 @@ class TimetableDataManager
 
     /**
      * createDays
+     * 14/12/2020 15:45
      * @param int $count
-     * @return array
-     * 14/12/2020 10:19
+     * @return ArrayCollection
      */
-    private function createDays(int $count = 5): array
+    private function createDays(int $count = 5): ArrayCollection
     {
-        $days = [];
+        $days = new ArrayCollection();
         $existing = $this->getDays();
         for ($x=0; $x<$count; $x++) {
-            $member = key_exists($x, $existing) ? $existing[$x] : new Day();
-            $member->setName('Day ' . strval($x + 1));
-            $days[$x] = $member;
+            if ($existing->containsKey($x)) {
+                $member = $existing->get($x);
+            } else {
+                $member = new Day();
+                $member->setName('Day ' . strval($x + 1));
+            }
+            $days->set($x, $member);
         }
         return $days;
+    }
+
+    /**
+     * removeDay
+     * 14/12/2020 15:55
+     * @param int $key
+     * @return \App\Manager\TimetableDataManager
+     */
+    public function removeDay(int $key): TimetableDataManager
+    {
+        $days = $this->getDays();
+        if ($days->containsKey($key)) {
+            $days->remove($key);
+        }
+        return $this;
     }
 
     /**

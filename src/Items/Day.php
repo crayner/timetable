@@ -62,7 +62,7 @@ class Day
      */
     public function setPeriods(int $periods): Day
     {
-        $this->periods = $periods;
+        $this->periods = $periods > 0 ? $periods : $this->periods;
         return $this;
     }
 

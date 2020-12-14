@@ -1,4 +1,7 @@
 {
+    "doctrine/collections": {
+        "version": "1.6.7"
+    },
     "monolog/monolog": {
         "version": "2.1.1"
     },

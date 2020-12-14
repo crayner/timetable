@@ -1,0 +1,45 @@
+{% trans_default_domain 'messages' %}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="cell medium-cell-block-container">
+        <div class="grid-x grid-padding-x">
+            <div class="cell medium-12 medium-cell-block-y text-center h2">{{ 'Settings: Days'|trans }}</div>
+        </div>
+    </div>
+    {{ form_start(form) }}
+    <div class="cell medium-cell-block-container">
+        {% for key,day in form.days %}
+            <div class="grid-x grid-margin-x grid-padding-x">
+                <div class="cell medium-2 medium-cell-block-y align-flex-center h4 justify-left">
+                    {{ day.name.vars.value|default('New Day'|trans) }}
+                </div>
+                <div class="cell medium-4 medium-cell-block-y">
+                    {{ form_row(day.name) }}
+                </div>
+                <div class="cell medium-4 medium-cell-block-y">
+                    {{ form_row(day.periods) }}
+                </div>
+                <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                    <a href="{{ path('day_delete', {'key': key}) }}" class="warning button" title="{{ 'Delete Day'|trans }}">{{ 'Delete Day'|trans }}</a>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="grid-x grid-margin-x grid-padding-x">
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('day_add') }}" class="button secondary" title="{{ 'Add Day'|trans }}">{{ 'Add Day'|trans }}</a>
+            </div>
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('day_remove') }}" class="button secondary" title="{{ 'Remove Day'|trans }}">{{ 'Remove Day'|trans }}</a>
+            </div>
+            <div class="cell medium-offset-4 medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('basic_settings') }}" class="button" title="{{ 'Update Basic Settings'|trans }}">{{ 'Settings: Basic'|trans }}</a>
+            </div>
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                {{ form_row(form.saveDays) }}
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock body %}
