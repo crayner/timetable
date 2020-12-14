@@ -11,26 +11,31 @@
     {{ form_start(form) }}
     <div class="cell medium-cell-block-container">
         <div class="grid-x grid-margin-x grid-padding-x">
-            <div class="cell medium-4 medium-cell-block-y">
+            <div class="cell medium-4 ">
                 {{ form_row(form.staffCount) }}
             </div>
-            <div class="cell medium-4 medium-cell-block-y">
+            <div class="cell medium-4">
                 {{ form_row(form.roomCount) }}
             </div>
-            <div class="cell medium-4 medium-cell-block-y">
+            <div class="cell medium-4">
                 {{ form_row(form.gradeCount) }}
                 <a href="{{ path('grades') }}" title="{{ 'Manage Grade Details'|trans }}">{{ 'Manage Grade Details'|trans }}</a>
             </div>
         </div>
         <div class="grid-x grid-margin-x grid-padding-x">
-            <div class="cell medium-4 medium-cell-block-y">
+            <div class="cell medium-4">
                 {{ form_row(form.dayCount) }}
                 <a href="{{ path('days') }}" title="{{ 'Manage Day Details'|trans }}">{{ 'Manage Day Details'|trans }}</a>
             </div>
-            <div class="cell medium-4 medium-cell-block-y">
+            <div class="cell medium-4">
                 {{ form_row(form.periods) }}
             </div>
-            <div class="cell medium-4 medium-cell-block-y align-flex-center">
+            <div class="cell medium-4 align-flex-center">
+                {{ form_row(form.studentsPerGrade) }}
+            </div>
+        </div>
+        <div class="grid-x grid-margin-x grid-padding-x">
+            <div class="cell medium-offset-8 medium-4 medium-cell-block-y align-flex-center">
                 {{ form_row(form.submit) }}
             </div>
         </div>

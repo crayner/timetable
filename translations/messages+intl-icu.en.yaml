@@ -68,6 +68,12 @@ basic_settings:
             one     { Each day was set to one period. }
             other   { Each day was set to # periods. }
         }
+    studentsPerGrade: >-
+        { count, plural,
+            =0      { Checks for student numbers have been turned off. }
+            one     { Really! Only one student per grade. }
+            other   { Each grade has # students. }
+        }
 Number of Days in the Timetable: 'Number of Days in the Timetable.'
 Periods in a Day: 'Periods in a Day'
 If changed, this value is applied to all days.: 'If changed, this value is applied to all days.'
@@ -92,3 +98,7 @@ Delete Grade: Delete Grade
 Add Grade: Add Grade
 Remove Grade: Remove Grade
 Save Grades: Save Grades
+Manage Grade Details: Manage Grade Details
+Manage Day Details: Manage Day Details
+Student per Grade: Student per Grade
+If changed, this value is applied to all grades. Set this value to zero to stop checks of student numbers in assigned classes.: If changed, this value is applied to all grades. Set this value to zero to stop checks of student numbers in assigned classes.

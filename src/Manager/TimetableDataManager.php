@@ -65,6 +65,11 @@ class TimetableDataManager
     private int $periods;
 
     /**
+     * @var int
+     */
+    private int $studentsPerGrade;
+
+    /**
      * @var array
      */
     private array $messages = [];
@@ -105,6 +110,7 @@ class TimetableDataManager
             'rooms' => $this->getRooms(true),
             'days' => $this->getDays(true)->toArray(),
             'periods' => $this->getPeriods(),
+            'studentsPerGrade' => $this->getStudentsPerGrade(),
         ];
     }
 
@@ -689,6 +695,34 @@ class TimetableDataManager
                 $day->setPeriods($periods);
             }
             $this->addMessage('warning', ['basic_settings.periods', ['count' => $periods]]);
+        }
+        return $this;
+    }
+
+    /**
+     * getStudentsPerGrade
+     * 15/12/2020 10:23
+     * @return int
+     */
+    public function getStudentsPerGrade(): int
+    {
+        return $this->studentsPerGrade = isset($this->studentsPerGrade) ? $this->studentsPerGrade : (key_exists('studentsPerGrade', $this->data) ? $this->data['studentsPerGrade'] : 0) ;
+    }
+
+    /**
+     * setStudentsPerGrade
+     * 15/12/2020 10:23
+     * @param int $studentsPerGrade
+     * @return TimetableDataManager
+     */
+    public function setStudentsPerGrade(int $studentsPerGrade): TimetableDataManager
+    {
+        if ($this->getStudentsPerGrade() !== $studentsPerGrade && $studentsPerGrade >= 0) {
+            $this->studentsPerGrade = $studentsPerGrade;
+            foreach ($this->getGrades() as $grade) {
+                $grade->setStudentCount($studentsPerGrade);
+            }
+            $this->addMessage('warning', ['basic_settings.studentsPerGrade', ['count' => $studentsPerGrade]]);
         }
         return $this;
     }
