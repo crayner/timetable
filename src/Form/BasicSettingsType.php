@@ -69,7 +69,7 @@ class BasicSettingsType extends AbstractType
             )
             ->add('studentsPerGrade', IntegerType::class,
                 [
-                    'label' => 'Student per Grade',
+                    'label' => 'Students per Grade',
                     'help' => 'If changed, this value is applied to all grades. Set this value to zero to stop checks of student numbers in assigned classes.',
                     'constraints' => [
                         new Range(['min' => 0]),

@@ -1,0 +1,58 @@
+{% trans_default_domain 'messages' %}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="cell shrink medium-cell-block-container">
+        <div class="grid-x grid-padding-x">
+            <div class="cell medium-12 medium-cell-block-y text-center h2">{{ 'Settings: Rooms'|trans }}</div>
+        </div>
+    </div>
+    {{ form_start(form) }}
+    <div class="cell medium-auto medium-cell-block-container">
+        {% for key,room in form.rooms %}
+            <div class="grid-x grid-margin-x grid-padding-x">
+                <div class="cell medium-2 medium-cell-block-y align-flex-center h4 justify-left">
+                    {{ room.name.vars.value|default('New Room'|trans) }}
+                </div>
+                <div class="cell medium-4 medium-cell-block-y">
+                    {{ form_row(room.name) }}
+                </div>
+                <div class="cell medium-4 medium-cell-block-y">
+                    {{ form_row(room.size) }}
+                </div>
+                <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                    <a href="{{ path('room_delete', {'name': room.name.vars.value|default('xxxxx')}) }}" class="warning button" title="{{ 'Delete Room'|trans }}">{{ 'Delete Room'|trans }}</a>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="grid-x grid-margin-x grid-padding-x">
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('room_add') }}" class="button secondary" title="{{ 'Add Room'|trans }}">{{ 'Add Room'|trans }}</a>
+            </div>
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('room_remove') }}" class="button secondary" title="{{ 'Remove Room'|trans }}">{{ 'Remove Room'|trans }}</a>
+            </div>
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('room_sort') }}" class="button secondary" title="{{ 'Sort Rooms'|trans }}">{{ 'Sort Rooms'|trans }}</a>
+            </div>
+            <div class="cell medium-offset-2 medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('basic_settings') }}" class="button" title="{{ 'Update Basic Settings'|trans }}">{{ 'Settings: Basic'|trans }}</a>
+            </div>
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                {{ form_row(form.saveRooms) }}
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+    {{ form_start(formUpload) }}
+    <div class="grid-x grid-margin-x grid-padding-x">
+        <div class="cell medium-8 medium-cell-block-y">
+            {{ form_row(formUpload.dataFile) }}
+        </div>
+        <div class="cell medium-4 medium-cell-block-y align-flex-center">
+            {{ form_row(formUpload.upload) }}
+        </div>
+    </div>
+    {{ form_end(formUpload) }}
+{% endblock body %}

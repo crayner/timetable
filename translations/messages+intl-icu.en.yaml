@@ -70,9 +70,15 @@ basic_settings:
         }
     studentsPerGrade: >-
         { count, plural,
-            =0      { Checks for student numbers have been turned off. }
-            one     { Really! Only one student per grade. }
-            other   { Each grade has # students. }
+            =0      { Checks for student numbers in grades are disabled. }
+            one     { Really! Grades limite dto one student each. }
+            other   { Each grade set to # students. }
+        }
+    roomCapacity: >-
+        { count, plural,
+            =0      { Checks for room capacity are disabled. }
+            one     { Really! Room capacity limited to one student. }
+            other   { Each room has # students capacity. }
         }
 Number of Days in the Timetable: 'Number of Days in the Timetable.'
 Periods in a Day: 'Periods in a Day'
@@ -100,7 +106,7 @@ Remove Grade: Remove Grade
 Save Grades: Save Grades
 Manage Grade Details: Manage Grade Details
 Manage Day Details: Manage Day Details
-Student per Grade: Student per Grade
+Students per Grade: Students per Grade
 If changed, this value is applied to all grades. Set this value to zero to stop checks of student numbers in assigned classes.: If changed, this value is applied to all grades. Set this value to zero to stop checks of student numbers in assigned classes.
 Manage Staff Details: Manage Staff Details
 New Staff: New Staff
@@ -115,8 +121,16 @@ staff:
             one     { One staff name imported. }
             other   { # staff names imported. }
         }
+room:
+    upload: >-
+        { count, plural,
+            =0      { No room names imported. }
+            one     { One room name imported. }
+            other   { # room names imported. }
+        }
 Save Staff: Save Staff
 Staff Name List Upload: Staff Name List Upload
 A text file, with a staff member name on each line.: A text file, with a staff member name on each line.
 Upload Staff: Upload Staff
 Sort Staff: Sort Staff
+Manage Room Details: Manage Room Details

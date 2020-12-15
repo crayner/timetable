@@ -14,12 +14,12 @@
  */
 namespace App\Items;
 
-class Room
+class Room implements DuplicateNameInterface
 {
     /**
-     * @var string|null
+     * @var string
      */
-    private ?string $name;
+    private string $name;
 
     /**
      * @var int
@@ -29,7 +29,7 @@ class Room
     /**
      * @return string|null
      */
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -37,10 +37,10 @@ class Room
     /**
      * Name.
      *
-     * @param string|null $name
+     * @param string $name
      * @return Room
      */
-    public function setName(?string $name): Room
+    public function setName(string $name): Room
     {
         $this->name = $name;
         return $this;

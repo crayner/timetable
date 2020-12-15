@@ -70,6 +70,11 @@ class TimetableDataManager
     private int $studentsPerGrade;
 
     /**
+     * @var int
+     */
+    private int $roomCapacity;
+
+    /**
      * @var array
      */
     private array $messages = [];
@@ -107,7 +112,7 @@ class TimetableDataManager
             'created_at' => $this->getCreatedAt()->format('c'),
             'staff' => $this->getStaff(true)->toArray(),
             'grades' => $this->getGrades(true)->toArray(),
-            'rooms' => $this->getRooms(true),
+            'rooms' => $this->getRooms(true)->toArray(),
             'days' => $this->getDays(true)->toArray(),
             'periods' => $this->getPeriods(),
             'studentsPerGrade' => $this->getStudentsPerGrade(),
@@ -370,7 +375,7 @@ class TimetableDataManager
                 $rooms[] = $x->deserialise($item);
             }
         }
-        $this->setRooms($rooms);
+        $this->setRooms(new ArrayCollection($rooms));
 
         $days = [];
         foreach ($this->getDays() as $item) {
@@ -436,29 +441,29 @@ class TimetableDataManager
     }
 
     /**
-     * getRoom
+     * getRooms
+     * 15/12/2020 13:43
      * @param bool $serialised
-     * @return array
-     * 11/12/2020 12:47
+     * @return ArrayCollection
      */
-    public function getRooms(bool $serialised = false): array
+    public function getRooms(bool $serialised = false): ArrayCollection
     {
         if ($this->isInjectMissing() && !key_exists('rooms', $this->data)) $this->setRooms($this->createRooms());
         if ($serialised && key_exists('rooms', $this->data)) {
             $rooms = [];
             foreach ($this->data['rooms'] as $item) $rooms[] = $item->serialise();
-            return $rooms;
+            return new ArrayCollection($rooms);
         }
-        return $this->data['rooms'];
+        return $this->data['rooms'] instanceof ArrayCollection ? $this->data['rooms'] : new ArrayCollection($this->data['rooms'] ?: []);
     }
 
     /**
-     * Room.
-     *
-     * @param array $room
+     * setRooms
+     * 15/12/2020 13:38
+     * @param ArrayCollection $rooms
      * @return TimetableDataManager
      */
-    public function setRooms(array $rooms): TimetableDataManager
+    public function setRooms(ArrayCollection $rooms): TimetableDataManager
     {
         $this->data['rooms'] = $rooms;
         return $this;
@@ -466,20 +471,66 @@ class TimetableDataManager
 
     /**
      * createRooms
+     * 15/12/2020 13:43
      * @param int $count
-     * @return array
-     * 14/12/2020 08:52
+     * @return ArrayCollection
      */
-    private function createRooms(int $count = 30): array
+    private function createRooms(int $count = 30): ArrayCollection
     {
-        $rooms = [];
+        $rooms = new ArrayCollection();
         $existing = $this->getRooms();
         for ($x=0; $x<$count; $x++) {
-            $member = key_exists($x, $existing) ? $existing[$x] : new Room();
-            $member->setName('Room ' . strval($x + 1));
-            $rooms[$x] = $member;
+            if ($existing->containsKey($x)) {
+                $member = $existing->get($x);
+            } else {
+                $member = new Room();
+                $member->setName('Room ' . strval($x + 1));
+            }
+            $rooms->set($x, $member);
         }
         return $rooms;
+    }
+
+    /**
+     * sortRooms
+     * 15/12/2020 14:25
+     * @return TimetableDataManager
+     */
+    public function sortRooms(): TimetableDataManager
+    {
+        try {
+            $iterator = $this->getRooms()->getIterator();
+        } catch (\Exception $e) {
+            return $this;
+        }
+
+        $iterator->uasort(
+            function (Room $a, Room $b) {
+                return $a->getName() > $b->getName() ? 1 : -1 ;
+            }
+        );
+        return $this->setRooms(new ArrayCollection(iterator_to_array($iterator, false)));
+    }
+
+    /**
+     * removeRoom
+     * 15/12/2020 14:44
+     * @param string $name
+     * @return TimetableDataManager
+     */
+    public function removeRoom(string $name): TimetableDataManager
+    {
+        $rooms = $this->getRooms();
+        $delete = $rooms->filter(function($room) use ($name) {
+            if ($name === $room->getName())
+            return $room;
+        });
+        foreach ($delete as $room)
+        {
+            $key = $rooms->indexOf($room);
+            if ($rooms->containsKey($key)) $rooms->remove($key);
+        }
+        return $this;
     }
 
     /**
@@ -489,7 +540,7 @@ class TimetableDataManager
      */
     public function getRoomCount(): int
     {
-        return $this->roomCount = count($this->getRooms());
+        return $this->roomCount = $this->getRooms()->count();
     }
 
     /**
@@ -748,6 +799,34 @@ class TimetableDataManager
                 $grade->setStudentCount($studentsPerGrade);
             }
             $this->addMessage('warning', ['basic_settings.studentsPerGrade', ['count' => $studentsPerGrade]]);
+        }
+        return $this;
+    }
+
+    /**
+     * getRoomCapacity
+     * 15/12/2020 13:56
+     * @return int
+     */
+    public function getRoomCapacity(): int
+    {
+        return $this->roomCapacity = isset($this->roomCapacity) ? $this->roomCapacity : (key_exists('roomCapacity', $this->data) ? $this->data['roomCapacity'] : 0) ;
+    }
+
+    /**
+     * setRoomCapacity
+     * 15/12/2020 13:56
+     * @param int $roomCapacity
+     * @return TimetableDataManager
+     */
+    public function setRoomCapacity(int $roomCapacity): TimetableDataManager
+    {
+        if ($this->getRoomCapacity() !== $roomCapacity && $roomCapacity >= 0) {
+            $this->roomCapacity = $roomCapacity;
+            foreach ($this->getRooms() as $room) {
+                $room->setSize($roomCapacity);
+            }
+            $this->addMessage('warning', ['basic_settings.roomCapacity', ['count' => $roomCapacity]]);
         }
         return $this;
     }
