@@ -105,7 +105,7 @@ class TimetableDataManager
         return [
             'name' => $this->getName(),
             'created_at' => $this->getCreatedAt()->format('c'),
-            'staff' => $this->getStaff(true),
+            'staff' => $this->getStaff(true)->toArray(),
             'grades' => $this->getGrades(true)->toArray(),
             'rooms' => $this->getRooms(true),
             'days' => $this->getDays(true)->toArray(),
@@ -195,24 +195,24 @@ class TimetableDataManager
      * @return array
      * 11/12/2020 12:47
      */
-    public function getStaff(bool $serialised = false): array
+    public function getStaff(bool $serialised = false): ArrayCollection
     {
         if ($this->isInjectMissing() && !key_exists('staff', $this->data)) $this->setStaff($this->createStaff());
         if ($serialised && key_exists('staff', $this->data)) {
             $staff = [];
             foreach ($this->data['staff'] as $item) $staff[] = $item->serialise();
-            return $staff;
+            return new ArrayCollection($staff);
         }
-        return key_exists('staff', $this->data) ? $this->data['staff'] : [];
+        return $this->data['staff'] instanceof ArrayCollection ? $this->data['staff'] : new ArrayCollection($this->data['staff'] ?: []);
     }
 
     /**
-     * Staff.
-     *
-     * @param array $staff
+     * setStaff
+     * 15/12/2020 11:40
+     * @param ArrayCollection $staff
      * @return TimetableDataManager
      */
-    public function setStaff(array $staff): TimetableDataManager
+    public function setStaff(ArrayCollection $staff): TimetableDataManager
     {
         $this->data['staff'] = $staff;
         return $this;
@@ -220,20 +220,45 @@ class TimetableDataManager
 
     /**
      * createStaff
+     * 15/12/2020 11:40
      * @param int $count
-     * @return array
-     * 11/12/2020 09:51
+     * @return ArrayCollection
      */
-    private function createStaff(int $count = 50): array
+    private function createStaff(int $count = 50): ArrayCollection
     {
-        $staff = [];
+        $staff = new ArrayCollection();
         $existing = $this->getStaff();
         for ($x=0; $x<$count; $x++) {
-            $member = key_exists($x, $existing) ? $existing[$x] : new Staff();
-            $member->setName('Staff Member ' . strval($x + 1));
-            $staff[$x] = $member;
+            if ($existing->containsKey($x)) {
+                $member = $existing->get($x);
+            } else {
+                $member = new Staff();
+                $member->setName('Staff Member ' . strval($x + 1));
+            }
+            $staff->set($x, $member);
         }
         return $staff;
+    }
+
+    /**
+     * sortStaff
+     * 15/12/2020 13:20
+     * @return TimetableDataManager
+     */
+    public function sortStaff(): TimetableDataManager
+    {
+        try {
+            $iterator = $this->getStaff()->getIterator();
+        } catch (\Exception $e) {
+            return $this;
+        }
+
+        $iterator->uasort(
+            function (Staff $a, Staff $b) {
+                return $a->getName() > $b->getName() ? 1 : -1 ;
+            }
+        );
+        return $this->setStaff(new ArrayCollection(iterator_to_array($iterator, false)));
     }
 
     /**
@@ -325,7 +350,7 @@ class TimetableDataManager
                 $staff[] = $x->deserialise($item);
             }
         }
-        $this->setStaff($staff);
+        $this->setStaff(new ArrayCollection($staff));
 
         $grades = [];
         foreach ($this->getGrades() as $item) {
@@ -360,12 +385,12 @@ class TimetableDataManager
 
     /**
      * getStaffCount
+     * 15/12/2020 11:37
      * @return int
-     * 13/12/2020 09:22
      */
     public function getStaffCount(): int
     {
-        return $this->staffCount = count($this->getStaff());
+        return $this->staffCount = $this->getStaff()->count();
     }
 
     /**

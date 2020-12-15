@@ -51,10 +51,10 @@ class DayController extends AbstractController
     /**
      * addDay
      * 14/12/2020 15:47
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param \App\Manager\TimetableManager $manager
+     * @param Request $request
+     * @param TimetableManager $manager
      * @Route("/day/add/",name="day_add")
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function addDay(Request $request, TimetableManager $manager): Response
     {
@@ -66,10 +66,10 @@ class DayController extends AbstractController
     /**
      * removeDay
      * 14/12/2020 15:47
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param \App\Manager\TimetableManager $manager
+     * @param Request $request
+     * @param TimetableManager $manager
      * @Route("/day/remove/",name="day_remove")
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function removeDay(Request $request, TimetableManager $manager): Response
     {

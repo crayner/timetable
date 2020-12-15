@@ -19,7 +19,7 @@ namespace App\Items;
  * Interface NameInterface
  * @package App\Items
  */
-interface NameInterface
+interface DuplicateNameInterface
 {
     /**
      * @return string

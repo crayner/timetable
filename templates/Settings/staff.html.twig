@@ -1,0 +1,56 @@
+{% trans_default_domain 'messages' %}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="cell medium-cell-block-container">
+        <div class="grid-x grid-padding-x">
+            <div class="cell medium-12 medium-cell-block-y text-center h2">{{ 'Settings: Staff'|trans }}</div>
+        </div>
+    </div>
+    {{ form_start(form) }}
+    <div class="cell medium-auto medium-cell-block-container">
+        {% for key,staff in form.staff %}
+            <div class="grid-x grid-margin-x grid-padding-x">
+                <div class="cell medium-4 medium-cell-block-y align-flex-center h4 justify-left">
+                    {{ staff.name.vars.value|default('New Staff'|trans) }}
+                </div>
+                <div class="cell medium-4 medium-cell-block-y">
+                    {{ form_row(staff.name) }}
+                </div>
+                <div class="cell medium-4 medium-cell-block-y align-flex-center">
+                    <a href="{{ path('staff_delete', {'key': key}) }}" class="warning button" title="{{ 'Delete Staff'|trans }}">{{ 'Delete Staff'|trans }}</a>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="grid-x grid-margin-x grid-padding-x">
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('staff_add') }}" class="button secondary" title="{{ 'Add Staff'|trans }}">{{ 'Add Staff'|trans }}</a>
+            </div>
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('staff_remove') }}" class="button secondary" title="{{ 'Remove Staff'|trans }}">{{ 'Remove Staff'|trans }}</a>
+            </div>
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('staff_sort') }}" class="button secondary" title="{{ 'Sort Staff'|trans }}">{{ 'Sort Staff'|trans }}</a>
+            </div>
+            <div class="cell medium-offset-2 medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('basic_settings') }}" class="button" title="{{ 'Update Basic Settings'|trans }}">{{ 'Settings: Basic'|trans }}</a>
+            </div>
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                {{ form_row(form.saveStaff) }}
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+    {{ form_start(formUpload) }}
+    <div class="grid-x grid-margin-x grid-padding-x">
+        <div class="cell medium-8 medium-cell-block-y">
+            {{ form_row(formUpload.dataFile) }}
+        </div>
+        <div class="cell medium-4 medium-cell-block-y align-flex-center">
+            {{ form_row(formUpload.upload) }}
+        </div>
+    </div>
+
+    {{ form_end(formUpload) }}
+{% endblock body %}

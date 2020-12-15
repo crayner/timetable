@@ -19,7 +19,7 @@ namespace App\Items;
  * @package App\Items
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class Staff
+class Staff implements DuplicateNameInterface
 {
     /**
      * @var string

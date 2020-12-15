@@ -19,7 +19,7 @@ namespace App\Items;
  * @package App\Items
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class Grade implements NameInterface
+class Grade implements DuplicateNameInterface
 {
     /**
      * @var string

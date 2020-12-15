@@ -14,7 +14,7 @@
  */
 namespace App\Items;
 
-class Day implements NameInterface
+class Day implements DuplicateNameInterface
 {
     /**
      * @var string

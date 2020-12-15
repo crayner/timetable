@@ -16,7 +16,7 @@
 namespace App\Validator;
 
 use App\Items\Day;
-use App\Items\NameInterface;
+use App\Items\DuplicateNameInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -40,7 +40,7 @@ class DuplicateNameValidator extends ConstraintValidator
 
         foreach ($value as $q=>$item)
         {
-            $duplicates = $value->filter(function(NameInterface $day) use ($item) {
+            $duplicates = $value->filter(function(DuplicateNameInterface $day) use ($item) {
                 if ($day !== $item && $item->getName() === $day->getName()) return $day;
             });
 
