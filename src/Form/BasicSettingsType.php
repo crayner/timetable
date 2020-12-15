@@ -76,6 +76,15 @@ class BasicSettingsType extends AbstractType
                     ],
                 ]
             )
+            ->add('roomCapacity', IntegerType::class,
+                [
+                    'label' => 'Student Capacity per Room',
+                    'help' => 'If changed, this value is applied to all rooms. Set this value to zero to stop checks of student numbers in assigned rooms.',
+                    'constraints' => [
+                        new Range(['min' => 0]),
+                    ],
+                ]
+            )
             ->add('submit', SubmitType::class,
                 [
                     'label' => 'Update Basic Settings',

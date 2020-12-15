@@ -112,10 +112,11 @@ class TimetableDataManager
             'created_at' => $this->getCreatedAt()->format('c'),
             'staff' => $this->getStaff(true)->toArray(),
             'grades' => $this->getGrades(true)->toArray(),
+            'studentsPerGrade' => $this->getStudentsPerGrade(),
             'rooms' => $this->getRooms(true)->toArray(),
+            'roomCapacity' => $this->getRoomCapacity(),
             'days' => $this->getDays(true)->toArray(),
             'periods' => $this->getPeriods(),
-            'studentsPerGrade' => $this->getStudentsPerGrade(),
         ];
     }
 
