@@ -134,3 +134,7 @@ A text file, with a staff member name on each line.: A text file, with a staff m
 Upload Staff: Upload Staff
 Sort Staff: Sort Staff
 Manage Room Details: Manage Room Details
+Student Capacity per Room: Student Capacity per Room
+'If changed, this value is applied to all rooms. Set this value to zero to stop checks of student numbers in assigned rooms.': 'If changed, this value is applied to all rooms. Set this value to zero to stop checks of student numbers in assigned rooms.'
+Default Lines per Grade: Default Lines per Grade
+'Lines are used to capture classes, and each line should account for all students in a grade. (e.g. Grade 7 Maths Line, Year 10 Language Line)': 'Lines are used to capture classes, and each line should account for all students in a grade. (e.g. Grade 7 Maths Line, Year 10 Language Line.)'

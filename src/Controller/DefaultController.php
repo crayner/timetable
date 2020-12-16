@@ -60,6 +60,7 @@ class DefaultController extends AbstractController
     public function begin(TimetableManager $manager, Request $request)
     {
         $form = $this->createForm(NewTimetableType::class);
+        $loadForm = $this->createForm(LoadTimetableType::class, null, ['action' => $this->generateUrl('load')]);
 
         $form->handleRequest($request);
 
@@ -82,7 +83,7 @@ class DefaultController extends AbstractController
             }
         }
 
-        return $this->render('welcome-unknown.html.twig', ['form' => $form->createView()]);
+        return $this->render('welcome-unknown.html.twig', ['form' => $form->createView(), 'loadForm' => $loadForm->createView()]);
     }
 
     /**
@@ -95,7 +96,7 @@ class DefaultController extends AbstractController
      */
     public function load(Request $request, TimetableManager $manager)
     {
-        $form = $this->createForm(LoadTimetableType::class, null, ['action' => $this->generateUrl('home')]);
+        $form = $this->createForm(LoadTimetableType::class, null, ['action' => $this->generateUrl('load')]);
 
         $form->handleRequest($request);
 

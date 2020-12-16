@@ -1,6 +1,5 @@
 .footer {
-    background-color: lightgray;
-    color: white;
+    color: lightslategrey;
 }
 .grid-margin-x > .cell {
     border: 1px solid lightgray;
@@ -27,4 +26,12 @@ small.error + input {
 }
 .justify-left {
     justify-content: left;
+}
+body {
+    background-color: #FEF7FF;
+    background-image: url("/images/background.jpg");
+    background-repeat: repeat-y;
+}
+.grid-container {
+    background-color: rgba(254,247,255, 0.8);
 }

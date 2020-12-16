@@ -14,8 +14,15 @@
  */
 namespace App\Items;
 
+use App\Helper\UUID;
+
 class Room implements DuplicateNameInterface
 {
+    /**
+     * @var string
+     */
+    private string $id;
+
     /**
      * @var string
      */
@@ -25,6 +32,14 @@ class Room implements DuplicateNameInterface
      * @var int
      */
     private int $size = 30;
+
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id = isset($this->id) ? $this->id : UUID::v4();
+    }
 
     /**
      * @return string|null
@@ -74,6 +89,7 @@ class Room implements DuplicateNameInterface
     public function serialise(): array
     {
         return [
+            'id' => $this->getId(),
             'name' => $this->getName(),
             'size' => $this->getSize(),
         ];
@@ -87,6 +103,7 @@ class Room implements DuplicateNameInterface
      */
     public function deserialise(array $data): Room
     {
+        $this->id = $data['id'];
         $this->name = $data['name'];
         $this->size = $data['size'];
         return $this;

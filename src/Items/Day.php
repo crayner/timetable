@@ -14,8 +14,15 @@
  */
 namespace App\Items;
 
+use App\Helper\UUID;
+
 class Day implements DuplicateNameInterface
 {
+    /**
+     * @var string
+     */
+    private string $id;
+
     /**
      * @var string
      */
@@ -25,6 +32,16 @@ class Day implements DuplicateNameInterface
      * @var int
      */
     private int $periods = 6;
+
+    /**
+     * getId
+     * 16/12/2020 17:45
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id = isset($this->id) ? $this->id : UUID::v4();
+    }
 
     /**
      * @return string
@@ -74,6 +91,7 @@ class Day implements DuplicateNameInterface
     public function serialise(): array
     {
         return [
+            'id' => $this->getId(),
             'name' => $this->getName(),
             'periods' => $this->getPeriods(),
         ];
@@ -87,6 +105,7 @@ class Day implements DuplicateNameInterface
      */
     public function deserialise(array $data): Day
     {
+        $this->id = $data['id'];
         $this->name = $data['name'];
         $this->periods = $data['periods'];
         return $this;

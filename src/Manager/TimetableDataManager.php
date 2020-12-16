@@ -16,7 +16,6 @@ namespace App\Manager;
 
 use App\Items\Day;
 use App\Items\Grade;
-use App\Items\Line;
 use App\Items\Room;
 use App\Items\Staff;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -75,6 +74,16 @@ class TimetableDataManager
     private int $roomCapacity;
 
     /**
+     * @var int
+     */
+    private int $lineCount;
+
+    /**
+     * @var LineManager
+     */
+    private LineManager $lineManager;
+
+    /**
      * @var array
      */
     private array $messages = [];
@@ -102,8 +111,8 @@ class TimetableDataManager
 
     /**
      * getSerializedData
+     * 16/12/2020 10:29
      * @return array
-     * 14/12/2020 10:22
      */
     public function getSerializedData(): array
     {
@@ -117,6 +126,8 @@ class TimetableDataManager
             'roomCapacity' => $this->getRoomCapacity(),
             'days' => $this->getDays(true)->toArray(),
             'periods' => $this->getPeriods(),
+            'lineCount' => $this->getLineCount(),
+            'lines' => $this->getLineManager()->serialise(),
         ];
     }
 
@@ -268,51 +279,6 @@ class TimetableDataManager
     }
 
     /**
-     * getLines
-     * @param bool $serialised
-     * @return array
-     * 11/12/2020 12:47
-     */
-    public function getLines(bool $serialised = false): array
-    {
-        if ($this->isInjectMissing() && !key_exists('lines', $this->data)) $this->setLines($this->createLines());
-        if ($serialised && key_exists('lines', $this->data)) {
-            $lines = [];
-            foreach ($this->data['lines'] as $item) $lines[] = $item->serialise();
-            return $lines;
-        }
-        return key_exists('lines', $this->data) ? $this->data['lines'] : [];
-    }
-
-    /**
-     * Lines.
-     *
-     * @param array $lines
-     * @return TimetableDataManager
-     */
-    public function setLines(array $lines): TimetableDataManager
-    {
-        $this->data['lines'] = $lines;
-        return $this;
-    }
-
-    /**
-     * createLines
-     * @return array
-     * 11/12/2020 10:17
-     */
-    private function createLines(): array
-    {
-        $lines = [];
-        for ($x=1; $x<=26; $x++) {
-            $member = new Line();
-            $member->setName('Line ' . chr(64 + $x));
-            $lines[] = $member;
-        }
-        return $lines;
-    }
-
-    /**
      * @return bool
      */
     public function isInjectMissing(): bool
@@ -387,6 +353,8 @@ class TimetableDataManager
             }
         }
         $this->setDays(new ArrayCollection($days));
+
+        $this->getLineManager()->deserialise(key_exists('lines', $this->data) ? $this->data['lines'] : []);
     }
 
     /**
@@ -830,5 +798,31 @@ class TimetableDataManager
             $this->addMessage('warning', ['basic_settings.roomCapacity', ['count' => $roomCapacity]]);
         }
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLineCount(): int
+    {
+        return $this->getLineManager()->getLinesPerGrade();
+    }
+
+    /**
+     * @param int $lineCount
+     * @return TimetableDataManager
+     */
+    public function setLineCount(int $lineCount): TimetableDataManager
+    {
+        $this->getLineManager()->setLinesPerGrade($lineCount);
+        return $this;
+    }
+
+    /**
+     * @return LineManager
+     */
+    public function getLineManager(): LineManager
+    {
+        return $this->lineManager = isset($this->lineManager) ? $this->lineManager : new LineManager();
     }
 }

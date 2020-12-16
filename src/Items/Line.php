@@ -14,24 +14,53 @@
  */
 namespace App\Items;
 
+use App\Helper\UUID;
+
 /**
  * Class Line
  * @package App\Items
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class Line
+class Line implements DuplicateNameInterface
 {
+    /**
+     * @var string
+     */
+    private string $id;
+
     /**
      * @var string
      */
     private string $name;
 
     /**
+     * @var Grade
+     */
+    private Grade $grade;
+
+    /**
+     * Line constructor.
+     * @param array $line
+     */
+    public function __construct(array $line = [])
+    {
+        $this->deserialise($line);
+    }
+
+    /**
+     * @return string
+     */
+    public function getId(): string
+    {
+        return $this->id = isset($this->id) ? $this->id : UUID::v4();
+    }
+
+    /**
      * @return string
      */
     public function getName(): string
     {
-        return $this->name;
+        return isset($this->name) ? $this->name : '';
     }
 
     /**
@@ -54,7 +83,9 @@ class Line
     public function serialise(): array
     {
         return [
+            'id' => $this->getId(),
             'name' => $this->getName(),
+            'grade' => $this->getGrade() ? $this->getGrade()->serialise() : null,
         ];
     }
 
@@ -65,7 +96,33 @@ class Line
      */
     public function deserialise(array $data): Line
     {
+        if (empty($data)) return $this;
         $this->name = $data['name'];
+        $this->getGrade();
+        $this->grade = $this->grade->deserialise($data['grade']);
         return $this;
     }
+
+    /**
+     * getGrade
+     * 16/12/2020 17:19
+     * @return Grade
+     */
+    public function getGrade(): Grade
+    {
+        return $this->grade = isset($this->grade) ? $this->grade : new Grade();
+    }
+
+    /**
+     * setGrade
+     * 16/12/2020 17:19
+     * @param Grade $grade
+     * @return $this
+     */
+    public function setGrade(Grade $grade): Line
+    {
+        $this->grade = $grade;
+        return $this;
+    }
+
 }

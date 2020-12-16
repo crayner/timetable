@@ -14,6 +14,8 @@
  */
 namespace App\Items;
 
+use App\Helper\UUID;
+
 /**
  * Class Grade
  * @package App\Items
@@ -21,6 +23,11 @@ namespace App\Items;
  */
 class Grade implements DuplicateNameInterface
 {
+    /**
+     * @var string
+     */
+    private string $id;
+
     /**
      * @var string
      */
@@ -35,9 +42,17 @@ class Grade implements DuplicateNameInterface
     /**
      * @return string
      */
+    public function getId(): string
+    {
+        return $this->id = isset($this->id) ? $this->id : UUID::v4();
+    }
+
+    /**
+     * @return string
+     */
     public function getName(): string
     {
-        return $this->name;
+        return isset($this->name) ? $this->name : '';
     }
 
     /**
@@ -82,6 +97,7 @@ class Grade implements DuplicateNameInterface
     public function serialise(): array
     {
         return [
+            'id' => $this->getId(),
             'name' => $this->getName(),
             'studentCount' => $this->getStudentCount(),
         ];
@@ -95,6 +111,7 @@ class Grade implements DuplicateNameInterface
      */
     public function deserialise(array $data): Grade
     {
+        $this->id = $data['id'];
         $this->name = $data['name'];
         $this->studentCount = $data['studentCount'];
         return $this;
