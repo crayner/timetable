@@ -12,6 +12,7 @@ Password: Password
 Repeat Password: Repeat Password
 Download Timetable File: Download Timetable File
 Timetable Name: Timetable Name
+Manage Line Details: Manage Line Details
 'The password can be ignored if you have not previously created a timetable.': 'The password can be ignored if you have not previously created a timetable.'
 'The timetable name must match the dataFile name, or the system will generate a new timetable data file.': 'The timetable name must match the dataFile name, or the system will generate a new timetable data file.'
 Start Now!: Start Now!

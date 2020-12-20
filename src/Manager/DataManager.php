@@ -91,6 +91,11 @@ class DataManager
     private SecurityEncoder $encoder;
 
     /**
+     * @var string
+     */
+    private string $secret;
+
+    /**
      * DataManager constructor.
      * @param string $name
      */
@@ -110,7 +115,7 @@ class DataManager
      */
     public function getName(): string
     {
-        return $this->name;
+        return isset($this->name) ? $this->name : '';
     }
 
     /**
@@ -356,7 +361,6 @@ class DataManager
      */
     public function readFile(): bool
     {
-        dump($this->isFileAvailable());
         if ($this->isFileAvailable()) {
             $data = Yaml::parse(file_get_contents($this->getFileName()));
             $this->deSerialise($data);
@@ -389,6 +393,7 @@ class DataManager
         return [
             'name' => $this->getName(),
             'password' => $this->getPassword(),
+            'secret' => $this->getSecret(),
             'created_on' => date('c'),
             'staff' => $this->getStaff(true)->toArray(),
             'studentsPerGrade' => $this->getStudentsPerGrade(),
@@ -397,6 +402,7 @@ class DataManager
             'periods' => $this->getPeriods(),
             'days' => $this->getDays(true)->toArray(),
             'grades' => $this->getGrades(true)->toArray(),
+            'lines' => $this->getLines(true)->toArray(),
         ];
     }
 
@@ -417,6 +423,7 @@ class DataManager
             ->setRooms(new ArrayCollection($data['rooms']), true)
             ->setDays(new ArrayCollection($data['days']), true)
             ->setGrades(new ArrayCollection($data['grades']), true)
+//            ->setLines(new ArrayCollection($data['lines']), true)
             ->setStaff(new ArrayCollection($data['staff']), true);
     }
 
@@ -587,4 +594,27 @@ class DataManager
         }
         return false;
     }
+
+    /**
+     * @return string
+     */
+    public function getSecret(): string
+    {
+        return isset($this->secret) ? $this->secret : '';
+    }
+
+    /**
+     * @param string $secret
+     * @return DataManager
+     */
+    public function setSecret(string $secret): DataManager
+    {
+        if ($this->getName() !== '') {
+            $secret = $this->getEncoder()->encodePassword($this->getName() . $secret);
+            $this->secret = $secret;
+        }
+        return $this;
+    }
+
+
 }

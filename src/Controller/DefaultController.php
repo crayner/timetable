@@ -194,12 +194,11 @@ class DefaultController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $session = $request->getSession();
-
+            $manager->setName($form->get('name')->getData());
             if ($manager->getDataManager()->encodePassword($form->get('password')->getData())) {
-                $user = new \stdClass();
-                $user->name = $form->get('name')->getData();
-                $user->password = $manager->getDataManager()->getPassword();
+                $user = $manager->getUser();
                 $session->set('_security_user', $user);
+                $session->set('timetable_name', $manager->getName());
                 return $this->redirectToRoute('basic_settings');
             }
         }

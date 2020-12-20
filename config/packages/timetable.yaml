@@ -1,2 +1,3 @@
 parameters:
     user_name: craigray
+    secret: '%env(APP_SECRET)%'

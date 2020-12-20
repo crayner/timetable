@@ -73,15 +73,11 @@ class ValidatorManager
      */
     public function isFileValid(): bool
     {
-        dump($this);
         if (!$this->getDataManager()->readFile()) return false;
-        dump($this);
 
         if (empty($this->getDataManager()->getName())) return false;
-        dump($this);
 
         if ($this->getDataManager()->getCreatedOn()->format('c') < date('c', strtotime('-3 Hours'))) return false;
-        dump($this);
 
         return true;
     }

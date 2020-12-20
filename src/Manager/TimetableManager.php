@@ -45,14 +45,23 @@ class TimetableManager
     private ValidatorManager $validatorManager;
 
     /**
+     * @var string
+     */
+    private string $secret;
+
+    private \stdClass $user;
+
+    /**
      * TimetableManager constructor.
      * @param SessionInterface $session
      * @param ValidatorManager $validatorManager
+     * @param string $secret
      */
-    public function __construct(SessionInterface $session, ValidatorManager $validatorManager)
+    public function __construct(SessionInterface $session, ValidatorManager $validatorManager, string $secret)
     {
         $this->session = $session;
-        $this->setValidator($validatorManager);
+        $this->setValidator($validatorManager)
+            ->setSecret($secret);
     }
 
     /**
@@ -80,7 +89,9 @@ class TimetableManager
     {
         $this->name = $name;
         $this->isNameValid() ? $this->getSession()->set('timetable_name', $name) : $this->getSession()->remove('timetable_name');
-        $this->getDataManager()->setName($name);
+        $this->getDataManager()
+            ->setName($name)
+            ->setSecret($this->getSecret());
         return $this;
     }
 
@@ -176,5 +187,39 @@ class TimetableManager
             return false;
         }
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSecret(): string
+    {
+        return $this->secret;
+    }
+
+    /**
+     * @param string $secret
+     * @return TimetableManager
+     */
+    public function setSecret(string $secret): TimetableManager
+    {
+        $this->secret = $secret;
+        return $this;
+    }
+
+    /**
+     * getUser
+     * 21/12/2020 10:47
+     * @return \stdClass
+     */
+    public function getUser(): \stdClass
+    {
+        if (!isset($this->user)) {
+            $this->user = new \stdClass();
+            $this->user->name = $this->getName();
+            $this->user->password = $this->getDataManager()->getPassword();
+            $this->user->secret = $this->getDataManager()->getSecret();
+        }
+        return $this->user;
     }
 }

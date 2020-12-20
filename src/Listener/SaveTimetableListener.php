@@ -37,7 +37,7 @@ class SaveTimetableListener implements EventSubscriberInterface
      * SaveTimetableListener constructor.
      * @param TimetableManager $manager
      */
-    public function __construct(TimetableManager $manager,)
+    public function __construct(TimetableManager $manager)
     {
         $this->manager = $manager;
     }
