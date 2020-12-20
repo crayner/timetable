@@ -22,7 +22,7 @@ use Symfony\Component\Yaml\Yaml;
  * @package App\Manager
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class TimetableValidatorManager
+class ValidatorManager
 {
     /**
      * @var string
@@ -30,18 +30,9 @@ class TimetableValidatorManager
     private string $name;
 
     /**
-     * @var TimetableDataManager
+     * @var DataManager
      */
-    private TimetableDataManager $dataManager;
-
-    /**
-     * TimetableValidatorManager constructor.
-     * @param TimetableDataManager $dataManager
-     */
-    public function __construct(TimetableDataManager $dataManager)
-    {
-        $this->setDataManager($dataManager);
-    }
+    private DataManager $dataManager;
 
     /**
      * getName
@@ -57,22 +48,12 @@ class TimetableValidatorManager
      * Name.
      *
      * @param string $name
-     * @return TimetableValidatorManager
+     * @return ValidatorManager
      */
-    public function setName(string $name): TimetableValidatorManager
+    public function setName(string $name): ValidatorManager
     {
         $this->name = $name;
         return $this;
-    }
-
-    /**
-     * getFilePath
-     * @return string
-     * 10/12/2020 14:48
-     */
-    private function getFilePath(): string
-    {
-        return __DIR__ .'/../../config/data/'.$this->getName().'.yaml';
     }
 
     /**
@@ -82,7 +63,7 @@ class TimetableValidatorManager
      */
     public function doesFileExist(): bool
     {
-        return realpath($this->getFilePath()) !== false;
+        return realpath($this->getDataManager()->getFilePath()) !== false;
     }
 
     /**
@@ -92,37 +73,34 @@ class TimetableValidatorManager
      */
     public function isFileValid(): bool
     {
-        if (!$this->doesFileExist()) return false;
-
-        $data = Yaml::parse(file_get_contents($this->getFilePath()));
-
-        $this->getDataManager()->setData($data);
+        dump($this);
+        if (!$this->getDataManager()->readFile()) return false;
+        dump($this);
 
         if (empty($this->getDataManager()->getName())) return false;
+        dump($this);
 
-        if ($this->getDataManager()->getCreatedAt() === null || $this->getDataManager()->getCreatedAt()->format('c') < date('c', strtotime('-1 Day'))) return false;
+        if ($this->getDataManager()->getCreatedOn()->format('c') < date('c', strtotime('-3 Hours'))) return false;
+        dump($this);
 
         return true;
     }
 
     /**
-     * @return TimetableDataManager
+     * @return DataManager
      */
-    public function getDataManager(): TimetableDataManager
+    public function getDataManager(): DataManager
     {
         return $this->dataManager;
     }
 
     /**
-     * DataManager.
-     *
-     * @param TimetableDataManager $dataManager
-     * @return TimetableValidatorManager
+     * @param DataManager $dataManager
+     * @return ValidatorManager
      */
-    public function setDataManager(TimetableDataManager $dataManager): TimetableValidatorManager
+    public function setDataManager(DataManager $dataManager): ValidatorManager
     {
         $this->dataManager = $dataManager;
         return $this;
     }
-
 }

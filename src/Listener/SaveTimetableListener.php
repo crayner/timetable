@@ -16,6 +16,8 @@ namespace App\Listener;
 
 use App\Manager\TimetableManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -35,7 +37,7 @@ class SaveTimetableListener implements EventSubscriberInterface
      * SaveTimetableListener constructor.
      * @param TimetableManager $manager
      */
-    public function __construct(TimetableManager $manager)
+    public function __construct(TimetableManager $manager,)
     {
         $this->manager = $manager;
     }
@@ -49,6 +51,7 @@ class SaveTimetableListener implements EventSubscriberInterface
     {
         return [
             KernelEvents::TERMINATE => ['onTerminate', 0],
+            KernelEvents::REQUEST => ['onRequest', 0],
         ];
     }
 
@@ -59,6 +62,31 @@ class SaveTimetableListener implements EventSubscriberInterface
      */
     public function onTerminate(TerminateEvent $event)
     {
+        if (!$event->getRequest()->hasSession()) return;
         if ($this->manager->isSaveOnTerminate()) $this->manager->getDataManager()->writeFile();
+    }
+
+    /**
+     * onRequest
+     * 20/12/2020 08:50
+     * @param RequestEvent $event
+     */
+    public function onRequest(RequestEvent $event)
+    {
+        $request = $event->getRequest();
+        if (in_array($request->attributes->get('_controller'), ['App\Controller\DefaultController::begin','"web_profiler.controller.profiler::toolbarAction','error_controller', 'App\Controller\DefaultController::createTimetable'])) return;
+
+        if (!$request->hasSession() || !$request->getSession()->has('_security_user')) {
+            $response = new RedirectResponse("/begin/");
+            $event->setResponse($response);
+            return;
+        }
+        $user = $request->getSession()->get('_security_user');
+        $this->manager->setName($user->name);
+
+        if (!$this->manager->isFileValid() || $user->name !== $this->manager->getDataManager()->getName() || $user->password !== $this->manager->getDataManager()->getPassword()) {
+            $response = new RedirectResponse("/begin/");
+            $event->setResponse($response);
+        }
     }
 }

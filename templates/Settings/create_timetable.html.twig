@@ -1,0 +1,21 @@
+{% trans_default_domain 'messages' %}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="cell medium-cell-block-container">
+        <div class="grid-x grid-padding-x">
+            <div class="cell medium-6 medium-cell-block-y">
+                <h4>{{ 'Create Timetable'|trans }}</h4>
+                <p class="callout warning">{{ 'create.message'|trans({'{name}': name}) }}</p>
+                <p>{{ 'welcome.warning'|trans }}</p>
+                {{ form(form) }}
+            </div>
+            <div class="cell medium-6 medium-cell-block-y">
+                <h4>{{ 'Resume Existing Timetable Work' }}</h4>
+                <p>{{ 'load_form'|trans }}</p>
+                {{ form(loadForm) }}
+            </div>
+        </div>
+    </div>
+{% endblock body %}

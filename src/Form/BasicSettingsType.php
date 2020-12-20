@@ -14,7 +14,7 @@
  */
 namespace App\Form;
 
-use App\Manager\TimetableDataManager;
+use App\Manager\DataManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -85,15 +85,6 @@ class BasicSettingsType extends AbstractType
                     ],
                 ]
             )
-            ->add('lineCount', IntegerType::class,
-                [
-                    'label' => 'Default Lines per Grade',
-                    'help' => 'Lines are used to capture classes, and each line should account for all students in a grade. (e.g. Grade 7 Maths Line, Year 10 Language Line)',
-                    'constraints' => [
-                        new Range(['min' => 1]),
-                    ],
-                ]
-            )
             ->add('submit', SubmitType::class,
                 [
                     'label' => 'Update Basic Settings',
@@ -113,7 +104,7 @@ class BasicSettingsType extends AbstractType
             ->setDefaults(
                 [
                     'translation_domain' => 'messages',
-                    'data_class' => TimetableDataManager::class,
+                    'data_class' => DataManager::class,
                 ]
             )
         ;

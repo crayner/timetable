@@ -38,11 +38,9 @@ class ManageDataController extends AbstractController
      */
     public function basicSettings(TimetableManager $manager, Request $request)
     {
-        $manager->load();
-
         $form = $this->createForm(BasicSettingsType::class, $manager->getDataManager());
 
-        $manager->handleBasicRequest($form, $request);
+        $form->handleRequest($request);
 
         return $this->render('Settings/basic.html.twig',
             ['form' => $form->createView()]);

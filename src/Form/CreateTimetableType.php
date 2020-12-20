@@ -2,22 +2,24 @@
 /**
  * Created by PhpStorm.
  *
- * timetable
- * (c) 2020 Craig Rayner <craig@craigrayner.com>
+ * Timetable Creator
+ * (c) 2020-2020 Craig Rayner <craig@craigrayner.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * User: craig
- * Date: 10/12/2020
- * Time: 13:33
+ * Licence: MIT
+ * User: Craig Rayner
+ * Date: 19/12/2020
+ * Time: 09:50
  */
 namespace App\Form;
 
+use App\Manager\DataManager;
 use App\Validator\UserPasswordContent;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,18 +28,12 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
- * Class NewTimetableType
+ * Class CreateTimetableType
  * @package App\Form
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class NewTimetableType extends AbstractType
+class CreateTimetableType extends AbstractType
 {
-    /**
-     * buildForm
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     * 10/12/2020 13:35
-     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -51,20 +47,21 @@ class NewTimetableType extends AbstractType
                     ],
                 ]
             )
-            ->add('password', PasswordType::class,
+            ->add('password', RepeatedType::class,
                 [
-                    'label' => 'Password',
-                    'help' => 'The password can be ignored if you have not previously created a timetable.',
-                    'required' => false,
+                    'type' => PasswordType::class,
+                    'first_options'  => ['label' => 'Password'],
+                    'second_options' => ['label' => 'Repeat Password'],
                     'constraints' => [
+                        new NotBlank(),
                         new Length(['max' => 75]),
-                        new UserPasswordContent(),
+                        new UserPasswordContent(['minSpecial' => 0]),
                     ],
                 ]
             )
             ->add('submit', SubmitType::class,
                 [
-                    'label' => 'Start Now!',
+                    'label' => 'Create Timetable',
                 ]
             )
         ;
@@ -72,15 +69,18 @@ class NewTimetableType extends AbstractType
 
     /**
      * configureOptions
+     * 19/12/2020 09:53
      * @param OptionsResolver $resolver
-     * 10/12/2020 15:08
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(
-            [
-                'translation_domain' => 'messages',
-            ]
-        );
+        $resolver
+            ->setDefaults(
+                [
+                    'translation_domain' => 'messages',
+                    'data_class' => DataManager::class,
+                ]
+            )
+        ;
     }
 }

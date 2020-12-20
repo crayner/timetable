@@ -10,28 +10,24 @@
  *
  * Licence: MIT
  * User: Craig Rayner
- * Date: 14/12/2020
- * Time: 16:10
+ * Date: 17/12/2020
+ * Time: 10:50
  */
+
 namespace App\Validator;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * Class Days
- * @package App\Validator
- * @author Craig Rayner <craig@craigrayner.com>
- */
-class DuplicateName extends Constraint
+class DuplicateLine extends Constraint
 {
-    const DUPLICATE_NAME_ERROR = '3e398a9b-6d9a-4a93-b824-032eb91bb82a';
+    const DUPLICATE_LINE_ERROR = '37359744-d060-481f-afef-a03404de64f9';
 
     protected static $errorNames = [
-        self::DUPLICATE_NAME_ERROR => 'DUPLICATE_NAME_ERROR',
+        self::DUPLICATE_LINE_ERROR => 'DUPLICATE_LINE_ERROR',
     ];
 
     /**
      * @var string
      */
-    public string $message = 'This name is a duplicate.';
+    public string $message = 'This line is a duplicate.';
 }

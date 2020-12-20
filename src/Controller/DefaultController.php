@@ -14,12 +14,15 @@
  */
 namespace App\Controller;
 
+use App\Form\CreateTimetableType;
 use App\Form\LoadTimetableType;
 use App\Form\NewTimetableType;
+use App\Helper\SecurityEncoder;
 use App\Manager\TimetableManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,22 +41,11 @@ use Symfony\Component\Yaml\Yaml;
 class DefaultController extends AbstractController
 {
     /**
-     * default
-     * 10/12/2020 12:30
-     * @param TimetableManager $manager
-     * @Route("/",name="home")
-     * @return Response
-     */
-    public function home(TimetableManager $manager)
-    {
-        return $manager->getResponse($this->get('twig'));
-    }
-
-    /**
      * begin
      * @param TimetableManager $manager
      * @param Request $request
      * @return Response
+     * @Route("/",name="home")
      * @Route("/begin/",name="begin")
      * 10/12/2020 12:37
      */
@@ -66,20 +58,30 @@ class DefaultController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (!empty($name = $form->get('name')->getData())) {
-                if (file_exists(__DIR__ . '/../../config/data/' . $name . '.yaml')) {
-                    $data = Yaml::parse(file_get_contents(__DIR__ . '/../../config/data/' . $name . '.yaml'));
-                    if ($data['created_at'] > date('c', strtotime('-1 day'))) {
-                        $this->addFlash('alert', ['The name "{name}" is not available.  Use a different name.', ['{name}' => $name]]);
-                        return $this->redirectToRoute('home');
-                    }
-                }
-
                 $manager->setName($name);
+                if ($manager->isFileValid()) {
+                    if (!empty($password = $form->get('password')->getData())) {
+                        $security = new SecurityEncoder();
+                        if ($security->isPasswordValid($manager->getDataManager()->getPassword(), $password)) {
+                            $user = new \stdClass();
+                            $user->name = $name;
+                            $user->password = $manager->getDataManager()->getPassword();
+                            $session = $request->getSession();
+                            $session->set('_security_user', $user);
+                            $session->set('timetable_name', $name);
+                            return $this->redirectToRoute('basic_settings');
+                        }
+                        $this->addFlash('alert', ['The password provided is not valid for the data file "{name}"', ['{name}' => $name]]);
+                        return $this->redirectToRoute('begin');
+                    }
+
+                    $this->addFlash('alert', ['The name "{name}" is already in use.  Use a different name or provide the required password.', ['{name}' => $name]]);
+                    return $this->redirectToRoute('begin');
+                }
             }
 
-            if ($manager->isNameValid() && !$manager->isFileValid()) {
-                $manager->createFile();
-                return $this->redirectToRoute('home');
+            if ($manager->isNameValid() && !$manager->getDataManager()->isFileAvailable()) {
+                return $this->redirectToRoute('create_timetable', ['name' => $name]);
             }
         }
 
@@ -103,7 +105,7 @@ class DefaultController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $dataFile = $form->get('dataFile')->getData();
-            if ($dataFile) {
+            if ($dataFile instanceof UploadedFile) {
                 $originalFilename = pathinfo($dataFile->getClientOriginalName(), PATHINFO_FILENAME);
 
                 try {
@@ -113,8 +115,8 @@ class DefaultController extends AbstractController
                 }
 
                 if (key_exists('name', $data) && $data['name'] === $originalFilename) {
-                    $manager->setName($originalFilename);
                     $dataManager = $manager->getDataManager($data);
+                    $manager->setName($originalFilename);
                     $dataManager->setInjectMissing();
                     if (!$manager->isFileValid()) {
                         $dataManager->unlink();
@@ -171,5 +173,37 @@ class DefaultController extends AbstractController
             $this->addFlash('alert', 'The file for the timetable data was not found.');
             return $this->redirectToRoute('home');
         }
+    }
+
+    /**
+     * createFile
+     * 19/12/2020 09:41
+     * @param string $name
+     * @param TimetableManager $manager
+     * @param Request $request
+     * @return Response
+     * @Route("/timetable/{name}/create/", name="create_timetable")
+     */
+    public function createTimetable(string $name, TimetableManager $manager, Request $request): Response
+    {
+        $manager->getDataManager()->setName($name);
+        $form = $this->createForm(CreateTimetableType::class, $manager->getDataManager());
+        $loadForm = $this->createForm(LoadTimetableType::class, null, ['action' => $this->generateUrl('load')]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $session = $request->getSession();
+
+            if ($manager->getDataManager()->encodePassword($form->get('password')->getData())) {
+                $user = new \stdClass();
+                $user->name = $form->get('name')->getData();
+                $user->password = $manager->getDataManager()->getPassword();
+                $session->set('_security_user', $user);
+                return $this->redirectToRoute('basic_settings');
+            }
+        }
+
+        return $this->render('Settings\create_timetable.html.twig', ['form' => $form->createView(), 'loadForm' => $loadForm->createView(), 'name' => $name]);
     }
 }

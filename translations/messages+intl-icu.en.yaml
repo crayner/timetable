@@ -3,16 +3,22 @@ Welcome: Welcome
 welcome:
     message: This system will (do its best) to generate a timetable based on the information that you provide. At the moment I have no information.
     warning: Information for your timetable is only kept on the site for a short (less than a day) period. Please ensure that you download and keep your data safe should you wish to return. This site has no manner to retrieve lost data.
+create:
+    message: No file exists for "{name}." You need to set a password for this file before it will be created.
 load_form: You can resume previous work by uploading your data file here.
 Created by: Created by
+Create Timetable: Create Timetable
+Password: Password
+Repeat Password: Repeat Password
 Download Timetable File: Download Timetable File
 Timetable Name: Timetable Name
-The timetable name must match the dataFile name, or the system will generate a new timetable data file.: The timetable name must match the dataFile name, or the system will generate a new timetable data file.
+'The password can be ignored if you have not previously created a timetable.': 'The password can be ignored if you have not previously created a timetable.'
+'The timetable name must match the dataFile name, or the system will generate a new timetable data file.': 'The timetable name must match the dataFile name, or the system will generate a new timetable data file.'
 Start Now!: Start Now!
 Timetable Data File: Timetable Data File
 If used and valid, this file will be saved to the server for use against the name in the file.: If used and valid, this file will be saved to the server for use against the name in the file.
 Load Timetable: Load Timetable
-'The name "{name}" is not available. Use a different name.': 'The name "{name}" is not available. Use a different name.'
+'The name "{name}" is already in use.  Use a different name or provide the required password.': 'The name "{name}" is already in use.  Use a different name or provide the required password.'
 'Settings: Basic': 'Settings: Basic'
 basic_settings:
     staff: >-
@@ -138,3 +144,4 @@ Student Capacity per Room: Student Capacity per Room
 'If changed, this value is applied to all rooms. Set this value to zero to stop checks of student numbers in assigned rooms.': 'If changed, this value is applied to all rooms. Set this value to zero to stop checks of student numbers in assigned rooms.'
 Default Lines per Grade: Default Lines per Grade
 'Lines are used to capture classes, and each line should account for all students in a grade. (e.g. Grade 7 Maths Line, Year 10 Language Line)': 'Lines are used to capture classes, and each line should account for all students in a grade. (e.g. Grade 7 Maths Line, Year 10 Language Line.)'
+'The password provided is not valid for the data file "{name}"': 'The password provided is not valid for the data file "{name}"'
