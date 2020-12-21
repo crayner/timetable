@@ -33,7 +33,7 @@
                         <div class="grid-x grid-padding-x grid-margin-y">
                             <div class="cell medium-4 medium-cell-block-y text-left"></div>
                             <div class="cell medium-4 medium-cell-block-y text-center">{{ 'Created by'|trans }} Craig Rayner<br />
-                                &copy; 2020
+                                &copy; 2020 - {{ 'now'|date('Y') }}
                             </div>
                             <div class="cell medium-4 medium-cell-block-y align-flex-center">
                                 {% if app.request.session.get('timetable_name')|default('') is not same as('') %}
