@@ -279,21 +279,59 @@ class DataManager
     }
 
     /**
+     * getgrades
+     * 22/12/2020 08:07
+     * @param bool $serialise
      * @return ArrayCollection
      */
-    public function getGrades(): ArrayCollection
+    public function getgrades(bool $serialise = false): ArrayCollection
     {
+        if ($this->grades->count() === 0) {
+            $this->readFile();
+        }
+        if ($serialise) {
+            $list = new ArrayCollection();
+            foreach ($this->grades as $grade) {
+                $list->add($grade->serialise());
+            }
+            return $list;
+        }
         return $this->grades;
     }
 
     /**
      * @param ArrayCollection $grades
+     * @param bool $deSerialise
      * @return DataManager
      */
-    public function setGrades(ArrayCollection $grades): DataManager
+    public function setgrades(ArrayCollection $grades, bool $deSerialise = false): DataManager
     {
+        if ($deSerialise) {
+            $new = new ArrayCollection();
+            foreach ($grades as $item) {
+                $grade = new grade();
+                $grade->deserialise($item);
+                $new->add($grade);
+            }
+            $grades = $new;
+        }
         $this->grades = $grades;
         return $this;
+    }
+
+    /**
+     * removeGrade
+     * 22/12/2020 08:34
+     * @param string $id
+     * @return DataManager
+     */
+    public function removeGrade(string $id): DataManager
+    {
+        $grades = $this->getGrades()->filter(function(Grade $grade) use ($id) {
+            if ($id !== $grade->getId()) return $grade;
+        });
+
+        return $this->setGrades($grades);
     }
 
     /**
@@ -607,9 +645,9 @@ class DataManager
     public function setGradeCount(int $count): DataManager
     {
         if ($count > $this->getGradeCount()) {
-            for ($i=$this->getGradeCount(); $i<=$count; $i++) {
+            for ($i=$this->getGradeCount(); $i<$count; $i++) {
                 $grade = new Grade();
-                $grade->setName('Grade/Year/Form ' . strval($i))
+                $grade->setName('Grade/Year/Form ' . strval($i + 1))
                     ->setStudentCount($this->getStudentsPerGrade())
                     ->getId();
                 $this->grades->add($grade);

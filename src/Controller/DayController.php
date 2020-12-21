@@ -74,9 +74,11 @@ class DayController extends AbstractController
     public function removeDay(Request $request, TimetableManager $manager): Response
     {
         $days = $manager->getDataManager()->getDays();
-        $last = $days->last();
-        $days->removeElement($last);
-        $manager->getDataManager()->setDays($days);
+        if ($days->count() > 0) {
+            $last = $days->last();
+            $days->removeElement($last);
+            $manager->getDataManager()->setDays($days);
+        }
 
         return $this->forward(DayController::class.'::days',['request' => $request, 'TimetableManager' => $manager]);
     }

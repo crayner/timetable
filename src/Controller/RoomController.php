@@ -80,9 +80,11 @@ class RoomController extends AbstractController
     public function removeRoom(Request $request, TimetableManager $manager): Response
     {
         $rooms = $manager->getDataManager()->getRooms();
-        $last = $rooms->last();
-        $rooms->removeElement($last);
-        $manager->getDataManager()->setRooms($rooms);
+        if ($rooms->count() > 0) {
+            $last = $rooms->last();
+            $rooms->removeElement($last);
+            $manager->getDataManager()->setRooms($rooms);
+        }
 
         return $this->forward(RoomController::class.'::rooms',['request' => $request, 'TimetableManager' => $manager]);
     }

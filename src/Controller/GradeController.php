@@ -74,7 +74,12 @@ class GradeController extends AbstractController
      */
     public function removeGrade(Request $request, TimetableManager $manager): Response
     {
-        $manager->getDataManager()->setGradeCount($manager->getDataManager()->getGradeCount() - 1);
+        $grades = $manager->getDataManager()->getGrades();
+        if ($grades->count() > 0) {
+            $last = $grades->last();
+            $grades->removeElement($last);
+            $manager->getDataManager()->setGrades($grades);
+        }
 
         return $this->forward(GradeController::class.'::grades',['request' => $request, 'TimetableManager' => $manager]);
     }
@@ -82,15 +87,15 @@ class GradeController extends AbstractController
     /**
      * deleteGrade
      * 15/12/2020 10:14
-     * @param int $key
+     * @param string $grade
      * @param Request $request
      * @param TimetableManager $manager
-     * @Route("/grade/{key}/delete/",name="grade_delete")
+     * @Route("/grade/{grade}/delete/",name="grade_delete")
      * @return Response
      */
-    public function deleteGrade(int $key, Request $request, TimetableManager $manager): Response
+    public function deleteGrade(string $grade, Request $request, TimetableManager $manager): Response
     {
-        $manager->getDataManager()->removeGrade($key);
+        $grades = $manager->getDataManager()->removeGrade($grade);
 
         return $this->forward(GradeController::class.'::grades',['request' => $request, 'TimetableManager' => $manager]);
     }
