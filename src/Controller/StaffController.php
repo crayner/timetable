@@ -23,8 +23,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class StaffController
@@ -79,7 +77,12 @@ class StaffController extends AbstractController
      */
     public function removeStaff(Request $request, TimetableManager $manager): Response
     {
-        $manager->getDataManager()->setStaffCount($manager->getDataManager()->getStaffCount() - 1);
+        $staff = $manager->getDataManager()->getStaff();
+        if ($staff->count() > 0) {
+            $last = $staff->last();
+            $staff->removeElement($last);
+            $manager->getDataManager()->setStaff($staff);
+        }
 
         return $this->forward(StaffController::class.'::staff',['request' => $request, 'TimetableManager' => $manager]);
     }
@@ -87,27 +90,26 @@ class StaffController extends AbstractController
     /**
      * removeStaff
      * 14/12/2020 15:47
-     * @param int $key
+     * @param string $staff
      * @param Request $request
      * @param TimetableManager $manager
+     * @Route("/staff/{staff}/delete/",name="staff_delete")
      * @return Response
-     * @Route("/staff/{key}/delete/",name="staff_delete")
      */
-    public function deleteStaff(int $key, Request $request, TimetableManager $manager): Response
+    public function deleteStaff(string $staff, Request $request, TimetableManager $manager): Response
     {
-        $manager->getDataManager()->removeStaff($key);
+        $manager->getDataManager()->removeStaff($staff);
 
         return $this->forward(StaffController::class.'::staff',['request' => $request, 'TimetableManager' => $manager]);
     }
 
     /**
-     * removeStaff
-     * 14/12/2020 15:47
-     * @param int $key
+     * upload
+     * 22/12/2020 09:46
      * @param Request $request
      * @param TimetableManager $manager
-     * @return Response
      * @Route("/staff/upload/",name="staff_upload")
+     * @return Response
      */
     public function upload(Request $request, TimetableManager $manager): Response
     {

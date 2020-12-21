@@ -269,13 +269,57 @@ class DataManager
     }
 
     /**
+     * setStaff
+     * 22/12/2020 09:37
      * @param ArrayCollection $staff
+     * @param bool $deSerialise
      * @return DataManager
      */
-    public function setStaff(ArrayCollection $staff): DataManager
+    public function setStaff(ArrayCollection $staff, bool $deSerialise = false): DataManager
     {
+        if ($deSerialise) {
+            $new = new ArrayCollection();
+            foreach ($staff as $item) {
+                $member = new Staff();
+                $member->deserialise($item);
+                $new->add($member);
+            }
+            $staff = $new;
+        }
         $this->staff = $staff;
         return $this;
+    }
+
+    /**
+     * removeStaff
+     * 22/12/2020 08:34
+     * @param string $id
+     * @return DataManager
+     */
+    public function removeStaff(string $id): DataManager
+    {
+        $members = $this->getStaff()->filter(function(Staff $staff) use ($id) {
+            if ($id !== $staff->getId()) return $staff;
+        });
+
+        return $this->setStaff($members);
+    }
+
+    /**
+     * sortStaff
+     * 22/12/2020 09:51
+     * @return DataManager
+     */
+    public function sortStaff(): DataManager
+    {
+        $iterator = $this->getStaff()->getIterator();
+
+        $iterator->uasort(
+            function (Staff $a, Staff $b) {
+                return $a->getName() > $b->getName() ? 1 : -1 ;
+            }
+        );
+        return $this->setStaff(new ArrayCollection(iterator_to_array($iterator, false)));
     }
 
     /**
@@ -284,7 +328,7 @@ class DataManager
      * @param bool $serialise
      * @return ArrayCollection
      */
-    public function getgrades(bool $serialise = false): ArrayCollection
+    public function getGrades(bool $serialise = false): ArrayCollection
     {
         if ($this->grades->count() === 0) {
             $this->readFile();
@@ -300,16 +344,18 @@ class DataManager
     }
 
     /**
+     * setGrades
+     * 22/12/2020 09:37
      * @param ArrayCollection $grades
      * @param bool $deSerialise
      * @return DataManager
      */
-    public function setgrades(ArrayCollection $grades, bool $deSerialise = false): DataManager
+    public function setGrades(ArrayCollection $grades, bool $deSerialise = false): DataManager
     {
         if ($deSerialise) {
             $new = new ArrayCollection();
             foreach ($grades as $item) {
-                $grade = new grade();
+                $grade = new Grade();
                 $grade->deserialise($item);
                 $new->add($grade);
             }
@@ -587,9 +633,10 @@ class DataManager
     public function setStaffCount(int $count): DataManager
     {
         if ($count > $this->getStaffCount()) {
-            for ($i=$this->getStaffCount(); $i<=$count; $i++) {
+            for ($i=$this->getStaffCount(); $i<$count; $i++) {
                 $staff = new Staff();
-                $staff->setName('Staff Member ' . strval($i))->getId();
+                $staff->setName('Staff Member ' . strval($i + 1))
+                    ->getId();
                 $this->staff->add($staff);
             }
         }

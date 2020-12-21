@@ -17,9 +17,10 @@
                 </div>
                 <div class="cell medium-4 medium-cell-block-y">
                     {{ form_row(staff.name) }}
+                    {{ form_row(staff.id) }}
                 </div>
                 <div class="cell medium-4 medium-cell-block-y align-flex-center">
-                    <a href="{{ path('staff_delete', {'key': key}) }}" class="warning button" title="{{ 'Delete Staff'|trans }}">{{ 'Delete Staff'|trans }}</a>
+                    <a href="{{ path('staff_delete', {'staff': staff.id.vars.value}) }}" class="warning button" title="{{ 'Delete Staff'|trans }}">{{ 'Delete Staff'|trans }}</a>
                 </div>
             </div>
         {% endfor %}
