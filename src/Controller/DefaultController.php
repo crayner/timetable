@@ -193,7 +193,7 @@ class DefaultController extends AbstractController
         $loadForm = $this->createForm(LoadTimetableType::class, null, ['action' => $this->generateUrl('load')]);
 
         $form->handleRequest($request);
-dd($form,$request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $session = $request->getSession();
             $manager->setName($form->get('name')->getData());
