@@ -17,12 +17,13 @@
                 </div>
                 <div class="cell medium-4 medium-cell-block-y">
                     {{ form_row(day.name) }}
+                    {{ form_row(day.id) }}
                 </div>
                 <div class="cell medium-4 medium-cell-block-y">
                     {{ form_row(day.periods) }}
                 </div>
                 <div class="cell medium-2 medium-cell-block-y align-flex-center">
-                    <a href="{{ path('day_delete', {'key': key}) }}" class="warning button" title="{{ 'Delete Day'|trans }}">{{ 'Delete Day'|trans }}</a>
+                    <a href="{{ path('day_delete', {'day': day.id.vars.value}) }}" class="warning button" title="{{ 'Delete Day'|trans }}">{{ 'Delete Day'|trans }}</a>
                 </div>
             </div>
         {% endfor %}

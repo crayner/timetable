@@ -370,21 +370,61 @@ class DataManager
     }
 
     /**
+     * getDays
+     * 22/12/2020 09:01
+     * @param bool $serialise
      * @return ArrayCollection
      */
-    public function getDays(): ArrayCollection
+    public function getDays(bool $serialise = false): ArrayCollection
     {
+        if ($this->days->count() === 0) {
+            $this->readFile();
+        }
+        if ($serialise) {
+            $list = new ArrayCollection();
+            foreach ($this->days as $day) {
+                $list->add($day->serialise());
+            }
+            return $list;
+        }
         return $this->days;
     }
 
     /**
+     * setDays
+     * 22/12/2020 09:05
      * @param ArrayCollection $days
+     * @param bool $deSerialise
      * @return DataManager
      */
-    public function setDays(ArrayCollection $days): DataManager
+    public function setDays(ArrayCollection $days, bool $deSerialise = false): DataManager
     {
+        if ($deSerialise) {
+            $new = new ArrayCollection();
+            foreach ($days as $item) {
+                $day = new Day();
+                $day->deserialise($item);
+                $new->add($day);
+            }
+            $days = $new;
+        }
         $this->days = $days;
         return $this;
+    }
+
+    /**
+     * removeDay
+     * 22/12/2020 08:34
+     * @param string $id
+     * @return DataManager
+     */
+    public function removeDay(string $id): DataManager
+    {
+        $days = $this->getDays()->filter(function(Day $day) use ($id) {
+            if ($id !== $day->getId()) return $day;
+        });
+
+        return $this->setDays($days);
     }
 
     /**
@@ -597,9 +637,9 @@ class DataManager
     public function setDayCount(int $count): DataManager
     {
         if ($count > $this->getDayCount()) {
-            for ($i=$this->getDayCount(); $i<=$count; $i++) {
+            for ($i=$this->getDayCount(); $i<$count; $i++) {
                 $day = new Day();
-                $day->setName('Day ' . strval($i))
+                $day->setName('Day ' . strval($i + 1))
                     ->setPeriods($this->getPeriods())
                     ->getId();
                 $this->days->add($day);
@@ -675,6 +715,4 @@ class DataManager
         }
         return $this;
     }
-
-
 }

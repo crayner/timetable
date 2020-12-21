@@ -16,6 +16,7 @@ namespace App\Form;
 
 use App\Items\Day;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -32,12 +33,13 @@ class DayType extends AbstractType
     /**
      * buildForm
      * 14/12/2020 14:54
-     * @param \Symfony\Component\Form\FormBuilderInterface $builder
+     * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('id', HiddenType::class)
             ->add('name', TextType::class)
             ->add('periods', IntegerType::class,
                 [

@@ -65,7 +65,7 @@ class DayController extends AbstractController
 
     /**
      * removeDay
-     * 14/12/2020 15:47
+     * 22/12/2020 09:11
      * @param Request $request
      * @param TimetableManager $manager
      * @Route("/day/remove/",name="day_remove")
@@ -73,7 +73,10 @@ class DayController extends AbstractController
      */
     public function removeDay(Request $request, TimetableManager $manager): Response
     {
-        $manager->getDataManager()->setDayCount($manager->getDataManager()->getDayCount() - 1);
+        $days = $manager->getDataManager()->getDays();
+        $last = $days->last();
+        $days->removeElement($last);
+        $manager->getDataManager()->setDays($days);
 
         return $this->forward(DayController::class.'::days',['request' => $request, 'TimetableManager' => $manager]);
     }
@@ -81,15 +84,15 @@ class DayController extends AbstractController
     /**
      * removeDay
      * 14/12/2020 15:47
-     * @param int $key
+     * @param string $day
      * @param Request $request
      * @param TimetableManager $manager
      * @return Response
-     * @Route("/day/{key}/delete/",name="day_delete")
+     * @Route("/day/{day}/delete/",name="day_delete")
      */
-    public function deleteDay(int $key, Request $request, TimetableManager $manager): Response
+    public function deleteDay(string $day, Request $request, TimetableManager $manager): Response
     {
-        $manager->getDataManager()->removeDay($key);
+        $manager->getDataManager()->removeDay($day);
 
         return $this->forward(DayController::class.'::days',['request' => $request, 'TimetableManager' => $manager]);
     }
