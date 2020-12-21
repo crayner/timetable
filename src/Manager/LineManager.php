@@ -53,7 +53,6 @@ class LineManager
     {
         $lines = [];
         foreach ($this->getLines() as $line) $lines[] = $line->serialise();
-        dump($this,$lines);
         return $lines;
     }
 

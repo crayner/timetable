@@ -15,6 +15,7 @@
  */
 namespace App\Manager;
 
+use App\Helper\SecurityEncoder;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class TimetableManager
@@ -49,6 +50,9 @@ class TimetableManager
      */
     private string $secret;
 
+    /**
+     * @var \stdClass
+     */
     private \stdClass $user;
 
     /**
@@ -88,9 +92,9 @@ class TimetableManager
     public function setName(string $name): TimetableManager
     {
         $this->name = $name;
-        $this->isNameValid() ? $this->getSession()->set('timetable_name', $name) : $this->getSession()->remove('timetable_name');
+        $this->isNameValid() ? $this->getSession()->set('timetable_name', $this->getName()) : $this->getSession()->remove('timetable_name');
         $this->getDataManager()
-            ->setName($name)
+            ->setName($this->getName())
             ->setSecret($this->getSecret());
         return $this;
     }

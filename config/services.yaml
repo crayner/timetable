@@ -34,3 +34,7 @@ services:
     App\Manager\TimetableManager:
         arguments:
             $secret: '%secret%'
+
+    App\Manager\ValidatorManager:
+        arguments:
+            $secret: '%secret%'

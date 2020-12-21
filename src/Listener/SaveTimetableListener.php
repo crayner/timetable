@@ -74,7 +74,7 @@ class SaveTimetableListener implements EventSubscriberInterface
     public function onRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
-        if (in_array($request->attributes->get('_controller'), ['App\Controller\DefaultController::begin','"web_profiler.controller.profiler::toolbarAction','error_controller', 'App\Controller\DefaultController::createTimetable'])) return;
+        if (in_array($request->attributes->get('_controller'), ['App\Controller\DefaultController::begin','"web_profiler.controller.profiler::toolbarAction','error_controller', 'App\Controller\DefaultController::createTimetable', 'App\Controller\DefaultController::load'])) return;
 
         if (!$request->hasSession() || !$request->getSession()->has('_security_user')) {
             $response = new RedirectResponse("/begin/");

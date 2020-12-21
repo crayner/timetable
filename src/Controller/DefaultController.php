@@ -115,20 +115,22 @@ class DefaultController extends AbstractController
                 }
 
                 if (key_exists('name', $data) && $data['name'] === $originalFilename) {
-                    $dataManager = $manager->getDataManager($data);
-                    $manager->setName($originalFilename);
-                    $dataManager->setInjectMissing();
-                    if (!$manager->isFileValid()) {
-                        $dataManager->unlink();
+                    $manager->setName($data['name']);
+                    $dataFile->move(dirname($manager->getDataManager()->getFileName()), $data['name']. '.yaml');
+                    if ($manager->getValidator()->isFileValid(true)) {
+                        $request->getSession()->set('_security_user', $manager->getUser());
+                        $request->getSession()->set('timetable_name', $manager->getName());
+                        return $this->redirectToRoute('basic_settings');
                     } else {
-                        $manager->setName($dataManager->getName());
+                        $this->addFlash('alert', "The file is not valid.");
                     }
                 }
             }
         } else {
             $this->addFlash('alert', "The file was not available to upload");
         }
-        return $this->redirectToRoute('home');
+        dd($manager);
+        return $this->forward(DefaultController::class.'::begin', ['request' => $request, 'manager' => $manager]);
     }
 
     /**
@@ -191,7 +193,7 @@ class DefaultController extends AbstractController
         $loadForm = $this->createForm(LoadTimetableType::class, null, ['action' => $this->generateUrl('load')]);
 
         $form->handleRequest($request);
-
+dd($form,$request);
         if ($form->isSubmitted() && $form->isValid()) {
             $session = $request->getSession();
             $manager->setName($form->get('name')->getData());

@@ -185,7 +185,7 @@ class DataManager
      * 18/12/2020 08:15
      * @return string
      */
-    private function getFileName(): string
+    public function getFileName(): string
     {
         return __DIR__ . '/../../config/data/' . $this->getName() . '.yaml';
     }
@@ -301,6 +301,7 @@ class DataManager
 
     /**
      * @param ArrayCollection $rooms
+     * @param bool $deSerialise
      * @return DataManager
      */
     public function setRooms(ArrayCollection $rooms, bool $deSerialise = false): DataManager
@@ -423,7 +424,8 @@ class DataManager
             ->setRooms(new ArrayCollection($data['rooms']), true)
             ->setDays(new ArrayCollection($data['days']), true)
             ->setGrades(new ArrayCollection($data['grades']), true)
-//            ->setLines(new ArrayCollection($data['lines']), true)
+            ->setLines(new ArrayCollection($data['lines']), true)
+            ->setSecret($data['secret'], false)
             ->setStaff(new ArrayCollection($data['staff']), true);
     }
 
@@ -604,13 +606,18 @@ class DataManager
     }
 
     /**
+     * setSecret
+     * 21/12/2020 16:06
      * @param string $secret
+     * @param bool $createSecret
      * @return DataManager
      */
-    public function setSecret(string $secret): DataManager
+    public function setSecret(string $secret, bool $createSecret = true): DataManager
     {
-        if ($this->getName() !== '') {
+        if ($createSecret && $this->getName() !== '') {
             $secret = $this->getEncoder()->encodePassword($this->getName() . $secret);
+            $this->secret = $secret;
+        } else if (!$createSecret) {
             $this->secret = $secret;
         }
         return $this;

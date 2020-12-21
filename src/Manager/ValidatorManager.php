@@ -14,8 +14,8 @@
  */
 namespace App\Manager;
 
-use DateTimeImmutable;
-use Symfony\Component\Yaml\Yaml;
+use App\Helper\SecurityEncoder;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Class TimetableValidatorManager
@@ -33,6 +33,32 @@ class ValidatorManager
      * @var DataManager
      */
     private DataManager $dataManager;
+
+    /**
+     * @var SecurityEncoder
+     */
+    private SecurityEncoder $encoder;
+
+    /**
+     * @var string
+     */
+    private string $secret;
+
+    /**
+     * @var SessionInterface
+     */
+    private SessionInterface $session;
+
+    /**
+     * ValidatorManager constructor.
+     * @param string $secret
+     * @param SessionInterface $session
+     */
+    public function __construct(string $secret, SessionInterface $session)
+    {
+        $this->secret = $secret;
+        $this->session = $session;
+    }
 
     /**
      * getName
@@ -71,15 +97,23 @@ class ValidatorManager
      * @return bool
      * 10/12/2020 14:50
      */
-    public function isFileValid(): bool
+    public function isFileValid(bool $ignoreDate = false): bool
     {
-        if (!$this->getDataManager()->readFile()) return false;
+        $valid = true;
+        if (!$this->getDataManager()->readFile()) $valid = false;
 
-        if (empty($this->getDataManager()->getName())) return false;
+        if ($valid && empty($this->getDataManager()->getName())) $valid = false;
 
-        if ($this->getDataManager()->getCreatedOn()->format('c') < date('c', strtotime('-3 Hours'))) return false;
+        if ($valid && !$ignoreDate && $this->getDataManager()->getCreatedOn()->format('c') < date('c', strtotime('-3 Hours'))) $valid = false;
 
-        return true;
+        if ($valid && !$this->getEncoder()->isPasswordValid($this->getDataManager()->getSecret(), $this->getDataManager()->getName().$this->getSecret())) $valid = false;
+
+        if (!$valid) {
+            $this->getDataManager()->unlink();
+            $this->getSession()->invalidate();
+        }
+
+        return $valid;
     }
 
     /**
@@ -98,5 +132,31 @@ class ValidatorManager
     {
         $this->dataManager = $dataManager;
         return $this;
+    }
+
+    /**
+     * getEncoder
+     * 21/12/2020 15:20
+     * @return SecurityEncoder
+     */
+    public function getEncoder(): SecurityEncoder
+    {
+        return $this->encoder = isset($this->encoder) ? $this->encoder : new SecurityEncoder();
+    }
+
+    /**
+     * @return string
+     */
+    public function getSecret(): string
+    {
+        return $this->secret;
+    }
+
+    /**
+     * @return SessionInterface
+     */
+    public function getSession(): SessionInterface
+    {
+        return $this->session;
     }
 }
