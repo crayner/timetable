@@ -17,6 +17,7 @@ namespace App\Form;
 
 use App\Items\Room;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -39,14 +40,15 @@ class RoomType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('id', HiddenType::class)
             ->add('name', TextType::class,
                 [
                     'label' => 'Room Name',
                 ]
             )
-            ->add('size', IntegerType::class,
+            ->add('capacity', IntegerType::class,
                 [
-                    'label' => 'Room Capacity (Size)',
+                    'label' => 'Room Capacity',
                     'help' => 'When set to zero, checks of capacity are not implemented.',
                     'constraints' => [
                         new Range(['min' => 0]),

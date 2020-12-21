@@ -15,7 +15,7 @@
  */
 namespace App\Form;
 
-use App\Manager\TimetableDataManager;
+use App\Manager\DataManager;
 use App\Validator\DuplicateName;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -66,7 +66,7 @@ class RoomsType extends AbstractType
             ->setDefaults(
                 [
                     'translation_domain' => 'messages',
-                    'data_class' => TimetableDataManager::class,
+                    'data_class' => DataManager::class,
                 ]
             )
         ;

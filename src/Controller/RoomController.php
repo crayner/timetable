@@ -79,7 +79,10 @@ class RoomController extends AbstractController
      */
     public function removeRoom(Request $request, TimetableManager $manager): Response
     {
-        $manager->getDataManager()->setRoomCount($manager->getDataManager()->getRoomCount() - 1);
+        $rooms = $manager->getDataManager()->getRooms();
+        $last = $rooms->last();
+        $rooms->removeElement($last);
+        $manager->getDataManager()->setRooms($rooms);
 
         return $this->forward(RoomController::class.'::rooms',['request' => $request, 'TimetableManager' => $manager]);
     }
@@ -87,15 +90,15 @@ class RoomController extends AbstractController
     /**
      * deleteRoom
      * 15/12/2020 10:14
-     * @param string $name
+     * @param string $room
      * @param Request $request
      * @param TimetableManager $manager
-     * @Route("/room/{name}/delete/",name="room_delete")
      * @return Response
+     * @Route("/room/{room}/delete/",name="room_delete")
      */
-    public function deleteRoom(string $name, Request $request, TimetableManager $manager): Response
+    public function deleteRoom(string $room, Request $request, TimetableManager $manager): Response
     {
-        $manager->getDataManager()->removeRoom($name);
+        $manager->getDataManager()->removeRoom($room);
 
         return $this->forward(RoomController::class.'::rooms',['request' => $request, 'TimetableManager' => $manager]);
     }
@@ -128,7 +131,7 @@ class RoomController extends AbstractController
                         }
                         $name = explode(',',$name);
                         $member->setName($name[0]);
-                        key_exists(1, $name) ? $member->setSize(intval($name[1])) : $member->setSize(30);
+                        key_exists(1, $name) ? $member->setCapacity(intval($name[1])) : $member->setCapacity(30);
                         $rooms->set($q, $member);
                     } else {
                         unset($data[$q]);

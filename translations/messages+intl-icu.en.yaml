@@ -146,3 +146,16 @@ Student Capacity per Room: Student Capacity per Room
 Default Lines per Grade: Default Lines per Grade
 'Lines are used to capture classes, and each line should account for all students in a grade. (e.g. Grade 7 Maths Line, Year 10 Language Line)': 'Lines are used to capture classes, and each line should account for all students in a grade. (e.g. Grade 7 Maths Line, Year 10 Language Line.)'
 'The password provided is not valid for the data file "{name}"': 'The password provided is not valid for the data file "{name}"'
+'Settings: Rooms': 'Settings: Rooms'
+New Room: New Room
+Room Name: Room Name
+Room Capacity: Room Capacity
+When set to zero, checks of capacity are not implemented.: When set to zero, checks of capacity are not implemented.
+Delete Room: Delete Room
+Add Room: Add Room
+Remove Room: Remove Room
+Sort Rooms: Sort Rooms
+Save Rooms: Save Rooms
+Room Name List Upload: Room Name List Upload
+A text file, with a room name, capacity on each line. The name and capacity must be separated by a comma. Capacity is optional.: A text file, with a room name, capacity on each line. The name and capacity must be separated by a comma. Capacity is optional.
+Upload Rooms: Upload Rooms

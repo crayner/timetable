@@ -31,7 +31,7 @@ class Room implements DuplicateNameInterface
     /**
      * @var int
      */
-    private int $size = 30;
+    private int $capacity = 30;
 
     /**
      * @return string
@@ -64,20 +64,20 @@ class Room implements DuplicateNameInterface
     /**
      * @return int
      */
-    public function getSize(): int
+    public function getCapacity(): int
     {
-        return $this->size;
+        return $this->capacity;
     }
 
     /**
-     * Size.
+     * Capacity.
      *
-     * @param int $size
+     * @param int $capacity
      * @return Room
      */
-    public function setSize(int $size): Room
+    public function setCapacity(int $capacity): Room
     {
-        $this->size = $size;
+        $this->capacity = $capacity;
         return $this;
     }
 
@@ -91,7 +91,7 @@ class Room implements DuplicateNameInterface
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
-            'size' => $this->getSize(),
+            'capacity' => $this->getCapacity(),
         ];
     }
 
@@ -105,7 +105,7 @@ class Room implements DuplicateNameInterface
     {
         $this->id = $data['id'];
         $this->name = $data['name'];
-        $this->size = $data['size'];
+        $this->capacity = $data['capacity'];
         return $this;
     }
 }

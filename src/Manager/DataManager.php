@@ -96,6 +96,11 @@ class DataManager
     private string $secret;
 
     /**
+     * @var bool
+     */
+    private bool $readFile = true;
+
+    /**
      * DataManager constructor.
      * @param string $name
      */
@@ -292,10 +297,23 @@ class DataManager
     }
 
     /**
+     * getRooms
+     * 22/12/2020 08:07
+     * @param bool $serialise
      * @return ArrayCollection
      */
-    public function getRooms(): ArrayCollection
+    public function getRooms(bool $serialise = false): ArrayCollection
     {
+        if ($this->rooms->count() === 0) {
+            $this->readFile();
+        }
+        if ($serialise) {
+            $list = new ArrayCollection();
+            foreach ($this->rooms as $room) {
+                $list->add($room->serialise());
+            }
+            return $list;
+        }
         return $this->rooms;
     }
 
@@ -317,6 +335,38 @@ class DataManager
         }
         $this->rooms = $rooms;
         return $this;
+    }
+
+    /**
+     * removeRoom
+     * 22/12/2020 08:34
+     * @param string $id
+     * @return DataManager
+     */
+    public function removeRoom(string $id): DataManager
+    {
+        $rooms = $this->getRooms()->filter(function(Room $room) use ($id) {
+            if ($id !== $room->getId()) return $room;
+        });
+
+        return $this->setRooms($rooms);
+    }
+
+    /**
+     * sortRooms
+     * 22/12/2020 08:44
+     * @return DataManager
+     */
+    public function sortRooms(): DataManager
+    {
+        $iterator = $this->getRooms()->getIterator();
+
+        $iterator->uasort(
+            function (Room $a, Room $b) {
+                return $a->getName() > $b->getName() ? 1 : -1 ;
+            }
+        );
+        return $this->setRooms(new ArrayCollection(iterator_to_array($iterator, false)));
     }
 
     /**
@@ -357,16 +407,18 @@ class DataManager
 
     /**
      * readFile
-     * 21/12/2020 08:16
+     * 22/12/2020 08:14
      * @return bool
      */
     public function readFile(): bool
     {
-        if ($this->isFileAvailable()) {
+        if ($this->isFileAvailable() && $this->readFile) {
             $data = Yaml::parse(file_get_contents($this->getFileName()));
             $this->deSerialise($data);
+            $this->readFile = false;
             return true;
         }
+        if (!$this->readFile) return true;
         return false;
     }
 
@@ -391,7 +443,7 @@ class DataManager
      */
     public function serialise(): array
     {
-        return [
+        $result = [
             'name' => $this->getName(),
             'password' => $this->getPassword(),
             'secret' => $this->getSecret(),
@@ -405,6 +457,7 @@ class DataManager
             'grades' => $this->getGrades(true)->toArray(),
             'lines' => $this->getLines(true)->toArray(),
         ];
+        return $result;
     }
 
     /**
@@ -484,10 +537,10 @@ class DataManager
     public function setRoomCount(int $count): DataManager
     {
         if ($count > $this->getRoomCount()) {
-            for ($i=$this->getRoomCount(); $i<=$count; $i++) {
+            for ($i=$this->getRoomCount(); $i<$count; $i++) {
                 $room = new Room();
-                $room->setName('Room ' . strval($i))
-                    ->setSize($this->getRoomCapacity())
+                $room->setName('Room ' . strval($i + 1))
+                    ->setCapacity($this->getRoomCapacity())
                     ->getId();
                 $this->rooms->add($room);
             }
