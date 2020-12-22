@@ -14,8 +14,10 @@
  */
 namespace App\Form;
 
+use App\Validator\UserPasswordContent;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -46,6 +48,17 @@ class LoadTimetableType extends AbstractType
                     'required' => false,
                     'constraints' => [
                         new NotBlank(),
+                    ],
+                ]
+            )
+            ->add('password', PasswordType::class,
+                [
+                    'label' => 'File Password',
+                    'help' => 'The password is for the uploaded data file. This is ignored if the file secret is valid.  If the secret is not valid, then the password will be required to unlock the uploaded file on the site.',
+                    'required' => false,
+                    'constraints' => [
+                        new Length(['max' => 75]),
+                        new UserPasswordContent(),
                     ],
                 ]
             )

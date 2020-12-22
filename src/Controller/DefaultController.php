@@ -122,14 +122,23 @@ class DefaultController extends AbstractController
                         $request->getSession()->set('timetable_name', $manager->getName());
                         return $this->redirectToRoute('basic_settings');
                     } else {
-                        $this->addFlash('alert', "The file is not valid.");
+                        if (!empty($password = $form->get('password')->getData())) {
+                            if ($manager->getDataManager()->getEncoder()->isPasswordValid($manager->getDataManager()->getPassword(), $password)) {
+                                $manager->getDataManager()->setSecret($manager->getSecret());
+                                $request->getSession()->set('_security_user', $manager->getUser());
+                                $request->getSession()->set('timetable_name', $manager->getName());
+                                return $this->redirectToRoute('basic_settings');
+                            }
+                        }
+                        $this->addFlash('alert', "The file is not valid. Use the password of the file to validate the file.");
+                        $manager->setSaveOnTerminate(false)->getDataManager()->unlink();
                     }
                 }
             }
         } else {
             $this->addFlash('alert', "The file was not available to upload");
         }
-        dd($manager);
+
         return $this->forward(DefaultController::class.'::begin', ['request' => $request, 'manager' => $manager]);
     }
 
@@ -206,5 +215,22 @@ class DefaultController extends AbstractController
         }
 
         return $this->render('Settings\create_timetable.html.twig', ['form' => $form->createView(), 'loadForm' => $loadForm->createView(), 'name' => $name]);
+    }
+
+    /**
+     * close
+     * 23/12/2020 09:58
+     * @param Request $request
+     * @param TimetableManager $manager
+     * @Route("/timetable/close/",name="close")
+     * @return Response
+     */
+    public function close(Request $request, TimetableManager $manager): Response
+    {
+        $manager->getDataManager()->unlink();
+        $manager->setSaveOnTerminate(false);
+        $request->getSession()->invalidate();
+
+        return $this->redirectToRoute('begin');
     }
 }

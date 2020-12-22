@@ -15,7 +15,6 @@
  */
 namespace App\Manager;
 
-use App\Helper\SecurityEncoder;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class TimetableManager

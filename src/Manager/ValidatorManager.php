@@ -94,6 +94,7 @@ class ValidatorManager
 
     /**
      * isFileValid
+     * @param bool $ignoreDate
      * @return bool
      * 10/12/2020 14:50
      */

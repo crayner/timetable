@@ -159,3 +159,5 @@ Save Rooms: Save Rooms
 Room Name List Upload: Room Name List Upload
 A text file, with a room name, capacity on each line. The name and capacity must be separated by a comma. Capacity is optional.: A text file, with a room name, capacity on each line. The name and capacity must be separated by a comma. Capacity is optional.
 Upload Rooms: Upload Rooms
+Close: Close
+The file is not valid. Use the password of the file to validate the file.: The file is not valid. Use the password of the file to validate the file.
