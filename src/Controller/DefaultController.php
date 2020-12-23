@@ -41,17 +41,32 @@ use Symfony\Component\Yaml\Yaml;
 class DefaultController extends AbstractController
 {
     /**
-     * begin
+     * home
+     * 23/12/2020 10:50
      * @param TimetableManager $manager
      * @param Request $request
-     * @return Response
      * @Route("/",name="home")
-     * @Route("/begin/",name="begin")
-     * 10/12/2020 12:37
+     * @return Response
      */
-    public function begin(TimetableManager $manager, Request $request)
+    public function home(TimetableManager $manager, Request $request): Response
     {
-        $form = $this->createForm(NewTimetableType::class);
+        $form = $this->createForm(NewTimetableType::class, null, ['action' => $this->generateUrl('begin')]);
+        $loadForm = $this->createForm(LoadTimetableType::class, null, ['action' => $this->generateUrl('load')]);
+
+        return $this->render('welcome-unknown.html.twig', ['form' => $form->createView(), 'loadForm' => $loadForm->createView()]);
+    }
+
+    /**
+     * begin
+     * 23/12/2020 10:43
+     * @param TimetableManager $manager
+     * @param Request $request
+     * @Route("/begin/",name="begin")
+     * @return Response
+     */
+    public function begin(TimetableManager $manager, Request $request): Response
+    {
+        $form = $this->createForm(NewTimetableType::class, null, ['action' => $this->generateUrl('begin')]);
         $loadForm = $this->createForm(LoadTimetableType::class, null, ['action' => $this->generateUrl('load')]);
 
         $form->handleRequest($request);
@@ -90,13 +105,13 @@ class DefaultController extends AbstractController
 
     /**
      * load
+     * 23/12/2020 10:43
      * @param Request $request
      * @param TimetableManager $manager
-     * @return RedirectResponse
      * @Route("/load/",name="load")
-     * 12/12/2020 08:43
+     * @return Response|RedirectResponse
      */
-    public function load(Request $request, TimetableManager $manager)
+    public function load(Request $request, TimetableManager $manager): Response
     {
         $form = $this->createForm(LoadTimetableType::class, null, ['action' => $this->generateUrl('load')]);
 
@@ -182,7 +197,7 @@ class DefaultController extends AbstractController
 
         } catch (FileException $e) {
             $this->addFlash('alert', 'The file for the timetable data was not found.');
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('begin');
         }
     }
 
@@ -192,8 +207,8 @@ class DefaultController extends AbstractController
      * @param string $name
      * @param TimetableManager $manager
      * @param Request $request
-     * @return Response
      * @Route("/timetable/{name}/create/", name="create_timetable")
+     * @return Response
      */
     public function createTimetable(string $name, TimetableManager $manager, Request $request): Response
     {

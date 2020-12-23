@@ -28,6 +28,14 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class SaveTimetableListener implements EventSubscriberInterface
 {
+    const IGNORE_CONTROLLER_METHODS = [
+        'App\Controller\DefaultController::begin',
+        'web_profiler.controller.profiler::toolbarAction',
+        'web_profiler.controller.profiler::panelAction',
+        'error_controller',
+        'App\Controller\DefaultController::createTimetable',
+        'App\Controller\DefaultController::load'];
+
     /**
      * @var TimetableManager
      */
@@ -63,6 +71,9 @@ class SaveTimetableListener implements EventSubscriberInterface
     public function onTerminate(TerminateEvent $event)
     {
         if (!$event->getRequest()->hasSession()) return;
+        $request = $event->getRequest();
+        if (in_array($request->attributes->get('_controller'), self::IGNORE_CONTROLLER_METHODS)) return;
+
         if ($this->manager->isSaveOnTerminate()) $this->manager->getDataManager()->writeFile();
     }
 
@@ -74,7 +85,7 @@ class SaveTimetableListener implements EventSubscriberInterface
     public function onRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
-        if (in_array($request->attributes->get('_controller'), ['App\Controller\DefaultController::begin','"web_profiler.controller.profiler::toolbarAction','error_controller', 'App\Controller\DefaultController::createTimetable', 'App\Controller\DefaultController::load'])) return;
+        if (in_array($request->attributes->get('_controller'), self::IGNORE_CONTROLLER_METHODS)) return;
 
         if (!$request->hasSession() || !$request->getSession()->has('_security_user')) {
             $response = new RedirectResponse("/begin/");
