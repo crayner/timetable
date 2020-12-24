@@ -15,8 +15,14 @@
  */
 namespace App\Manager;
 
+use stdClass;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
+/**
+ * Class TimetableManager
+ * @package App\Manager
+ * @author Craig Rayner <craig@craigrayner.com>
+ */
 class TimetableManager
 {
     /**
@@ -50,9 +56,9 @@ class TimetableManager
     private string $secret;
 
     /**
-     * @var \stdClass
+     * @var stdClass
      */
-    private \stdClass $user;
+    private stdClass $user;
 
     /**
      * TimetableManager constructor.
@@ -161,7 +167,7 @@ class TimetableManager
      */
     public function getValidator(): ValidatorManager
     {
-        return $this->validatorManager;
+        return $this->validatorManager->setDataManager($this->getDataManager());
     }
 
     /**
@@ -172,8 +178,7 @@ class TimetableManager
      */
     public function setValidator(ValidatorManager $validatorManager): TimetableManager
     {
-        $this->validatorManager = $validatorManager;
-        $this->validatorManager->setDataManager($this->getDataManager());
+        $this->validatorManager = $validatorManager->setDataManager($this->getDataManager());
         return $this;
     }
 
@@ -213,16 +218,31 @@ class TimetableManager
     /**
      * getUser
      * 21/12/2020 10:47
-     * @return \stdClass
+     * @return stdClass
      */
-    public function getUser(): \stdClass
+    public function getUser(): stdClass
     {
         if (!isset($this->user)) {
-            $this->user = new \stdClass();
+            $this->user = new stdClass();
             $this->user->name = $this->getName();
             $this->user->password = $this->getDataManager()->getPassword();
             $this->user->secret = $this->getDataManager()->getSecret();
         }
         return $this->user;
+    }
+
+    /**
+     * isReadyToMap
+     * 23/12/2020 11:19
+     * @return bool
+     */
+    public function isReadyToMap(): bool
+    {
+        return $this->isNameValid()
+            && $this->isFileValid()
+            && $this->getDataManager()->getStaffCount() > 0
+            && $this->getDataManager()->getGradeCount() > 0
+            && $this->getDataManager()->getDayCount() > 0
+        ;
     }
 }

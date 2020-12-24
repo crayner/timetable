@@ -135,6 +135,7 @@ class DefaultController extends AbstractController
                     if ($manager->getValidator()->isFileValid(true)) {
                         $request->getSession()->set('_security_user', $manager->getUser());
                         $request->getSession()->set('timetable_name', $manager->getName());
+                        $manager->getDataManager()->writeFile();
                         return $this->redirectToRoute('basic_settings');
                     } else {
                         if (!empty($password = $form->get('password')->getData())) {
@@ -142,6 +143,7 @@ class DefaultController extends AbstractController
                                 $manager->getDataManager()->setSecret($manager->getSecret());
                                 $request->getSession()->set('_security_user', $manager->getUser());
                                 $request->getSession()->set('timetable_name', $manager->getName());
+                                $manager->getDataManager()->writeFile();
                                 return $this->redirectToRoute('basic_settings');
                             }
                         }

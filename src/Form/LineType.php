@@ -15,25 +15,23 @@
  */
 namespace App\Form;
 
+use App\Form\Transform\ItemIdTransForm;
 use App\Items\Grade;
 use App\Items\Line;
 use App\Manager\TimetableManager;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
-use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Range;
 
 /**
  * Class LineListType
  * @package App\Form
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class LineListType extends AbstractType
+class LineType extends AbstractType
 {
     /**
      * @var TimetableManager
@@ -56,13 +54,7 @@ class LineListType extends AbstractType
      */
     public function getGradeChoices()
     {
-        $choices = [];
         return $this->manager->getDataManager()->getGrades();
-        foreach ($this->manager->getDataManager()->getGrades() as $grade)
-        {
-            $choices[] = new ChoiceView($grade, $grade->getId(), $grade->getName());
-        }
-        return $choices;
     }
 
     /**
@@ -76,9 +68,10 @@ class LineListType extends AbstractType
         $builder
             ->add('name', TextType::class,
                 [
-                    'label' => 'Grade/Year/Form Name',
+                    'label' => 'Line Name',
                 ]
             )
+            ->add('id', HiddenType::class)
             ->add('grade', ChoiceType::class,
                 [
                     'label' => 'Grade/Year/Form',
@@ -86,9 +79,11 @@ class LineListType extends AbstractType
                     'placeholder' => 'Please select...',
                     'choice_label' => 'name',
                     'choice_value' => 'id',
+                    'choice_translation_domain' => false,
                 ]
             )
         ;
+        $builder->get('grade')->addModelTransformer(new ItemIdTransForm(Grade::class, $this->manager));
     }
 
     /**

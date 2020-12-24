@@ -40,7 +40,19 @@
                 {{ form_row(form.staffCount) }}
                 <a href="{{ path('staff') }}" title="{{ 'Manage Staff Details'|trans }}">{{ 'Manage Staff Details'|trans }}</a>
             </div>
+            {% if manager.isReadyToMap %}
+                <div class="cell medium-4 medium-cell-block-y">
+                    <a href="{{ path('lines') }}" title="{{ 'Manage Line Details'|trans }}">{{ 'Manage Line Details'|trans }}</a>
+                </div>
+            {% endif %}
         </div>
+        {% if manager.isReadyToMap %}
+            <div class="grid-x grid-margin-x grid-padding-x">
+                <div class="cell medium-12 medium-cell-block-y callout secondary">
+                    {{ 'timetable_ready'|trans }}
+                </div>
+            </div>
+        {% endif %}
         <div class="grid-x grid-margin-x grid-padding-x">
             <div class="cell medium-offset-4 medium-4 medium-cell-block-y align-flex-center">
                 <a href="{{ path('lines') }}" class="button secondary" title="{{ 'Manage Line Details'|trans }}">{{ 'Manage Line Details'|trans }}</a>

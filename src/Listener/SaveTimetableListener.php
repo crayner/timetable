@@ -32,9 +32,14 @@ class SaveTimetableListener implements EventSubscriberInterface
         'App\Controller\DefaultController::begin',
         'web_profiler.controller.profiler::toolbarAction',
         'web_profiler.controller.profiler::panelAction',
+        'web_profiler.controller.profiler::openAction',
         'error_controller',
         'App\Controller\DefaultController::createTimetable',
         'App\Controller\DefaultController::load'];
+
+    const IGNORE_ROUTE = [
+        '_profiler'
+    ];
 
     /**
      * @var TimetableManager
@@ -73,6 +78,7 @@ class SaveTimetableListener implements EventSubscriberInterface
         if (!$event->getRequest()->hasSession()) return;
         $request = $event->getRequest();
         if (in_array($request->attributes->get('_controller'), self::IGNORE_CONTROLLER_METHODS)) return;
+        if ($this->isRouteIgnored($request->attributes->get('_route'))) return;
 
         if ($this->manager->isSaveOnTerminate()) $this->manager->getDataManager()->writeFile();
     }
@@ -86,6 +92,7 @@ class SaveTimetableListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
         if (in_array($request->attributes->get('_controller'), self::IGNORE_CONTROLLER_METHODS)) return;
+        if ($this->isRouteIgnored($request->attributes->get('_route'))) return;
 
         if (!$request->hasSession() || !$request->getSession()->has('_security_user')) {
             $response = new RedirectResponse("/begin/");
@@ -93,11 +100,26 @@ class SaveTimetableListener implements EventSubscriberInterface
             return;
         }
         $user = $request->getSession()->get('_security_user');
+
         $this->manager->setName($user->name);
 
         if (!$this->manager->isFileValid() || $user->name !== $this->manager->getDataManager()->getName() || $user->password !== $this->manager->getDataManager()->getPassword()) {
             $response = new RedirectResponse("/begin/");
             $event->setResponse($response);
         }
+    }
+
+    /**
+     * isRouteIgnored
+     * 24/12/2020 07:58
+     * @param string $route
+     * @return bool
+     */
+    private function isRouteIgnored(string $route): bool
+    {
+        foreach (self::IGNORE_ROUTE as $item) {
+            if (0 === strpos($route, $item)) return true;
+        }
+        return false;
     }
 }

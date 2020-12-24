@@ -56,6 +56,18 @@ class Line implements DuplicateNameInterface
     }
 
     /**
+     * setId
+     * 23/12/2020 15:07
+     * @param string|null $id
+     * @return Line
+     */
+    public function setId(?string $id): Line
+    {
+        if (!empty($id)) $this->id = $id;
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getName(): string

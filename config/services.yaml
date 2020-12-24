@@ -35,6 +35,10 @@ services:
         arguments:
             $secret: '%secret%'
 
+    App\Manager\LineManager:
+        arguments:
+            $secret: '%secret%'
+
     App\Manager\ValidatorManager:
         arguments:
             $secret: '%secret%'

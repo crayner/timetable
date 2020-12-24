@@ -8,6 +8,9 @@
         <meta name="author" content="Craig Rayner, Hill Range Services"/>
         <meta name="robots" content="none"/>
         <meta name="Referrer‐Policy" value="no‐referrer | same‐origin"/>
+        {% if getManager().isFileValid() %}
+        <meta http-equiv="refresh" content = "1200; url={{ path('close') }}">
+        {% endif %}
         <title>{% block title %}Timetable Creator!{% endblock %}</title>
         {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset('css/foundation.min.css') }}" type="text/css">

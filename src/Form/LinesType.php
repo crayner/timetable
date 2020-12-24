@@ -15,7 +15,7 @@
  */
 namespace App\Form;
 
-use App\Manager\LineManager;
+use App\Manager\DataManager;
 use App\Validator\DuplicateName;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -41,7 +41,7 @@ class LinesType extends AbstractType
         $builder
             ->add('lines', CollectionType::class,
                 [
-                    'entry_type' => LineListType::class,
+                    'entry_type' => LineType::class,
                     'constraints' => [
                         new DuplicateName(),
                     ],
@@ -66,7 +66,7 @@ class LinesType extends AbstractType
             ->setDefaults(
                 [
                     'translation_domain' => 'messages',
-                    'data_class' => LineManager::class,
+                    'data_class' => DataManager::class,
                 ]
             )
         ;
