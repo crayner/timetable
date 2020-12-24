@@ -15,8 +15,14 @@
  */
 namespace App\Manager;
 
+use stdClass;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
+/**
+ * Class TimetableManager
+ * @package App\Manager
+ * @author Craig Rayner <craig@craigrayner.com>
+ */
 class TimetableManager
 {
     /**
@@ -30,9 +36,9 @@ class TimetableManager
     private SessionInterface $session;
 
     /**
-     * @var DataManager|null
+     * @var DataManager
      */
-    private ?DataManager $dataManager;
+    private DataManager $dataManager;
 
     /**
      * @var bool
@@ -50,9 +56,9 @@ class TimetableManager
     private string $secret;
 
     /**
-     * @var \stdClass
+     * @var stdClass
      */
-    private \stdClass $user;
+    private stdClass $user;
 
     /**
      * TimetableManager constructor.
@@ -60,10 +66,11 @@ class TimetableManager
      * @param ValidatorManager $validatorManager
      * @param string $secret
      */
-    public function __construct(SessionInterface $session, ValidatorManager $validatorManager, string $secret)
+    public function __construct(SessionInterface $session, ValidatorManager $validatorManager, string $secret, DataManager $dataManager)
     {
         $this->session = $session;
-        $this->setValidator($validatorManager)
+        $this->setDataManager($dataManager)
+            ->setValidator($validatorManager)
             ->setSecret($secret);
     }
 
@@ -133,7 +140,17 @@ class TimetableManager
      */
     public function getDataManager(): DataManager
     {
-        return $this->dataManager = isset($this->dataManager) && $this->dataManager !== null ? $this->dataManager : new DataManager($this->getName());
+        return $this->dataManager;
+    }
+
+    /**
+     * @param DataManager $dataManager
+     * @return TimetableManager
+     */
+    public function setDataManager(DataManager $dataManager): TimetableManager
+    {
+        $this->dataManager = $dataManager;
+        return $this;
     }
 
     /**
@@ -161,7 +178,7 @@ class TimetableManager
      */
     public function getValidator(): ValidatorManager
     {
-        return $this->validatorManager;
+        return $this->validatorManager->setDataManager($this->getDataManager());
     }
 
     /**
@@ -172,8 +189,7 @@ class TimetableManager
      */
     public function setValidator(ValidatorManager $validatorManager): TimetableManager
     {
-        $this->validatorManager = $validatorManager;
-        $this->validatorManager->setDataManager($this->getDataManager());
+        $this->validatorManager = $validatorManager->setDataManager($this->getDataManager());
         return $this;
     }
 
@@ -186,7 +202,6 @@ class TimetableManager
     {
         if (!$this->getValidator()->isFileValid()) {
             $this->getDataManager()->unlink();
-            $this->dataManager = null;
             return false;
         }
         return true;
@@ -213,16 +228,31 @@ class TimetableManager
     /**
      * getUser
      * 21/12/2020 10:47
-     * @return \stdClass
+     * @return stdClass
      */
-    public function getUser(): \stdClass
+    public function getUser(): stdClass
     {
         if (!isset($this->user)) {
-            $this->user = new \stdClass();
+            $this->user = new stdClass();
             $this->user->name = $this->getName();
             $this->user->password = $this->getDataManager()->getPassword();
             $this->user->secret = $this->getDataManager()->getSecret();
         }
         return $this->user;
+    }
+
+    /**
+     * isReadyToMap
+     * 23/12/2020 11:19
+     * @return bool
+     */
+    public function isReadyToMap(): bool
+    {
+        return $this->isNameValid()
+            && $this->isFileValid()
+            && $this->getDataManager()->getStaffCount() > 0
+            && $this->getDataManager()->getGradeCount() > 0
+            && $this->getDataManager()->getDayCount() > 0
+        ;
     }
 }

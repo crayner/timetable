@@ -10,17 +10,27 @@
  *
  * Licence: MIT
  * User: Craig Rayner
- * Date: 16/12/2020
- * Time: 10:11
+ * Date: 26/12/2020
+ * Time: 08:33
  */
-namespace App\Manager;
+namespace App\Provider;
 
+use App\Items\Grade;
 
 /**
- * Class LineManager
- * @package App\Manager
+ * Class GradeProvider
+ * @package App\Provider
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class LineManager extends TimetableManager
+class GradeProvider extends AbstractProvider
 {
+    /**
+     * @var string
+     */
+    protected string $method = 'getGrades';
+
+    /**
+     * @var string
+     */
+    protected string $itemName = Grade::class;
 }

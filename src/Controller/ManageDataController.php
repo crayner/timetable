@@ -43,6 +43,6 @@ class ManageDataController extends AbstractController
         $form->handleRequest($request);
 
         return $this->render('Settings/basic.html.twig',
-            ['form' => $form->createView()]);
+            ['form' => $form->createView(), 'manager' => $manager]);
     }
 }

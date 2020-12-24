@@ -58,7 +58,7 @@ class LoadTimetableType extends AbstractType
                     'required' => false,
                     'constraints' => [
                         new Length(['max' => 75]),
-                        new UserPasswordContent(),
+                        new UserPasswordContent(['minSpecial' => 0]),
                     ],
                 ]
             )

@@ -161,3 +161,16 @@ A text file, with a room name, capacity on each line. The name and capacity must
 Upload Rooms: Upload Rooms
 Close: Close
 The file is not valid. Use the password of the file to validate the file.: The file is not valid. Use the password of the file to validate the file.
+timetable_ready: You are now ready to start mapping the classes to the timetable.  The system tries to map details immediately, and in the order that the lines/classes are added to the system by you.  The checks are made on an ongoing basis as well, checking for clashes of Rooms and Staff.  This system DOES NOT check student clashes, as the line handles all students in a grade.  It will, however, check student numbers.
+'Settings: Lines': 'Settings: Lines'
+New Line: New Line
+Line Name: Line Name
+Grade/Year/Form: Grade/Year/Form
+Please select...: Please select...
+Delete Line: Delete Line
+Add Line: Add Line
+Remove Line: Remove Line
+Save Lines: Save Lines
+Lines: Lines
+File Password: File Password
+'The password is for the uploaded data file. This is ignored if the file secret is valid.  If the secret is not valid, then the password will be required to unlock the uploaded file on the site.': 'The password is for the uploaded data file. This is ignored if the file secret is valid.  If the secret is not valid, then the password will be required to unlock the uploaded file on the site.'

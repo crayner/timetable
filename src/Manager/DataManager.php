@@ -18,6 +18,7 @@ namespace App\Manager;
 use App\Helper\SecurityEncoder;
 use App\Items\Day;
 use App\Items\Grade;
+use App\Items\Line;
 use App\Items\Room;
 use App\Items\Staff;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -512,19 +513,43 @@ class DataManager
     }
 
     /**
+     * getLines
+     * 23/12/2020 14:58
+     * @param bool $serialise
      * @return ArrayCollection
      */
-    public function getLines(): ArrayCollection
+    public function getLines(bool $serialise = false): ArrayCollection
     {
+        if ($this->lines->count() === 0) {
+            $this->readFile();
+        }
+        if ($serialise) {
+            $list = new ArrayCollection();
+            foreach ($this->lines as $line) {
+                $list->add($line->serialise());
+            }
+            return $list;
+        }
         return $this->lines;
     }
 
     /**
+     * setLines
+     * 23/12/2020 14:56
      * @param ArrayCollection $lines
-     * @return DataManager
+     * @param bool $deSerialise
+     * @return $this
      */
-    public function setLines(ArrayCollection $lines): DataManager
+    public function setLines(ArrayCollection $lines, bool $deSerialise = false): DataManager
     {
+        if ($deSerialise) {
+            $new = new ArrayCollection();
+            foreach ($lines as $item) {
+                $line = new Line($item);
+                $new->add($line);
+            }
+            $lines = $new;
+        }
         $this->lines = $lines;
         return $this;
     }
@@ -540,10 +565,29 @@ class DataManager
             $data = Yaml::parse(file_get_contents($this->getFileName()));
             $this->deSerialise($data);
             $this->readFile = false;
-            return true;
         }
-        if (!$this->readFile) return true;
-        return false;
+
+        return !$this->readFile;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isReadFile(): bool
+    {
+        return $this->readFile;
+    }
+
+    /**
+     * setReadFile
+     * 29/12/2020 10:23
+     * @param bool $readFile
+     * @return $this
+     */
+    public function setReadFile(bool $readFile = false): DataManager
+    {
+        $this->readFile = $readFile;
+        return $this;
     }
 
     /**
@@ -567,7 +611,7 @@ class DataManager
      */
     public function serialise(): array
     {
-        $result = [
+        return [
             'name' => $this->getName(),
             'password' => $this->getPassword(),
             'secret' => $this->getSecret(),
@@ -581,7 +625,6 @@ class DataManager
             'grades' => $this->getGrades(true)->toArray(),
             'lines' => $this->getLines(true)->toArray(),
         ];
-        return $result;
     }
 
     /**
@@ -601,9 +644,9 @@ class DataManager
             ->setRooms(new ArrayCollection($data['rooms']), true)
             ->setDays(new ArrayCollection($data['days']), true)
             ->setGrades(new ArrayCollection($data['grades']), true)
-            ->setLines(new ArrayCollection($data['lines']), true)
             ->setSecret($data['secret'], false)
-            ->setStaff(new ArrayCollection($data['staff']), true);
+            ->setStaff(new ArrayCollection($data['staff']), true)
+            ->setLines(new ArrayCollection($data['lines']), true);
     }
 
     /**

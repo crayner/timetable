@@ -10,17 +10,16 @@
  *
  * Licence: MIT
  * User: Craig Rayner
- * Date: 16/12/2020
- * Time: 10:11
+ * Date: 26/12/2020
+ * Time: 08:39
  */
-namespace App\Manager;
-
+namespace App\Provider;
 
 /**
- * Class LineManager
- * @package App\Manager
- * @author Craig Rayner <craig@craigrayner.com>
+ * Interface ItemProviderInterface
+ * @package App\Provider
  */
-class LineManager extends TimetableManager
+interface ProviderInterface
 {
+
 }

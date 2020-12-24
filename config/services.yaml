@@ -21,6 +21,7 @@ services:
             - '../src/Kernel.php'
             - '../src/Tests/'
             - '../src/Items/'
+            - '../src/Provider/'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -35,6 +36,13 @@ services:
         arguments:
             $secret: '%secret%'
 
+    App\Manager\LineManager:
+        arguments:
+            $secret: '%secret%'
+
     App\Manager\ValidatorManager:
         arguments:
             $secret: '%secret%'
+
+    App\Provider\ProviderFactory:
+        public: true

@@ -15,6 +15,7 @@
 namespace App\Items;
 
 use App\Helper\UUID;
+use App\Provider\ProviderFactory;
 
 /**
  * Class Line
@@ -34,9 +35,9 @@ class Line implements DuplicateNameInterface
     private string $name;
 
     /**
-     * @var Grade
+     * @var Grade|null
      */
-    private Grade $grade;
+    private ?Grade $grade;
 
     /**
      * Line constructor.
@@ -53,6 +54,18 @@ class Line implements DuplicateNameInterface
     public function getId(): string
     {
         return $this->id = isset($this->id) ? $this->id : UUID::v4();
+    }
+
+    /**
+     * setId
+     * 23/12/2020 15:07
+     * @param string|null $id
+     * @return Line
+     */
+    public function setId(?string $id): Line
+    {
+        if (!empty($id)) $this->id = $id;
+        return $this;
     }
 
     /**
@@ -97,9 +110,13 @@ class Line implements DuplicateNameInterface
     public function deserialise(array $data): Line
     {
         if (empty($data)) return $this;
+        $this->id = $data['id'];
         $this->name = $data['name'];
-        $this->getGrade();
-        $this->grade = $this->grade->deserialise($data['grade']);
+        if (is_array($data['grade']) && key_exists('id', $data['grade'])) {
+            $this->grade = ProviderFactory::create(Grade::class)->find($data['grade']['id']);
+        } else {
+            $this->grade = ProviderFactory::create(Grade::class)->find($data['grade']);
+        }
         return $this;
     }
 

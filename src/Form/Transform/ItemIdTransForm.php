@@ -94,7 +94,6 @@ class ItemIdTransForm implements DataTransformerInterface
                 });
                 if ($x->count() !== 1) throw new TransformationFailedException();
                 return $x->first();
-                break;
             default:
                 throw new TransformationFailedException();
         }

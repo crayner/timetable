@@ -17,6 +17,7 @@ namespace App\Controller;
 
 use App\Form\LinesType;
 use App\Items\Line;
+use App\Manager\LineManager;
 use App\Manager\TimetableManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,17 +28,19 @@ class LineController extends AbstractController
 {
     /**
      * manage
-     * 16/12/2020 17:51
+     * 23/12/2020 14:41
      * @param Request $request
-     * @param TimetableManager $manager
+     * @param LineManager $manager
      * @Route("/lines/",name="lines")
      * @return Response
      */
-    public function manage(Request $request, TimetableManager $manager)
+    public function manage(Request $request, LineManager $manager): Response
     {
-        $form = $this->createForm(LinesType::class, $manager->getDataManager()->getLineManager());
+
+        $form = $this->createForm(LinesType::class, $manager->getDataManager(), ['action' => $this->generateUrl('lines')]);
 
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && !$form->isValid()) {
             $manager->setSaveOnTerminate(false);
         }
@@ -47,20 +50,21 @@ class LineController extends AbstractController
 
     /**
      * addLine
-     * 16/12/2020 16:28
+     * 23/12/2020 14:45
      * @param Request $request
-     * @param TimetableManager $manager
+     * @param LineManager $manager
      * @Route("/line/add/",name="line_add")
      * @return Response
      */
-    public function addLine(Request $request, TimetableManager $manager): Response
+    public function addLine(Request $request, LineManager $manager): Response
     {
         $line = new Line();
-        $manager->getDataManager()->getLineManager()->addLine($line);
+        $lines = $manager->getDataManager()->getLines();
+        $line->setName('Line '.strval($lines->count() + 1));
+        $lines->add($line);
+        $manager->getDataManager()->setLines($lines);
 
-
-
-        return $this->forward(LineController::class.'::manage',['request' => $request, 'TimetableManager' => $manager]);
+        return $this->forward(LineController::class.'::manage',['request' => $request, 'manager' => $manager]);
     }
 
     /**
@@ -73,24 +77,36 @@ class LineController extends AbstractController
      */
     public function removeLine(Request $request, TimetableManager $manager): Response
     {
-        $manager->getDataManager()->setLineCount($manager->getDataManager()->getLineCount() - 1);
+        $lines = $manager->getDataManager()->getLines();
+        if ($lines->count() > 0) {
+            $last = $lines->last();
+            $lines->removeElement($last);
+            $manager->getDataManager()->setLines($lines);
+        }
 
-        return $this->forward(LineController::class.'::manage',['request' => $request, 'TimetableManager' => $manager]);
+        return $this->forward(LineController::class.'::manage',['request' => $request, 'manager' => $manager]);
     }
 
     /**
      * deleteLine
-     * 15/12/2020 10:14
-     * @param int $key
+     * 23/12/2020 14:46
+     * @param string $line
      * @param Request $request
-     * @param TimetableManager $manager
-     * @Route("/line/{key}/delete/",name="line_delete")
+     * @param LineManager $manager
+     * @Route("/line/{line}/delete/",name="line_delete")
      * @return Response
      */
-    public function deleteLine(int $key, Request $request, TimetableManager $manager): Response
+    public function deleteLine(string $line, Request $request, LineManager $manager): Response
     {
-        $manager->getDataManager()->removeLine($key);
+        $items = $manager->getDataManager()->getLines();
+        $lines = $items->filter(function(Line $item) use ($line) {
+            if ($line === $item->getId()) return $item;
+        });
 
-        return $this->forward(LineController::class . '::manage', ['request' => $request, 'TimetableManager' => $manager]);
+        if ($lines->count() > 1) throw new \InvalidArgumentException('The database is not consistent.  Duplicate Lines.');
+        if ($lines->count() === 1) $items->removeElement($lines->first());
+        $manager->getDataManager()->setLines($items);
+
+        return $this->forward(LineController::class . '::manage', ['request' => $request, 'manager' => $manager]);
     }
 }
