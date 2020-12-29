@@ -89,6 +89,7 @@ class ItemIdTransForm implements DataTransformerInterface
     {
         switch ($this->class) {
             case Grade::class:
+                dump($value,$this);
                 $x = $this->manager->getGrades()->filter(function(Grade $grade) use ($value) {
                     if ($value === $grade->getId()) return $grade;
                 });
