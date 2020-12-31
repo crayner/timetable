@@ -111,7 +111,11 @@ class ValidatorManager
 
         if (!$valid) {
             $this->getDataManager()->unlink();
+            $flashes = $this->getSession()->getBag('flashes')->all();
             $this->getSession()->invalidate();
+            foreach ($flashes as $level => $flash) {
+                $this->getSession()->getBag('flashes')->set($level,$flash);
+            }
         }
 
         return $valid;

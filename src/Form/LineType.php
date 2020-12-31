@@ -15,7 +15,7 @@
  */
 namespace App\Form;
 
-use App\Form\Transform\ItemIdTransForm;
+use App\Form\Transform\ItemTransForm;
 use App\Items\Grade;
 use App\Items\Line;
 use App\Manager\TimetableManager;
@@ -83,7 +83,7 @@ class LineType extends AbstractType
                 ]
             )
         ;
-        $builder->get('grade')->addModelTransformer(new ItemIdTransForm(Grade::class, $this->manager));
+        $builder->get('grade')->addModelTransformer(new ItemTransForm(Grade::class));
     }
 
     /**

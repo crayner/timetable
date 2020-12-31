@@ -15,9 +15,8 @@
  */
 namespace App\Form\Transform;
 
-use App\Items\DuplicateNameInterface;
-use App\Items\Grade;
 use App\Manager\TimetableManager;
+use App\Provider\ProviderFactory;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
@@ -26,7 +25,7 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
  * @package App\Form\Transform
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class ItemIdTransForm implements DataTransformerInterface
+class ItemTransForm implements DataTransformerInterface
 {
     /**
      * @var string
@@ -34,19 +33,12 @@ class ItemIdTransForm implements DataTransformerInterface
     private string $class;
 
     /**
-     * @var TimetableManager
-     */
-    private TimetableManager $manager;
-
-    /**
      * ItemIdTransForm constructor.
      * @param string $class
-     * @param TimetableManager|string $manager
      */
-    public function __construct(string $class, TimetableManager $manager)
+    public function __construct(string $class)
     {
         $this->class = $class;
-        $this->manager = $manager;
     }
 
     /**
@@ -64,39 +56,23 @@ class ItemIdTransForm implements DataTransformerInterface
 
     /**
      * reverseTransform
-     * 16/12/2020 17:30
+     * 31/12/2020 13:41
      * @param mixed $value
-     * @return mixed|void
+     * @return mixed|null
      */
     public function reverseTransform($value)
     {
         if (is_string($value)) {
-            return $this->findItem($value);
+            $provider = ProviderFactory::create($this->class);
+            dump($provider,$provider->find($value));
+            return $provider->find($value);
         }
 
-        if (empty($value)) return;
+        if (is_object($value) && get_class($value) === $this->class) return $value;
+
+        if (empty($value)) return null;
+
 
         throw new TransformationFailedException();
-    }
-
-    /**
-     * findItem
-     * 16/12/2020 17:40
-     * @param string $value
-     * @return mixed
-     */
-    private function findItem(string $value)
-    {
-        switch ($this->class) {
-            case Grade::class:
-                dump($value,$this);
-                $x = $this->manager->getGrades()->filter(function(Grade $grade) use ($value) {
-                    if ($value === $grade->getId()) return $grade;
-                });
-                if ($x->count() !== 1) throw new TransformationFailedException();
-                return $x->first();
-            default:
-                throw new TransformationFailedException();
-        }
     }
 }

@@ -125,6 +125,7 @@ class DefaultController extends AbstractController
 
                 try {
                     $data = Yaml::parse($dataFile->getContent());
+                    $data = is_array($data) ? $data : [];
                 } catch (ParseException $e) {
                     $data = [];
                 }
@@ -150,10 +151,13 @@ class DefaultController extends AbstractController
                         $this->addFlash('alert', "The file is not valid. Use the password of the file to validate the file.");
                         $manager->setSaveOnTerminate(false)->getDataManager()->unlink();
                     }
+                } else {
+                    $this->addFlash('alert', ['The file "{file}" is not valid.', ['{file}' => $dataFile->getClientOriginalName()]]);
                 }
             }
         } else {
             $this->addFlash('alert', "The file was not available to upload");
+            return $this->redirectToRoute('begin');
         }
 
         return $this->forward(DefaultController::class.'::begin', ['request' => $request, 'manager' => $manager]);
