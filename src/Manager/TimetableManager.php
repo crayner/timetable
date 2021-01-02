@@ -168,6 +168,7 @@ class TimetableManager
     public function setSaveOnTerminate(bool $saveOnTerminate): TimetableManager
     {
         $this->saveOnTerminate = $saveOnTerminate;
+        $this->getDataManager()->setSaveOnTerminate($saveOnTerminate);
         return $this;
     }
 

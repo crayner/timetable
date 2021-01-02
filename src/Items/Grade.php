@@ -15,13 +15,14 @@
 namespace App\Items;
 
 use App\Helper\UUID;
+use App\Provider\ProviderItemInterface;
 
 /**
  * Class Grade
  * @package App\Items
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class Grade implements DuplicateNameInterface
+class Grade implements DuplicateNameInterface, ProviderItemInterface
 {
     /**
      * @var string

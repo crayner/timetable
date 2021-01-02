@@ -16,6 +16,7 @@
 namespace App\Manager;
 
 use App\Helper\SecurityEncoder;
+use App\Items\ClassDetail;
 use App\Items\Day;
 use App\Items\Grade;
 use App\Items\Line;
@@ -97,9 +98,19 @@ class DataManager
     private string $secret;
 
     /**
+     * @var ArrayCollection
+     */
+    private ArrayCollection $classes;
+
+    /**
      * @var bool
      */
     private bool $readFile = true;
+
+    /**
+     * @var bool
+     */
+    private bool $saveOnTerminate = true;
 
     /**
      * DataManager constructor.
@@ -113,6 +124,7 @@ class DataManager
             ->setRooms(new ArrayCollection())
             ->setDays(new ArrayCollection())
             ->setLines(new ArrayCollection())
+            ->setClasses(new ArrayCollection())
         ;
     }
 
@@ -566,7 +578,6 @@ class DataManager
             $this->deSerialise($data);
             $this->readFile = false;
         }
-
         return !$this->readFile;
     }
 
@@ -623,6 +634,7 @@ class DataManager
             'periods' => $this->getPeriods(),
             'days' => $this->getDays(true)->toArray(),
             'grades' => $this->getGrades(true)->toArray(),
+            'classes' => $this->getClasses(true)->toArray(),
             'lines' => $this->getLines(true)->toArray(),
         ];
     }
@@ -646,6 +658,7 @@ class DataManager
             ->setGrades(new ArrayCollection($data['grades']), true)
             ->setSecret($data['secret'], false)
             ->setStaff(new ArrayCollection($data['staff']), true)
+            ->setClasses(new ArrayCollection($data['classes']), true)
             ->setLines(new ArrayCollection($data['lines']), true);
     }
 
@@ -843,4 +856,102 @@ class DataManager
         }
         return $this;
     }
+
+    /**
+     * getClasses
+     * 1/01/2021 11:10
+     * @param bool $serialise
+     * @return ArrayCollection
+     */
+    public function getClasses(bool $serialise = false): ArrayCollection
+    {
+        if ($this->classes->count() === 0) {
+            $this->readFile();
+        }
+        if ($serialise) {
+            $list = new ArrayCollection();
+            foreach ($this->classes as $class) {
+                $list->add($class->serialise());
+            }
+            return $list;
+        }
+        return $this->classes;
+    }
+
+    /**
+     * setClasses
+     * 1/01/2021 11:11
+     * @param ArrayCollection $classes
+     * @param bool $deSerialise
+     * @return $this
+     */
+    public function setClasses(ArrayCollection $classes, bool $deSerialise = false): DataManager
+    {
+        if ($deSerialise) {
+            $new = new ArrayCollection();
+            foreach ($classes as $item) {
+                $member = new ClassDetail();
+                $member->deserialise($item);
+                $new->add($member);
+            }
+            $classes = $new;
+        }
+        $this->classes = $classes;
+        return $this;
+    }
+
+    /**
+     * removeClass
+     * 1/01/2021 11:18
+     * @param string $id
+     * @return $this
+     */
+    public function removeClass(string $id): DataManager
+    {
+        $members = $this->getClasses()->filter(function(ClassDetail $class) use ($id) {
+            if ($id !== $class->getId()) return $class;
+        });
+
+        return $this->setClasses($members);
+    }
+
+    /**
+     * sortClasses
+     * 1/01/2021 11:19
+     * @return $this
+     */
+    public function sortClasses(): DataManager
+    {
+        try {
+            $iterator = $this->getClasses()->getIterator();
+        } catch (\Exception $e) {
+            return $this;
+        }
+
+        $iterator->uasort(
+            function (ClassDetail $a, ClassDetail $b) {
+                return $a->getName() > $b->getName() ? 1 : -1 ;
+            }
+        );
+        return $this->setClasses(new ArrayCollection(iterator_to_array($iterator, false)));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSaveOnTerminate(): bool
+    {
+        return $this->saveOnTerminate;
+    }
+
+    /**
+     * @param bool $saveOnTerminate
+     * @return DataManager
+     */
+    public function setSaveOnTerminate(bool $saveOnTerminate): DataManager
+    {
+        $this->saveOnTerminate = $saveOnTerminate;
+        return $this;
+    }
+
 }

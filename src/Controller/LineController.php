@@ -109,4 +109,14 @@ class LineController extends AbstractController
 
         return $this->forward(LineController::class . '::manage', ['request' => $request, 'manager' => $manager]);
     }
+
+    /**
+     * manageClasses
+     * 31/12/2020 14:48
+     * @Route("/line/{line}/classes/manage/",name="line_classes_manage")
+     */
+    public function manageClasses(string $line)
+    {
+
+    }
 }

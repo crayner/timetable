@@ -14,7 +14,8 @@
  */
 namespace App\Listener;
 
-use App\Manager\TimetableManager;
+use App\Manager\DataManager;
+use App\Manager\ValidatorManager;
 use App\Provider\ProviderFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -43,18 +44,26 @@ class SaveTimetableListener implements EventSubscriberInterface
     ];
 
     /**
-     * @var TimetableManager
+     * @var DataManager
      */
-    private TimetableManager $manager;
+    private DataManager $manager;
+
+    /**
+     * @var ValidatorManager
+     */
+    private ValidatorManager $validator;
 
     /**
      * SaveTimetableListener constructor.
-     * @param TimetableManager $manager
+     * @param DataManager $manager
      * @param ProviderFactory $factory
+     * @param ValidatorManager $validator
      */
-    public function __construct(TimetableManager $manager, ProviderFactory $factory)
+    public function __construct(DataManager $manager, ProviderFactory $factory, ValidatorManager $validator)
     {
         $this->manager = $manager;
+        $this->validator = $validator;
+        $this->validator->setDataManager($this->manager);
     }
 
     /**
@@ -81,12 +90,12 @@ class SaveTimetableListener implements EventSubscriberInterface
         $request = $event->getRequest();
         if (in_array($request->attributes->get('_controller'), self::IGNORE_CONTROLLER_METHODS)) return;
         if ($request->attributes->has('_route') && $this->isRouteIgnored($request->attributes->get('_route'))) return;
-        if ($this->manager->isSaveOnTerminate()) $this->manager->getDataManager()->writeFile();
+        if ($this->manager->isSaveOnTerminate()) $this->manager->writeFile();
     }
 
     /**
      * onRequest
-     * 20/12/2020 08:50
+     * 1/01/2021 13:09
      * @param RequestEvent $event
      */
     public function onRequest(RequestEvent $event)
@@ -104,7 +113,7 @@ class SaveTimetableListener implements EventSubscriberInterface
 
         $this->manager->setName($user->name);
 
-        if (!$this->manager->isFileValid() || $user->name !== $this->manager->getDataManager()->getName() || $user->password !== $this->manager->getDataManager()->getPassword()) {
+        if (!$this->validator->isFileValid() || $user->name !== $this->manager->getName() || $user->password !== $this->manager->getPassword()) {
             $response = new RedirectResponse("/begin/");
             $event->setResponse($response);
         }

@@ -16,7 +16,10 @@
 namespace App\Provider;
 
 use App\Manager\DataManager;
+use App\Manager\Serialiser;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class AbstractProvider
@@ -83,11 +86,11 @@ class AbstractProvider implements ProviderInterface
      */
     public function find(?string $id = null)
     {
-        $item = $this->all()->filter(function ($x) use ($id) {
-            if ($id === $x->getId()) return $x;
+        $items = $this->all()->filter(function (ProviderItemInterface $item) use ($id) {
+            if ($id === $item->getId()) return $item;
         });
-        if ($item->count() > 1) throw new ProviderException(sprintf('The item "%s" returned an invalid result for a find of "%s".', $this->getItemName(), $id));
-        return $item->first() ?: null;
+        if ($items->count() > 1) throw new ProviderException(sprintf('The item "%s" returned an invalid result for a find of "%s".', $this->getItemName(), $id));
+        return $items->first() ?: null;
     }
 
     /**

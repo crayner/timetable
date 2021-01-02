@@ -174,4 +174,14 @@ Save Lines: Save Lines
 Lines: Lines
 File Password: File Password
 'The password is for the uploaded data file. This is ignored if the file secret is valid.  If the secret is not valid, then the password will be required to unlock the uploaded file on the site.': 'The password is for the uploaded data file. This is ignored if the file secret is valid.  If the secret is not valid, then the password will be required to unlock the uploaded file on the site.'
+Manage Line Classes: Manage Line Classes
 The file "{file}" is not valid.: The file "{file}" is not valid.
+'Settings: Classes': 'Settings: Classes'
+Add Class: Add Class
+Remove Class: Remove Class
+Save Classes: Save Classes
+New Class: New Class
+Class Name: Class Name
+Capacity: Capacity
+Teachers: Teachers
+Delete Class: Delete Class

@@ -15,13 +15,14 @@
 namespace App\Items;
 
 use App\Helper\UUID;
+use App\Provider\ProviderItemInterface;
 
 /**
  * Class Staff
  * @package App\Items
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class Staff implements DuplicateNameInterface
+class Staff implements DuplicateNameInterface, ProviderItemInterface
 {
     /**
      * @var string

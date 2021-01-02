@@ -16,6 +16,7 @@
 namespace App\Provider;
 
 use App\Manager\DataManager;
+use App\Manager\Serialiser;
 use Psr\Container\ContainerInterface;
 
 class ProviderFactory

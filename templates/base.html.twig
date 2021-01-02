@@ -39,7 +39,7 @@
                                 &copy; 2020 - {{ 'now'|date('Y') }}
                             </div>
                             <div class="cell medium-4 medium-cell-block-y align-flex-center">
-                                {% if app.request.session.get('timetable_name')|default('') is not same as('') %}
+                                {% if getManager().isFileValid() %}
                                     <a class="button primary" type="button" href="{{ path('download') }}">{{ 'Download Timetable File'|trans }}</a>
                                     <a class="button warning" type="button" href="{{ path('close') }}">{{ 'Close'|trans }}</a>
                                 {% endif %}

@@ -130,7 +130,7 @@ class DefaultController extends AbstractController
                     $data = [];
                 }
 
-                if (key_exists('name', $data) && $data['name'] === $originalFilename) {
+                if ($manager->getValidator()->validateDataLoad($data)) {
                     $manager->setName($data['name']);
                     $dataFile->move(dirname($manager->getDataManager()->getFileName()), $data['name']. '.yaml');
                     if ($manager->getValidator()->isFileValid(true)) {

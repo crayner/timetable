@@ -16,13 +16,15 @@ namespace App\Items;
 
 use App\Helper\UUID;
 use App\Provider\ProviderFactory;
+use App\Provider\ProviderItemInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Class Line
  * @package App\Items
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class Line implements DuplicateNameInterface
+class Line implements DuplicateNameInterface, ProviderItemInterface
 {
     /**
      * @var string
@@ -38,6 +40,11 @@ class Line implements DuplicateNameInterface
      * @var Grade|null
      */
     private ?Grade $grade;
+
+    /**
+     * @var ArrayCollection
+     */
+    private ArrayCollection $classes;
 
     /**
      * Line constructor.
@@ -98,7 +105,8 @@ class Line implements DuplicateNameInterface
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
-            'grade' => $this->getGrade() ? $this->getGrade()->serialise() : null,
+            'grade' => $this->getGrade() ? $this->getGrade()->getId() : null,
+            'classes' => $this->serialiseClasses(),
         ];
     }
 
@@ -112,11 +120,7 @@ class Line implements DuplicateNameInterface
         if (empty($data)) return $this;
         $this->id = $data['id'];
         $this->name = $data['name'];
-        if (is_array($data['grade']) && key_exists('id', $data['grade'])) {
-            $this->grade = ProviderFactory::create(Grade::class)->find($data['grade']['id']);
-        } else {
-            $this->grade = ProviderFactory::create(Grade::class)->find($data['grade']);
-        }
+        $this->grade = ProviderFactory::create(Grade::class)->find($data['grade']);
         return $this;
     }
 
@@ -142,4 +146,52 @@ class Line implements DuplicateNameInterface
         return $this;
     }
 
+    /**
+     * getClasses
+     * 31/12/2020 14:05
+     * @return ArrayCollection
+     */
+    public function getClasses(): ArrayCollection
+    {
+        return $this->classes = isset($this->classes) ? $this->classes : new ArrayCollection();
+    }
+
+    /**
+     * @param ArrayCollection $classes
+     * @return Line
+     */
+    public function setClasses(ArrayCollection $classes): Line
+    {
+        $this->classes = $classes;
+        return $this;
+    }
+
+    /**
+     * addClass
+     * 31/12/2020 14:13
+     * @param ClassDetail $class
+     * @return $this
+     */
+    public function addClass(ClassDetail $class)
+    {
+        if ($this->getClasses()->contains($class)) return $this;
+
+        $this->classes->add($class);
+
+        return $this;
+    }
+
+    /**
+     * serialiseClasses
+     * 31/12/2020 14:15
+     * @return array
+     */
+    public function serialiseClasses(): array
+    {
+        $classes = [];
+        foreach ($this->getClasses() as $class) {
+            $classes[] = $class->getId()();
+        }
+        return $classes;
+    }
 }

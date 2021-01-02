@@ -44,6 +44,16 @@ class Day implements DuplicateNameInterface
     }
 
     /**
+     * @param string $id
+     * @return Day
+     */
+    public function setId(string $id): Day
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getName(): string
@@ -110,5 +120,4 @@ class Day implements DuplicateNameInterface
         $this->periods = $data['periods'];
         return $this;
     }
-
 }

@@ -33,5 +33,11 @@ body {
     background-repeat: repeat-y;
 }
 .grid-container {
-    background-color: rgba(254,247,255, 0.8);
+    background-color: rgba(254,247,255,0.8);
 }
+.striped div.grid-x:nth-of-type(even)  {
+    background-color: rgba(203,197,204,0.8);
+}
+.striped div.grid-x:last-child  {
+     background-color: inherit;
+ }

@@ -9,20 +9,21 @@
         </div>
     </div>
     {{ form_start(form) }}
-    <div class="cell medium-auto medium-cell-block-container">
+    <div class="cell medium-auto medium-cell-block-container striped">
         {% for key,line in form.lines %}
             <div class="grid-x grid-margin-x grid-padding-x">
                 <div class="cell medium-2 medium-cell-block-y align-flex-center h4 justify-left">
                     {{ line.name.vars.value|default('New Line'|trans) }}
                 </div>
-                <div class="cell medium-4 medium-cell-block-y">
+                <div class="cell medium-3 medium-cell-block-y">
                     {{ form_row(line.name) }}
                     {{ form_row(line.id) }}
                 </div>
-                <div class="cell medium-4 medium-cell-block-y">
+                <div class="cell medium-3 medium-cell-block-y">
                     {{ form_row(line.grade, {value: line.vars.value.grade.id}) }}
                 </div>
-                <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                <div class="cell medium-4 medium-cell-block-y">
+                    <a href="{{ path('line_classes_manage', {line: line.id.vars.value}) }}" class="success button" title="{{ 'Manage Line Classes'|trans }}">{{ 'Manage Line Classes'|trans }}</a>
                     <a href="{{ path('line_delete', {line: line.id.vars.value}) }}" class="warning button" title="{{ 'Delete Line'|trans }}">{{ 'Delete Line'|trans }}</a>
                 </div>
             </div>

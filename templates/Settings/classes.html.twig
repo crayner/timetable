@@ -1,0 +1,55 @@
+{% trans_default_domain 'messages' %}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="cell shrink medium-cell-block-container">
+        <div class="grid-x grid-padding-x">
+            <div class="cell medium-12 medium-cell-block-y text-center h2">{{ 'Settings: Classes'|trans }}</div>
+        </div>
+    </div>
+    {{ form_start(form) }}
+    <div class="cell medium-auto medium-cell-block-container">
+        {% for key,class in form.classes %}
+            <div class="grid-x grid-margin-x grid-padding-x">
+                <div class="cell medium-2 medium-cell-block-y align-flex-center h4 justify-left">
+                    {{ class.name.vars.value|default('New Class'|trans) }}
+                </div>
+                <div class="cell medium-8 medium-cell-block-y">
+                    <div class="grid-x grid-margin-x grid-padding-x">
+                        <div class="cell medium-4 medium-cell-block-y">
+                            {{ form_row(class.name) }}
+                            {{ form_row(class.id) }}
+                        </div>
+                        <div class="cell medium-4 medium-cell-block-y">
+                            {{ form_row(class.capacity) }}
+                        </div>
+                        <div class="cell medium-4 medium-cell-block-y">
+                            {{ form_row(class.teachers) }}
+                            {% dump(class.teachers) %}
+                        </div>
+                    </div>
+                </div>
+                <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                    <a href="{{ path('class_delete', {'class': class.id.vars.value}) }}" class="warning button" title="{{ 'Delete Class'|trans }}">{{ 'Delete Class'|trans }}</a>
+                </div>
+            </div>
+        {% endfor %}
+        {% do form.classes.setRendered %}
+        <div class="grid-x grid-margin-x grid-padding-x">
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('class_add') }}" class="button secondary" title="{{ 'Add Class'|trans }}">{{ 'Add Class'|trans }}</a>
+            </div>
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('class_remove') }}" class="button secondary" title="{{ 'Remove Class'|trans }}">{{ 'Remove Class'|trans }}</a>
+            </div>
+            <div class="cell medium-offset-4 medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('basic_settings') }}" class="button" title="{{ 'Update Basic Settings'|trans }}">{{ 'Settings: Basic'|trans }}</a>
+            </div>
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                {{ form_row(form.saveClasses) }}
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock body %}

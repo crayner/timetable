@@ -45,6 +45,11 @@ class ValidatorManager
     private string $secret;
 
     /**
+     * @var bool
+     */
+    private bool $fileValid = false;
+
+    /**
      * @var SessionInterface
      */
     private SessionInterface $session;
@@ -100,6 +105,8 @@ class ValidatorManager
      */
     public function isFileValid(bool $ignoreDate = false): bool
     {
+        if ($this->fileValid) return true;
+
         $valid = true;
         if (!$this->getDataManager()->readFile()) $valid = false;
 
@@ -118,7 +125,7 @@ class ValidatorManager
             }
         }
 
-        return $valid;
+        return $this->fileValid = $valid;
     }
 
     /**
@@ -163,5 +170,32 @@ class ValidatorManager
     public function getSession(): SessionInterface
     {
         return $this->session;
+    }
+
+    /**
+     * validateDataLoad
+     * 1/01/2021 10:52
+     * @param array $data
+     * @return bool
+     */
+    public function validateDataLoad(array $data): bool
+    {
+        if (empty($data)) return false;
+
+        if (!key_exists('name', $data) || !key_exists('password', $data) || !key_exists('secret', $data)) return false;
+
+        if (!key_exists('created_on', $data) || !key_exists('studentsPerGrade', $data) || !key_exists('roomCapacity', $data)) return false;
+
+        if (!key_exists('periods', $data) || !key_exists('days', $data) || !key_exists('staff', $data)) return false;
+
+        if (!key_exists('rooms', $data) || !key_exists('grades', $data) || !key_exists('lines', $data)) return false;
+
+        if (!key_exists('classes', $data) || !key_exists('grades', $data) || !key_exists('lines', $data)) return false;
+
+        if (!is_array($data['rooms']) || !is_array($data['grades']) || !is_array($data['lines'])) return false;
+
+        if (!is_array($data['classes']) || !is_array($data['days']) || !is_array($data['staff'])) return false;
+
+        return true;
     }
 }

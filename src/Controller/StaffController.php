@@ -129,8 +129,8 @@ class StaffController extends AbstractController
                         } else {
                             $member = new Staff();
                         }
-                        $member->setName($name);
-                        $staff->set($q, $member);
+                        $member->setName(trim($name));
+                        $staff->set($q,$member);
                     } else {
                         unset($data[$q]);
                     }
