@@ -246,7 +246,6 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
      */
     public function serialise(): array
     {
-        dump($this);
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
