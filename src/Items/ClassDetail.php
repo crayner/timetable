@@ -17,11 +17,12 @@
 namespace App\Items;
 
 use App\Helper\UUID;
-use App\Provider\ProviderFactory;
+use App\Manager\ItemSerialiser;
+use App\Provider\ProviderItemInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ClassDetail implements DuplicateNameInterface
+class ClassDetail implements DuplicateNameInterface, ProviderItemInterface
 {
     /**
      * @var string
@@ -42,6 +43,11 @@ class ClassDetail implements DuplicateNameInterface
      * @var ArrayCollection|Staff[]
      */
     private ArrayCollection $teachers;
+
+    /**
+     * @var Line|null
+     */
+    private ?Line $line;
 
     /**
      * getId
@@ -148,6 +154,23 @@ class ClassDetail implements DuplicateNameInterface
         return $this;
     }
 
+    /**
+     * @return Line|null
+     */
+    public function getLine(): ?Line
+    {
+        return $this->line = isset($this->line) ? $this->line : null;
+    }
+
+    /**
+     * @param Line|null $line
+     * @return ClassDetail
+     */
+    public function setLine(?Line $line): ClassDetail
+    {
+        $this->line = $line;
+        return $this;
+    }
 
     /**
      * serialise
@@ -160,7 +183,7 @@ class ClassDetail implements DuplicateNameInterface
             'id' => $this->getId(),
             'name' => $this->getName(),
             'capacity' => $this->getCapacity(),
-            'teachers' => $this->getTeachers(true)->toArray(),
+            'teachers' => ItemSerialiser::serialise($this->getTeachers()),
         ];
     }
 
@@ -195,9 +218,7 @@ class ClassDetail implements DuplicateNameInterface
         $this->id = $data['id'];
         $this->name = $data['name'];
         $this->capacity = $data['capacity'];
-        foreach ($data['teachers'] as $teacher) {
-            $this->addTeacher(ProviderFactory::create(Staff::class)->find($teacher));
-        }
+        $this->teachers = ItemSerialiser::deserialise(Staff::class, $data['teachers']);
         return $this;
     }
 

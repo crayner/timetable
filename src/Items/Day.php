@@ -15,8 +15,14 @@
 namespace App\Items;
 
 use App\Helper\UUID;
+use App\Provider\ProviderItemInterface;
 
-class Day implements DuplicateNameInterface
+/**
+ * Class Day
+ * @package App\Items
+ * @author Craig Rayner <craig@craigrayner.com>
+ */
+class Day implements DuplicateNameInterface, ProviderItemInterface
 {
     /**
      * @var string

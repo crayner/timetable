@@ -15,10 +15,12 @@
  */
 namespace App\Controller;
 
+use App\Form\FullLineType;
 use App\Form\LinesType;
 use App\Items\Line;
 use App\Manager\LineManager;
 use App\Manager\TimetableManager;
+use App\Provider\ProviderFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -111,12 +113,34 @@ class LineController extends AbstractController
     }
 
     /**
-     * manageClasses
-     * 31/12/2020 14:48
-     * @Route("/line/{line}/classes/manage/",name="line_classes_manage")
+     * details
+     * 3/01/2021 09:46
+     * @param string $line
+     * @param Request $request
+     * @param LineManager $manager
+     * @Route("/line/{line}/details/",name="line_details")
+     * @return Response
      */
-    public function manageClasses(string $line)
+    public function details(string $line, Request $request, LineManager $manager)
     {
+        $line = ProviderFactory::create(Line::class)->find($line);
+        if (empty($line)) {
+            $this->addFlash('warning', 'The line was not found.');
+            return $this->forward(LineController::class.'::manager', ['request' => $request, 'manager' => $manager]);
+        }
 
+        $form = $this->createForm(FullLineType::class, $line);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $manager->setSaveOnTerminate(false);
+        } else if ($form->isSubmitted() && $form->isValid()) {
+            if ($manager->validateClassDetails($line, intval($form->get('classCount')->getData()))) {
+                return $this->redirectToRoute('line_details', ['line' => $line->getId()]);
+            }
+        }
+
+        return $this->render('Lines/full_line.html.twig', ['form' => $form->createView()]);
     }
 }

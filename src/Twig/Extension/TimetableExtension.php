@@ -15,7 +15,7 @@
  */
 namespace App\Twig\Extension;
 
-use App\Manager\TimetableManager;
+use App\Manager\LineManager;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -27,15 +27,15 @@ use Twig\TwigFunction;
 class TimetableExtension extends AbstractExtension
 {
     /**
-     * @var TimetableManager
+     * @var LineManager
      */
-    private TimetableManager $manager;
+    private LineManager $manager;
 
     /**
      * TimetableExtension constructor.
-     * @param TimetableManager $manager
+     * @param LineManager $manager
      */
-    public function __construct(TimetableManager $manager)
+    public function __construct(LineManager $manager)
     {
         $this->manager = $manager;
     }
@@ -53,10 +53,10 @@ class TimetableExtension extends AbstractExtension
 
     /**
      * getManager
-     * 24/12/2020 11:13
-     * @return TimetableManager
+     * 4/01/2021 13:16
+     * @return LineManager
      */
-    public function getManager(): TimetableManager
+    public function getManager(): LineManager
     {
         return $this->manager;
     }

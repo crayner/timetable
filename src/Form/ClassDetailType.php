@@ -21,6 +21,7 @@ use App\Form\Type\PreferredChoiceType;
 use App\Form\Type\SelectedAsPreferredChoiceType;
 use App\Items\ClassDetail;
 use App\Items\Grade;
+use App\Items\Line;
 use App\Items\Staff;
 use App\Provider\ProviderFactory;
 use Symfony\Component\Form\AbstractType;
@@ -64,6 +65,7 @@ class ClassDetailType extends AbstractType
             )
             ->add('capacity', IntegerType::class,
                 [
+                    'label' => 'Class Capacity',
                     'help' => 'Set this value to zero to stop checks of student numbers in assigned classes.',
                     'constraints' => [
                         new Range(['min' => 0]),
@@ -81,6 +83,17 @@ class ClassDetailType extends AbstractType
                     'required' => false,
                     'multiple' => true,
                     'class' => Staff::class,
+                ]
+            )
+            ->add('line', ChoiceType::class,
+                [
+                    'label' => 'Line',
+                    'choices' => ProviderFactory::create(Line::class)->all(),
+                    'placeholder' => 'Please select...',
+                    'choice_label' => 'name',
+                    'choice_value' => 'id',
+                    'choice_translation_domain' => false,
+                    'required' => false,
                 ]
             )
         ;

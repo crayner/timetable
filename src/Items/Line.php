@@ -15,9 +15,10 @@
 namespace App\Items;
 
 use App\Helper\UUID;
-use App\Provider\ProviderFactory;
+use App\Manager\ItemSerialiser;
 use App\Provider\ProviderItemInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class Line
@@ -37,14 +38,29 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
     private string $name;
 
     /**
-     * @var Grade|null
+     * @var ArrayCollection 
      */
-    private ?Grade $grade;
+    private ArrayCollection $grades;
 
     /**
      * @var ArrayCollection
      */
     private ArrayCollection $classes;
+
+    /**
+     * @var ArrayCollection
+     */
+    private ArrayCollection $days;
+
+    /**
+     * @var array
+     */
+    private array $periods;
+
+    /**
+     * @var int
+     */
+    private int $placementCount;
 
     /**
      * Line constructor.
@@ -80,7 +96,7 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
      */
     public function getName(): string
     {
-        return isset($this->name) ? $this->name : '';
+        return $this->name = isset($this->name) ? substr($this->name, 0, 6) : '';
     }
 
     /**
@@ -91,58 +107,25 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
      */
     public function setName(string $name): Line
     {
-        $this->name = $name;
+        $this->name = substr($name,0,6);
         return $this;
     }
 
     /**
-     * serialise
-     * @return string[]
-     * 11/12/2020 13:28
+     * @return ArrayCollection
      */
-    public function serialise(): array
+    public function getGrades(): ArrayCollection
     {
-        return [
-            'id' => $this->getId(),
-            'name' => $this->getName(),
-            'grade' => $this->getGrade() ? $this->getGrade()->getId() : null,
-            'classes' => $this->serialiseClasses(),
-        ];
+        return $this->grades = isset($this->grades) ? $this->grades : new ArrayCollection();
     }
 
     /**
-     * deserialise
-     * @param array $data
-     * 11/12/2020 13:28
+     * @param ArrayCollection $grades
+     * @return Line
      */
-    public function deserialise(array $data): Line
+    public function setGrades(ArrayCollection $grades): Line
     {
-        if (empty($data)) return $this;
-        $this->id = $data['id'];
-        $this->name = $data['name'];
-        $this->grade = ProviderFactory::create(Grade::class)->find($data['grade']);
-        return $this;
-    }
-
-    /**
-     * getGrade
-     * 16/12/2020 17:19
-     * @return Grade
-     */
-    public function getGrade(): Grade
-    {
-        return $this->grade = isset($this->grade) ? $this->grade : new Grade();
-    }
-
-    /**
-     * setGrade
-     * 16/12/2020 17:19
-     * @param Grade $grade
-     * @return $this
-     */
-    public function setGrade(Grade $grade): Line
-    {
-        $this->grade = $grade;
+        $this->grades = $grades;
         return $this;
     }
 
@@ -170,9 +153,9 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
      * addClass
      * 31/12/2020 14:13
      * @param ClassDetail $class
-     * @return $this
+     * @return Line
      */
-    public function addClass(ClassDetail $class)
+    public function addClass(ClassDetail $class): Line
     {
         if ($this->getClasses()->contains($class)) return $this;
 
@@ -182,16 +165,139 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
     }
 
     /**
-     * serialiseClasses
-     * 31/12/2020 14:15
+     * getClassCount
+     * 4/01/2021 08:53
+     * @return int
+     */
+    public function getClassCount(): int
+    {
+        return $this->getClasses()->count();
+    }
+
+    /**
+     * setClassCount
+     * 4/01/2021 09:00
+     * @param int $count
+     * @return Line
+     */
+    public function setClassCount(int $count): Line
+    {
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getDays(): ArrayCollection
+    {
+        return $this->days = isset($this->days) ? $this->days : new ArrayCollection();
+    }
+
+    /**
+     * @param ArrayCollection $days
+     * @return Line
+     */
+    public function setDays(ArrayCollection $days): Line
+    {
+        $this->days = $days;
+        return $this;
+    }
+
+    /**
      * @return array
      */
-    public function serialiseClasses(): array
+    public function getPeriods(): array
     {
-        $classes = [];
-        foreach ($this->getClasses() as $class) {
-            $classes[] = $class->getId()();
-        }
-        return $classes;
+        return $this->periods = isset($this->periods) ? $this->periods : [];
+    }
+
+    /**
+     * @param array $periods
+     * @return Line
+     */
+    public function setPeriods(array $periods): Line
+    {
+        $this->periods = $periods;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPlacementCount(): int
+    {
+        return $this->placementCount = isset($this->placementCount) ? $this->placementCount : 0;
+    }
+
+    /**
+     * @param int $placementCount
+     * @return Line
+     */
+    public function setPlacementCount(int $placementCount): Line
+    {
+        $this->placementCount = $placementCount;
+        return $this;
+    }
+
+    /**
+     * serialise
+     * @return string[]
+     * 11/12/2020 13:28
+     */
+    public function serialise(): array
+    {
+        dump($this);
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'grades' => ItemSerialiser::serialise($this->getGrades()),
+            'classes' => ItemSerialiser::serialise($this->getClasses()),
+            'days' => ItemSerialiser::serialise($this->getDays()),
+            'periods' => $this->getPeriods(),
+            'placementCount' => $this->getPlacementCount(),
+        ];
+    }
+
+    /**
+     * deserialise
+     * @param array $data
+     * 11/12/2020 13:28
+     */
+    public function deserialise(array $data): Line
+    {
+        $resolver = new OptionsResolver();
+        $resolver
+            ->setRequired(
+                [
+                    'id',
+                    'name',
+                ]
+            )
+            ->setDefaults(
+                [
+                    'grades' => [],
+                    'classes' => [],
+                    'periods' => [],
+                    'days' => [],
+                    'placementCount' => 0,
+                ]
+            )
+            ->setAllowedTypes('id', 'string')
+            ->setAllowedTypes('name', 'string')
+            ->setAllowedTypes('grades', 'array')
+            ->setAllowedTypes('classes', 'array')
+            ->setAllowedTypes('periods', 'array')
+            ->setAllowedTypes('days', 'array')
+            ->setAllowedTypes('placementCount', 'integer')
+        ;
+        $data = $resolver->resolve($data);
+        $this->id = $data['id'];
+        $this->name = $data['name'];
+        $this->placementCount = $data['placementCount'];
+        $this->days = ItemSerialiser::deserialise(Day::class, $data['days']);
+        $this->grades = ItemSerialiser::deserialise(Grade::class, $data['grades']);
+        $this->classes = ItemSerialiser::deserialise(ClassDetail::class, $data['classes']);
+        $this->periods = $data['periods'];
+        return $this;
     }
 }

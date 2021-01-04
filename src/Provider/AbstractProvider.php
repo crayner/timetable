@@ -16,7 +16,7 @@
 namespace App\Provider;
 
 use App\Manager\DataManager;
-use App\Manager\Serialiser;
+use App\Manager\ItemSerialiser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Yaml\Yaml;
@@ -111,5 +111,25 @@ class AbstractProvider implements ProviderInterface
     public function getItemName(): string
     {
         return $this->itemName;
+    }
+
+    /**
+     * has
+     * 4/01/2021 10:03
+     * @param $item
+     * The item can be an id (string) or an object (ProviderItemInterface.)
+     * @return bool
+     */
+    public function has($item): bool
+    {
+        if (is_string($item)) {
+            return $this->find($item) !== null;
+        }
+
+        if (is_object($item) && method_exists($item, 'getId')) {
+            return $this->find($item->getId()) !== null;
+        }
+
+        return false;
     }
 }
