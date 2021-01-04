@@ -20,10 +20,10 @@
                     {{ form_row(line.id) }}
                 </div>
                 <div class="cell medium-3 medium-cell-block-y">
-                    {{ form_row(line.grade, {value: line.vars.value.grade.id}) }}
+                    {{ form_row(line.grades) }}
                 </div>
-                <div class="cell medium-4 medium-cell-block-y">
-                    <a href="{{ path('line_classes_manage', {line: line.id.vars.value}) }}" class="success button" title="{{ 'Manage Line Classes'|trans }}">{{ 'Manage Line Classes'|trans }}</a>
+                <div class="cell medium-4 medium-cell-block-y align-flex-center">
+                    <a href="{{ path('line_details', {line: line.id.vars.value}) }}" class="success button" title="{{ 'Details'|trans }}">{{ 'Details'|trans }}</a>
                     <a href="{{ path('line_delete', {line: line.id.vars.value}) }}" class="warning button" title="{{ 'Delete Line'|trans }}">{{ 'Delete Line'|trans }}</a>
                 </div>
             </div>

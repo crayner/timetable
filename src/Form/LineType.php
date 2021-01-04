@@ -25,6 +25,8 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Class LineListType
@@ -69,21 +71,28 @@ class LineType extends AbstractType
             ->add('name', TextType::class,
                 [
                     'label' => 'Line Name',
+                    'constraints' => [
+                        new NotBlank(),
+                        new Length(['max' => 6]),
+                    ],
                 ]
             )
             ->add('id', HiddenType::class)
-            ->add('grade', ChoiceType::class,
+            ->add('grades', ChoiceType::class,
                 [
                     'label' => 'Grade/Year/Form',
                     'choices' => $this->getGradeChoices(),
                     'placeholder' => 'Please select...',
                     'choice_label' => 'name',
                     'choice_value' => 'id',
+                    'multiple' => true,
+                    'expanded' => true,
+                    'attr' => ['class' => 'text-right labels-inline'],
                     'choice_translation_domain' => false,
                 ]
             )
         ;
-        $builder->get('grade')->addModelTransformer(new ItemTransForm(Grade::class));
+        $builder->get('grades')->addModelTransformer(new ItemTransForm(Grade::class, true));
     }
 
     /**

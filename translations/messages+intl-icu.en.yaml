@@ -185,3 +185,21 @@ Class Name: Class Name
 Capacity: Capacity
 Teachers: Teachers
 Delete Class: Delete Class
+'Settings: Line Details': 'Settings: Line Details'
+line_capacity_message: >-
+    { message, select,
+        under { {
+             count, plural,
+                =0 { This should never happen! }
+                one { One student needs to be added to the classes. }
+                other { # students need to be added to the classes. }
+            } }
+        over    { {
+            count, plural,
+                =0 { This should never happen! }
+                one { One student needs to be removed from the classes. }
+                other { # students need to be removed from the classes. }
+            } }
+        correct { The student numbers are correct. }
+        other   { This should never happen! }
+    }

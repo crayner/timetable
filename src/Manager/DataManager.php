@@ -22,6 +22,7 @@ use App\Items\Grade;
 use App\Items\Line;
 use App\Items\Room;
 use App\Items\Staff;
+use App\Provider\ProviderFactory;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Yaml\Yaml;
 
@@ -250,6 +251,20 @@ class DataManager
     public function getPeriods(): int
     {
         return $this->periods;
+    }
+
+    /**
+     * getMaxDayPeriods
+     * 3/01/2021 10:10
+     * @return int
+     */
+    public function getMaxDayPeriods(): int
+    {
+        $periods = 0;
+        foreach ($this->getDays() as $day){
+            $periods = $day->getPeriods() > $periods ? $day->getPeriods() : $periods;
+        }
+        return $periods;
     }
 
     /**
@@ -659,7 +674,8 @@ class DataManager
             ->setSecret($data['secret'], false)
             ->setStaff(new ArrayCollection($data['staff']), true)
             ->setClasses(new ArrayCollection($data['classes']), true)
-            ->setLines(new ArrayCollection($data['lines']), true);
+            ->setLines(new ArrayCollection($data['lines']), true)
+        ;
     }
 
     /**
@@ -901,10 +917,27 @@ class DataManager
     }
 
     /**
+     * addClass
+     * 4/01/2021 10:01
+     * @param ClassDetail $class
+     * @return DataManager
+     */
+    public function addClass(ClassDetail $class): DataManager
+    {
+        if ($this->getClasses()->contains($class)) return $this;
+
+        if (ProviderFactory::create(ClassDetail::class)->has($class)) return $this;
+
+        $this->classes->add($class);
+
+        return $this;
+    }
+
+    /**
      * removeClass
      * 1/01/2021 11:18
      * @param string $id
-     * @return $this
+     * @return DataManager
      */
     public function removeClass(string $id): DataManager
     {
@@ -918,7 +951,7 @@ class DataManager
     /**
      * sortClasses
      * 1/01/2021 11:19
-     * @return $this
+     * @return DataManager
      */
     public function sortClasses(): DataManager
     {

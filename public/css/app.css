@@ -35,9 +35,21 @@ body {
 .grid-container {
     background-color: rgba(254,247,255,0.8);
 }
-.striped div.grid-x:nth-of-type(even)  {
+.striped div.grid-margin-x:nth-of-type(even)  {
     background-color: rgba(203,197,204,0.8);
 }
+.striped div.grid-margin-x:nth-of-type(even) .cell  {
+    border-color: darkgrey;
+}
 .striped div.grid-x:last-child  {
-     background-color: inherit;
- }
+    background-color: inherit;
+}
+.labels-inline label {
+    display: inline;
+}
+.labels-inline div {
+    max-height: 1.1rem;
+}
+.labels-inline div:last-child {
+     max-height: inherit;
+}
