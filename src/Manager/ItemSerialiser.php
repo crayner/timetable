@@ -56,7 +56,7 @@ class ItemSerialiser
             return $result;
         }
 
-        if (class_implements(ProviderItemInterface::class, $data)) {
+        if (in_array(ProviderItemInterface::class, class_implements($data))) {
             return $data->getId();
         }
 

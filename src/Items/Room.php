@@ -15,8 +15,10 @@
 namespace App\Items;
 
 use App\Helper\UUID;
+use App\Provider\ProviderItemInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class Room implements DuplicateNameInterface
+class Room implements DuplicateNameInterface, ProviderItemInterface
 {
     /**
      * @var string
@@ -39,6 +41,16 @@ class Room implements DuplicateNameInterface
     public function getId(): string
     {
         return $this->id = isset($this->id) ? $this->id : UUID::v4();
+    }
+
+    /**
+     * @param string $id
+     * @return Room
+     */
+    public function setId(string $id): Room
+    {
+        $this->id = $id;
+        return $this;
     }
 
     /**
@@ -82,8 +94,18 @@ class Room implements DuplicateNameInterface
     }
 
     /**
+     * getNameCapacity
+     * 5/01/2021 08:15
+     * @return string
+     */
+    public function getNameCapacity(): string
+    {
+        return $this->getName() . ' ('.$this->getCapacity().')';
+    }
+
+    /**
      * serialise
-     * @return null[]|string[]
+     * @return array
      * 14/12/2020 08:46
      */
     public function serialise(): array
@@ -103,6 +125,24 @@ class Room implements DuplicateNameInterface
      */
     public function deserialise(array $data): Room
     {
+        $resolver = new OptionsResolver();
+        $resolver
+            ->setRequired(
+                [
+                    'id',
+                    'name',
+                ]
+            )
+            ->setDefaults(
+                [
+                    'capacity' => 30,
+                ]
+            )
+            ->setAllowedTypes('id', 'string')
+            ->setAllowedTypes('name', 'string')
+            ->setAllowedTypes('capacity', 'integer')
+        ;
+        $data = $resolver->resolve($data);
         $this->id = $data['id'];
         $this->name = $data['name'];
         $this->capacity = $data['capacity'];

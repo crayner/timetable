@@ -203,3 +203,5 @@ line_capacity_message: >-
         correct { The student numbers are correct. }
         other   { This should never happen! }
     }
+Class Capacity: Class Capacity
+Default Room: Default Room

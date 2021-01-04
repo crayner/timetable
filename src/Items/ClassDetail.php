@@ -50,6 +50,11 @@ class ClassDetail implements DuplicateNameInterface, ProviderItemInterface
     private ?Line $line;
 
     /**
+     * @var Room|null
+     */
+    private ?Room $room;
+
+    /**
      * getId
      * 16/12/2020 17:45
      * @return string
@@ -173,6 +178,26 @@ class ClassDetail implements DuplicateNameInterface, ProviderItemInterface
     }
 
     /**
+     * getRoom
+     * 5/01/2021 07:49
+     * @return Room|null
+     */
+    public function getRoom(): ?Room
+    {
+        return $this->room = isset($this->room) ? $this->room : null;
+    }
+
+    /**
+     * @param Room|null $room
+     * @return ClassDetail
+     */
+    public function setRoom(?Room $room): ClassDetail
+    {
+        $this->room = $room;
+        return $this;
+    }
+
+    /**
      * serialise
      * 31/12/2020 14:16
      * @return string[]
@@ -184,12 +209,13 @@ class ClassDetail implements DuplicateNameInterface, ProviderItemInterface
             'name' => $this->getName(),
             'capacity' => $this->getCapacity(),
             'teachers' => ItemSerialiser::serialise($this->getTeachers()),
+            'room' => ItemSerialiser::serialise($this->getRoom()),
         ];
     }
 
     /**
      * deserialise
-     * 1/01/2021 11:14
+     * 5/01/2021 08:29
      * @param array $data
      * @return ClassDetail
      */
@@ -207,18 +233,21 @@ class ClassDetail implements DuplicateNameInterface, ProviderItemInterface
                 [
                     'capacity' => 0,
                     'teachers' => [],
+                    'room' => null,
                 ]
             )
             ->setAllowedTypes('id', 'string')
             ->setAllowedTypes('name', 'string')
             ->setAllowedTypes('capacity', 'integer')
             ->setAllowedTypes('teachers', 'array')
+            ->setAllowedTypes('room', ['null','string'])
         ;
         $data = $resolver->resolve($data);
         $this->id = $data['id'];
         $this->name = $data['name'];
         $this->capacity = $data['capacity'];
         $this->teachers = ItemSerialiser::deserialise(Staff::class, $data['teachers']);
+        $this->room = ItemSerialiser::deserialise(Room::class, $data['room']);
         return $this;
     }
 

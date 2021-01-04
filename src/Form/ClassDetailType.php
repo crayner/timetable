@@ -22,9 +22,11 @@ use App\Form\Type\SelectedAsPreferredChoiceType;
 use App\Items\ClassDetail;
 use App\Items\Grade;
 use App\Items\Line;
+use App\Items\Room;
 use App\Items\Staff;
 use App\Provider\ProviderFactory;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -85,12 +87,12 @@ class ClassDetailType extends AbstractType
                     'class' => Staff::class,
                 ]
             )
-            ->add('line', ChoiceType::class,
+            ->add('room', ChoiceType::class,
                 [
-                    'label' => 'Line',
-                    'choices' => ProviderFactory::create(Line::class)->all(),
+                    'label' => 'Default Room',
+                    'choices' => ProviderFactory::create(Room::class)->all(),
                     'placeholder' => 'Please select...',
-                    'choice_label' => 'name',
+                    'choice_label' => 'nameCapacity',
                     'choice_value' => 'id',
                     'choice_translation_domain' => false,
                     'required' => false,
