@@ -35,17 +35,17 @@
                     </div>
                 </div>
                 <div class="cell medium-2 medium-cell-block-y align-flex-center">
-                    <a href="{{ path('class_delete', {'class': class.id.vars.value}) }}" class="warning button" title="{{ 'Delete Class'|trans }}">{{ 'Delete Class'|trans }}</a>
+                    <a href="{{ path('class_delete', {'class': class.id.vars.value, line: getManager().line.id}) }}" class="warning button" title="{{ 'Delete Class'|trans }}">{{ 'Delete Class'|trans }}</a>
                 </div>
             </div>
         {% endfor %}
         {% do form.classes.setRendered %}
         <div class="grid-x grid-margin-x grid-padding-x">
             <div class="cell medium-2 medium-cell-block-y align-flex-center">
-                <a href="{{ path('class_add') }}" class="button secondary" title="{{ 'Add Class'|trans }}">{{ 'Add Class'|trans }}</a>
+                <a href="{{ path('class_add', {line: getManager().line.id}) }}" class="button secondary" title="{{ 'Add Class'|trans }}">{{ 'Add Class'|trans }}</a>
             </div>
             <div class="cell medium-2 medium-cell-block-y align-flex-center">
-                <a href="{{ path('class_remove') }}" class="button secondary" title="{{ 'Remove Class'|trans }}">{{ 'Remove Class'|trans }}</a>
+                <a href="{{ path('class_remove', {line: getManager().line.id}) }}" class="button secondary" title="{{ 'Remove Class'|trans }}">{{ 'Remove Class'|trans }}</a>
             </div>
             <div class="cell medium-offset-4 medium-2 medium-cell-block-y align-flex-center">
                 <a href="{{ path('basic_settings') }}" class="button" title="{{ 'Update Basic Settings'|trans }}">{{ 'Settings: Basic'|trans }}</a>

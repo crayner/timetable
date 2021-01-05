@@ -71,7 +71,7 @@ class DayController extends AbstractController
      * @Route("/day/remove/",name="day_remove")
      * @return Response
      */
-    public function removeDay(Request $request, TimetableManager $manager): Response
+    public function remove(Request $request, TimetableManager $manager): Response
     {
         $days = $manager->getDataManager()->getDays();
         if ($days->count() > 0) {
@@ -92,7 +92,7 @@ class DayController extends AbstractController
      * @return Response
      * @Route("/day/{day}/delete/",name="day_delete")
      */
-    public function deleteDay(string $day, Request $request, TimetableManager $manager): Response
+    public function delete(string $day, Request $request, TimetableManager $manager): Response
     {
         $manager->getDataManager()->removeDay($day);
 
