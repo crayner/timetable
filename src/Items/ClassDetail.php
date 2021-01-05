@@ -168,10 +168,10 @@ class ClassDetail implements DuplicateNameInterface, ProviderItemInterface
     }
 
     /**
-     * @param Line|null $line
+     * @param Line $line
      * @return ClassDetail
      */
-    public function setLine(?Line $line): ClassDetail
+    public function setLine(Line $line): ClassDetail
     {
         $this->line = $line;
         return $this;
@@ -210,6 +210,7 @@ class ClassDetail implements DuplicateNameInterface, ProviderItemInterface
             'capacity' => $this->getCapacity(),
             'teachers' => ItemSerialiser::serialise($this->getTeachers()),
             'room' => ItemSerialiser::serialise($this->getRoom()),
+            'line' => ItemSerialiser::serialise($this->getLine()),
         ];
     }
 
@@ -234,6 +235,7 @@ class ClassDetail implements DuplicateNameInterface, ProviderItemInterface
                     'capacity' => 0,
                     'teachers' => [],
                     'room' => null,
+                    'line' => null,
                 ]
             )
             ->setAllowedTypes('id', 'string')
@@ -241,6 +243,7 @@ class ClassDetail implements DuplicateNameInterface, ProviderItemInterface
             ->setAllowedTypes('capacity', 'integer')
             ->setAllowedTypes('teachers', 'array')
             ->setAllowedTypes('room', ['null','string'])
+            ->setAllowedTypes('line', ['null','string'])
         ;
         $data = $resolver->resolve($data);
         $this->id = $data['id'];
@@ -248,6 +251,7 @@ class ClassDetail implements DuplicateNameInterface, ProviderItemInterface
         $this->capacity = $data['capacity'];
         $this->teachers = ItemSerialiser::deserialise(Staff::class, $data['teachers']);
         $this->room = ItemSerialiser::deserialise(Room::class, $data['room']);
+        $this->line = ItemSerialiser::deserialise(Line::class, $data['line']);
         return $this;
     }
 

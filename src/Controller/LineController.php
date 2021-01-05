@@ -123,21 +123,21 @@ class LineController extends AbstractController
      */
     public function details(string $line, Request $request, LineManager $manager)
     {
-        $line = ProviderFactory::create(Line::class)->find($line);
+        $manager->setLine($line);
         if (empty($line)) {
             $this->addFlash('warning', 'The line was not found.');
             return $this->forward(LineController::class.'::manager', ['request' => $request, 'manager' => $manager]);
         }
 
-        $form = $this->createForm(FullLineType::class, $line);
+        $form = $this->createForm(FullLineType::class, $manager->getline());
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && !$form->isValid()) {
             $manager->setSaveOnTerminate(false);
         } else if ($form->isSubmitted() && $form->isValid()) {
-            if ($manager->validateClassDetails($line, intval($form->get('classCount')->getData()))) {
-                return $this->redirectToRoute('line_details', ['line' => $line->getId()]);
+            if ($manager->validateClassDetails($manager->getLine(), intval($form->get('classCount')->getData()))) {
+                return $this->redirectToRoute('line_details', ['line' => $manager->getLine()->getId()]);
             }
         }
 

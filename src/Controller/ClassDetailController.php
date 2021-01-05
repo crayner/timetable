@@ -17,7 +17,10 @@ namespace App\Controller;
 
 use App\Form\ClassDetailsType;
 use App\Items\ClassDetail;
+use App\Items\Line;
+use App\Manager\LineManager;
 use App\Manager\TimetableManager;
+use App\Provider\ProviderFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,14 +37,15 @@ class ClassDetailController extends AbstractController
      * grades
      * 15/12/2020 08:44
      * @param Request $request
-     * @param TimetableManager $manager
-     * @Route("/class/details/",name="class_details")
-     * @Route("/class/details/",name="class_delete")
+     * @param LineManager $manager
+     * @param string $line
      * @return Response
+     * @Route("/class/{line}/details/",name="class_details")
      */
-    public function details(Request $request, TimetableManager $manager): Response
+    public function details(Request $request, LineManager $manager, string $line): Response
     {
-        $form = $this->createForm(ClassDetailsType::class, $manager->getDataManager(), ['action' => $this->generateUrl('class_details')]);
+        $manager->setLine($line);
+        $form = $this->createForm(ClassDetailsType::class, $manager, ['action' => $this->generateUrl('class_details', ['line' => $manager->getLine()->getId()])]);
 
         $form->handleRequest($request);
 
@@ -55,39 +59,60 @@ class ClassDetailController extends AbstractController
     /**
      * add
      * 1/01/2021 11:42
+     * @param string $line
      * @param Request $request
-     * @param TimetableManager $manager
-     * @Route("/class/add/",name="class_add")
+     * @param LineManager $manager
      * @return Response
+     * @Route("/class/{line}/add/",name="class_add")
      */
-    public function add(Request $request, TimetableManager $manager): Response
+    public function add(string $line, Request $request, LineManager $manager): Response
     {
         $class = new ClassDetail();
+        $manager->setLine($line);
         $class->setName('CL'. str_pad(strval($manager->getDataManager()->getClasses()->count() + 1), 4, '0', STR_PAD_LEFT));
         $classes = $manager->getDataManager()->getClasses();
         $classes->add($class);
         $manager->getDataManager()->setClasses($classes);
 
-        return $this->forward(ClassDetailController::class.'::details',['request' => $request, 'TimetableManager' => $manager]);
+        return $this->forward(ClassDetailController::class.'::details',['request' => $request, 'LineManager' => $manager]);
     }
 
     /**
      * remove
      * 1/01/2021 12:13
      * @param Request $request
-     * @param TimetableManager $manager
-     * @Route("/class/remove/",name="class_remove")
+     * @param LineManager $manager
      * @return Response
+     * @Route("/class/{line}/remove/",name="class_remove")
      */
-    public function remove(Request $request, TimetableManager $manager): Response
+    public function remove(string $line, Request $request, LineManager $manager): Response
     {
-        $classes = $manager->getDataManager()->getClasses();
+        $manager->setLine($line);
+        $classes = $manager->getClasses();
         if ($classes->count() > 0) {
             $last = $classes->last();
             $classes->removeElement($last);
-            $manager->getDataManager()->setClasses($classes);
+            $manager->setClasses($classes);
         }
 
-        return $this->forward(ClassDetailController::class.'::details',['request' => $request, 'TimetableManager' => $manager]);
+        return $this->forward(ClassDetailController::class.'::details',['request' => $request, 'LineManager' => $manager]);
+    }
+
+    /**
+     * delete
+     * 5/01/2021 12:29
+     * @param string $line
+     * @param string $class
+     * @param Request $request
+     * @param LineManager $manager
+     * @return Response
+     * @Route("/class/{line}/{class}/delete/",name="class_delete")
+     */
+    public function delete(string $line, string $class, Request $request, LineManager $manager)
+    {
+        $manager->setLine($line);
+        if (!$manager->removeClass($class)) $this->addFlash('warning', 'The class detail was not valid!');
+
+        return $this->forward(ClassDetailController::class.'::details',['request' => $request, 'LineManager' => $manager]);
     }
 }

@@ -17,6 +17,7 @@ namespace App\Form;
 
 use App\Items\ClassDetail;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -34,6 +35,7 @@ class LineClassType extends AbstractType
     {
         $builder
             ->add('name', TextType::class)
+            ->add('id', HiddenType::class)
             ->add('capacity', IntegerType::class)
         ;
     }

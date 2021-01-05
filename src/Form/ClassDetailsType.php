@@ -16,6 +16,7 @@
 namespace App\Form;
 
 use App\Manager\DataManager;
+use App\Manager\LineManager;
 use App\Validator\DuplicateName;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -66,7 +67,7 @@ class ClassDetailsType extends AbstractType
             ->setDefaults(
                 [
                     'translation_domain' => 'messages',
-                    'data_class' => DataManager::class,
+                    'data_class' => LineManager::class,
                 ]
             )
         ;

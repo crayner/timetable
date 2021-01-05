@@ -59,13 +59,17 @@
             {% endif %}
             {% for key,item in form.classes %}
                 <div class="grid-x grid-margin-x grid-padding-x">
-                    <div class="cell medium-4 medium-cell-block-y">
+                    <div class="cell medium-2 medium-cell-block-y">
+                        {{ form_widget(item.id) }}
                         {{ form_widget(item.name) }}
                     </div>
-                    <div class="cell medium-4 medium-cell-block-y">
+                    <div class="cell medium-2 medium-cell-block-y">
                         {{ form_widget(item.capacity) }}
                     </div>
-                    <div class="cell medium-4 medium-cell-block-y">
+                    <div class="cell medium-8 medium-cell-block-y align-flex-center">
+                        <a href="{{ path('class_details', {line: getManager().line.id}) }}" class="button success" title="{{ 'Class Details'|trans }}">{{ 'Class Details'|trans }}</a>
+                        <a href="{{ path('class_delete', {'class': item.id.vars.value, line: getManager().line.id}) }}" class="warning button" title="{{ 'Delete Class'|trans }}">{{ 'Delete Class'|trans }}</a>
+
                     </div>
                 </div>
             {% endfor %}
@@ -73,13 +77,16 @@
         {% do form.classes.setRendered %}
         <div class="grid-x grid-margin-x grid-padding-x">
             <div class="cell medium-2 medium-cell-block-y align-flex-center">
-                <a href="{{ path('line_add') }}" class="button secondary" title="{{ 'Add Line'|trans }}">{{ 'Add Line'|trans }}</a>
+                <a href="{{ path('line_add', {line: getManager().line.id}) }}" class="button secondary" title="{{ 'Add Line'|trans }}">{{ 'Add Line'|trans }}</a>
             </div>
             <div class="cell medium-2 medium-cell-block-y align-flex-center">
-                <a href="{{ path('line_remove') }}" class="button secondary" title="{{ 'Remove Line'|trans }}">{{ 'Remove Line'|trans }}</a>
+                <a href="{{ path('line_remove', {line: getManager().line.id}) }}" class="button secondary" title="{{ 'Remove Line'|trans }}">{{ 'Remove Line'|trans }}</a>
             </div>
-            <div class="cell medium-offset-4 medium-2 medium-cell-block-y align-flex-center">
+            <div class="cell medium-offset-2 medium-2 medium-cell-block-y align-flex-center">
                 <a href="{{ path('basic_settings') }}" class="button" title="{{ 'Update Basic Settings'|trans }}">{{ 'Settings: Basic'|trans }}</a>
+            </div>
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('lines') }}" class="button" title="{{ 'Manage Lines'|trans }}">{{ 'Manage Lines'|trans }}</a>
             </div>
             <div class="cell medium-2 medium-cell-block-y align-flex-center">
                 {{ form_row(form.saveLine) }}

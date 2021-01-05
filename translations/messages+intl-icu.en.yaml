@@ -205,3 +205,14 @@ line_capacity_message: >-
     }
 Class Capacity: Class Capacity
 Default Room: Default Room
+Class Count: Class Count
+Create the classes for this line by changing this number.: Create the classes for this line by changing this number.
+Days in Timetable: Days in Timetable
+Limit placement in the timetable to the selected items. No selection = full selection.: Limit placement in the timetable to the selected items. No selection = full selection.
+Periods in Timetable: Periods in Timetable
+Placement Count: Placement Count
+How many times will this line be placed in the timetable.: How many times will this line be placed in the timetable.
+Classes in Line: Classes in Line
+Save Line: Save Line
+Details: Details
+Class Details: Class Details

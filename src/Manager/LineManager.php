@@ -17,6 +17,8 @@ namespace App\Manager;
 
 use App\Items\ClassDetail;
 use App\Items\Line;
+use App\Provider\ProviderFactory;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Class LineManager
@@ -25,6 +27,11 @@ use App\Items\Line;
  */
 class LineManager extends TimetableManager
 {
+    /**
+     * @var Line|null
+     */
+    private ?Line $line;
+
     /**
      * validateClassDetails
      * 4/01/2021 13:14
@@ -75,5 +82,40 @@ class LineManager extends TimetableManager
         if ($total < 0) return ['message' => 'over', 'count' => abs($total)];
 
         return ['message' => 'correct'];
+    }
+
+    /**
+     * getLine
+     * 6/01/2021 09:41
+     * @return Line|null
+     */
+    public function getLine(): ?Line
+    {
+        return $this->line = isset($this->line) ? $this->line : null;
+    }
+
+    /**
+     * setLine
+     * 6/01/2021 09:41
+     * @param $line
+     * @return LineManager
+     */
+    public function setLine($line): LineManager
+    {
+        if (is_string($line)) $line = ProviderFactory::create(Line::class)->find($line);
+        $this->line = $line instanceof Line ? $line : null;
+        return $this;
+    }
+
+    /**
+     * getClasses
+     * 5/01/2021 13:04
+     * @return ArrayCollection
+     */
+    public function getClasses(): ArrayCollection
+    {
+        if (is_null($this->getLine())) return $this->getDataManager()->getClasses();
+
+        return $this->getLine()->getClasses();
     }
 }

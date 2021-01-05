@@ -649,8 +649,8 @@ class DataManager
             'periods' => $this->getPeriods(),
             'days' => $this->getDays(true)->toArray(),
             'grades' => $this->getGrades(true)->toArray(),
-            'classes' => $this->getClasses(true)->toArray(),
             'lines' => $this->getLines(true)->toArray(),
+            'classes' => $this->getClasses(true)->toArray(),
         ];
     }
 
@@ -673,8 +673,8 @@ class DataManager
             ->setGrades(new ArrayCollection($data['grades']), true)
             ->setSecret($data['secret'], false)
             ->setStaff(new ArrayCollection($data['staff']), true)
-            ->setClasses(new ArrayCollection($data['classes']), true)
             ->setLines(new ArrayCollection($data['lines']), true)
+            ->setClasses(new ArrayCollection($data['classes']), true)
         ;
     }
 
@@ -935,17 +935,20 @@ class DataManager
 
     /**
      * removeClass
-     * 1/01/2021 11:18
+     * 5/01/2021 12:33
      * @param string $id
-     * @return DataManager
+     * @return bool
      */
-    public function removeClass(string $id): DataManager
+    public function removeClass(string $id): bool
     {
+        $count = $this->getClasses()->count();
         $members = $this->getClasses()->filter(function(ClassDetail $class) use ($id) {
             if ($id !== $class->getId()) return $class;
         });
 
-        return $this->setClasses($members);
+        $this->setClasses($members);
+
+        return $count === $members->count() + 1;
     }
 
     /**

@@ -16,6 +16,7 @@ namespace App\Items;
 
 use App\Helper\UUID;
 use App\Manager\ItemSerialiser;
+use App\Provider\ProviderFactory;
 use App\Provider\ProviderItemInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -136,7 +137,15 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
      */
     public function getClasses(): ArrayCollection
     {
-        return $this->classes = isset($this->classes) ? $this->classes : new ArrayCollection();
+        if (!isset($this->classes) || $this->classes->count() === 0) {
+            $line = $this;
+            $this->classes = ProviderFactory::create(ClassDetail::class)->all()->filter(function(ClassDetail $class) use ($line) {
+                if ($line->isEqualTo($class->getLine())) return $class;
+            });
+            return $this->classes;
+        } else {
+            return isset($this->classes) ? $this->classes : new ArrayCollection();
+        }
     }
 
     /**
@@ -146,21 +155,6 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
     public function setClasses(ArrayCollection $classes): Line
     {
         $this->classes = $classes;
-        return $this;
-    }
-
-    /**
-     * addClass
-     * 31/12/2020 14:13
-     * @param ClassDetail $class
-     * @return Line
-     */
-    public function addClass(ClassDetail $class): Line
-    {
-        if ($this->getClasses()->contains($class)) return $this;
-
-        $this->classes->add($class);
-
         return $this;
     }
 
@@ -240,6 +234,17 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
     }
 
     /**
+     * isEqualTo
+     * 5/01/2021 14:46
+     * @param Line $line
+     * @return bool
+     */
+    public function isEqualTo(Line $line): bool
+    {
+        return $line->getId() === $this->getId();
+    }
+
+    /**
      * serialise
      * @return string[]
      * 11/12/2020 13:28
@@ -250,7 +255,6 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
             'id' => $this->getId(),
             'name' => $this->getName(),
             'grades' => ItemSerialiser::serialise($this->getGrades()),
-            'classes' => ItemSerialiser::serialise($this->getClasses()),
             'days' => ItemSerialiser::serialise($this->getDays()),
             'periods' => $this->getPeriods(),
             'placementCount' => $this->getPlacementCount(),
@@ -275,7 +279,6 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
             ->setDefaults(
                 [
                     'grades' => [],
-                    'classes' => [],
                     'periods' => [],
                     'days' => [],
                     'placementCount' => 0,
@@ -284,7 +287,6 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
             ->setAllowedTypes('id', 'string')
             ->setAllowedTypes('name', 'string')
             ->setAllowedTypes('grades', 'array')
-            ->setAllowedTypes('classes', 'array')
             ->setAllowedTypes('periods', 'array')
             ->setAllowedTypes('days', 'array')
             ->setAllowedTypes('placementCount', 'integer')
@@ -295,7 +297,6 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
         $this->placementCount = $data['placementCount'];
         $this->days = ItemSerialiser::deserialise(Day::class, $data['days']);
         $this->grades = ItemSerialiser::deserialise(Grade::class, $data['grades']);
-        $this->classes = ItemSerialiser::deserialise(ClassDetail::class, $data['classes']);
         $this->periods = $data['periods'];
         return $this;
     }
