@@ -16,6 +16,7 @@
 namespace App\Manager;
 
 use App\Items\ClassDetail;
+use App\Items\Grade;
 use App\Items\Line;
 use App\Provider\ProviderFactory;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -31,6 +32,11 @@ class LineManager extends TimetableManager
      * @var Line|null
      */
     private ?Line $line;
+
+    /**
+     * @var Grade|null
+     */
+    private ?Grade $grade;
 
     /**
      * validateClassDetails
@@ -117,5 +123,46 @@ class LineManager extends TimetableManager
         if (is_null($this->getLine())) return $this->getDataManager()->getClasses();
 
         return $this->getLine()->getClasses();
+    }
+
+    /**
+     * getGrade
+     * 6/01/2021 10:40
+     * @return Grade|null
+     */
+    public function getGrade(): ?Grade
+    {
+        return $this->grade = isset($this->grade) ? $this->grade : null;
+    }
+
+    /**
+     * setGrade
+     * 7/01/2021 10:31
+     *
+     * @param $grade
+     * @return LineManager
+     */
+    public function setGrade($grade): LineManager
+    {
+        if (is_string($grade)) $grade = ProviderFactory::create(Grade::class)->find($grade);
+        $this->grade = $grade instanceof Grade ? $grade : null;
+
+        return $this;
+    }
+
+    /**
+     * getLines
+     * 6/01/2021 10:44
+     * @return ArrayCollection
+     */
+    public function getLines(): ArrayCollection
+    {
+        if (($grade = $this->getGrade()) === null) return $this->getDataManager()->getLines();
+
+        $lines = $this->getDataManager()->getLines()->filter(function (Line $line) use ($grade) {
+            if ($line->hasGrade($grade)) return $line;
+        });
+
+        return $lines;
     }
 }

@@ -102,7 +102,7 @@ class FullLineType extends AbstractType
             ->add('days', ChoiceType::class,
                 [
                     'label' => 'Days in Timetable',
-                    'help' => 'Limit placement in the timetable to the selected items. No selection = full selection.',
+                    'help' => 'Limit placement in the timetable to the selected days. No selection = full selection.',
                     'choices' => ProviderFactory::create(Day::class)->all(),
                     'choice_label' => 'name',
                     'choice_value' => 'id',
@@ -116,7 +116,7 @@ class FullLineType extends AbstractType
             ->add('periods', ChoiceType::class,
                 [
                     'label' => 'Periods in Timetable',
-                    'help' => 'Limit placement in the timetable to the selected items. No selection = full selection.',
+                    'help' => 'Limit placement in the timetable to the selected periods. No selection = full selection.',
                     'choices' => $this->getPeriodList(),
                     'expanded' => true,
                     'required' => false,
@@ -129,6 +129,12 @@ class FullLineType extends AbstractType
                 [
                     'label' => 'Placement Count',
                     'help' => 'How many times will this line be placed in the timetable.'
+                ]
+            )
+            ->add('doublePeriods', IntegerType::class,
+                [
+                    'label' => 'Allow Double Periods',
+                    'help' => 'How many times will this line have a double period in the timetable. Zero = no double periods.'
                 ]
             )
             ->add('classes', CollectionType::class,

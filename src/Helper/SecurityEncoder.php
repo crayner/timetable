@@ -139,4 +139,14 @@ class SecurityEncoder
         self::setAlgorithm();
         return password_needs_rehash($encoded, $this->algo, $this->options);
     }
+
+    /**
+     * getSelf
+     * 7/01/2021 10:24
+     * @return $this
+     */
+    public function getSelf(): SecurityEncoder
+    {
+        return $this;
+    }
 }

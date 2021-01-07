@@ -13,8 +13,8 @@
  * Date: 16/12/2020
  * Time: 16:47
  */
-
 namespace App\Helper;
+
 /**
  * Class UUID
  * @package App\Helper

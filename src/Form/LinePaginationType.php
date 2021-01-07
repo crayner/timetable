@@ -15,9 +15,12 @@
  */
 namespace App\Form;
 
-use App\Manager\DataManager;
+use App\Items\Grade;
+use App\Manager\LineManager;
+use App\Provider\ProviderFactory;
 use App\Validator\DuplicateName;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -28,7 +31,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * @package App\Form
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class LinesType extends AbstractType
+class LinePaginationType extends AbstractType
 {
     /**
      * buildForm
@@ -39,17 +42,17 @@ class LinesType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('lines', CollectionType::class,
+            ->add('searchGrade', ChoiceType::class,
                 [
-                    'entry_type' => LineType::class,
-                    'constraints' => [
-                        new DuplicateName(),
+                    'mapped' => false,
+                    'choices' => ProviderFactory::create(Grade::class)->all(),
+                    'placeholder' => 'All Forms/Grades/Years',
+                    'choice_label' => 'name',
+                    'choice_value' => 'id',
+                    'attr' => [
+                        'onChange' => 'this.form.submit()',
                     ],
-                ]
-            )
-            ->add('saveLines', SubmitType::class,
-                [
-                    'label' => 'Save Lines',
+                    'choice_translation_domain' => false,
                 ]
             )
         ;
@@ -66,7 +69,7 @@ class LinesType extends AbstractType
             ->setDefaults(
                 [
                     'translation_domain' => 'messages',
-                    'data_class' => DataManager::class,
+                    'data_class' => LineManager::class,
                 ]
             )
         ;

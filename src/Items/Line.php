@@ -64,6 +64,11 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
     private int $placementCount;
 
     /**
+     * @var int
+     */
+    private int $doublePeriods;
+
+    /**
      * Line constructor.
      * @param array $line
      */
@@ -121,6 +126,21 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
     }
 
     /**
+     * getGradeStrings
+     * 6/01/2021 11:19
+     * @return string
+     */
+    public function getGradeStrings(): string
+    {
+        $result = [];
+        foreach ($this->getGrades() as $grade) {
+            $result[] = $grade->getName();
+        }
+
+        return empty($result) ? '' : "<ul>\n<li>" . implode("</li>\n<li>", $result) . "</li>\n</ul>";
+    }
+
+    /**
      * @param ArrayCollection $grades
      * @return Line
      */
@@ -128,6 +148,21 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
     {
         $this->grades = $grades;
         return $this;
+    }
+
+    /**
+     * hasGrade
+     * 6/01/2021 10:49
+     * @param Grade|null $grade
+     * @return bool
+     */
+    public function hasGrade(?Grade $grade): bool
+    {
+        if ((is_null($grade))) return false;
+        $grades = $this->getGrades()->filter(function (Grade $item) use ($grade) {
+            if ($grade->isEqualto($item)) return $item;
+        });
+        return $grades->count() === 1;
     }
 
     /**
@@ -188,6 +223,19 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
     }
 
     /**
+     * getDaysString
+     * 7/01/2021 10:50
+     * @return string
+     */
+    public function getDaysString(): string
+    {
+        $result = [];
+        foreach ($this->getDays() as $day)
+            $result[] = $day->getName();
+        return implode(', ', $result);
+    }
+
+    /**
      * @param ArrayCollection $days
      * @return Line
      */
@@ -204,7 +252,20 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
     {
         return $this->periods = isset($this->periods) ? $this->periods : [];
     }
-
+    
+    /**
+     * getPeriodsString
+     * 7/01/2021 10:50
+     * @return string
+     */
+    public function getPeriodsString(): string
+    {
+        $result = [];
+        foreach ($this->getPeriods() as $period)
+            $result[] = $period;
+        return implode(', ', $result);
+    }
+    
     /**
      * @param array $periods
      * @return Line
@@ -234,6 +295,24 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
     }
 
     /**
+     * @return int
+     */
+    public function getDoublePeriods(): int
+    {
+        return $this->doublePeriods = isset($this->doublePeriods) ? $this->doublePeriods : 0;
+    }
+
+    /**
+     * @param int $doublePeriods
+     * @return Line
+     */
+    public function setDoublePeriods(int $doublePeriods): Line
+    {
+        $this->doublePeriods = $doublePeriods;
+        return $this;
+    }
+
+    /**
      * isEqualTo
      * 5/01/2021 14:46
      * @param Line $line
@@ -258,6 +337,7 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
             'days' => ItemSerialiser::serialise($this->getDays()),
             'periods' => $this->getPeriods(),
             'placementCount' => $this->getPlacementCount(),
+            'doublePeriods' => $this->getDoublePeriods(),
         ];
     }
 
@@ -282,6 +362,7 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
                     'periods' => [],
                     'days' => [],
                     'placementCount' => 0,
+                    'doublePeriods' => 0,
                 ]
             )
             ->setAllowedTypes('id', 'string')
@@ -290,11 +371,13 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
             ->setAllowedTypes('periods', 'array')
             ->setAllowedTypes('days', 'array')
             ->setAllowedTypes('placementCount', 'integer')
+            ->setAllowedTypes('doublePeriods', 'integer')
         ;
         $data = $resolver->resolve($data);
         $this->id = $data['id'];
         $this->name = $data['name'];
         $this->placementCount = $data['placementCount'];
+        $this->doublePeriods = $data['doublePeriods'];
         $this->days = ItemSerialiser::deserialise(Day::class, $data['days']);
         $this->grades = ItemSerialiser::deserialise(Grade::class, $data['grades']);
         $this->periods = $data['periods'];
