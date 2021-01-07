@@ -16,7 +16,7 @@
 namespace App\Controller;
 
 use App\Form\FullLineType;
-use App\Form\LinesType;
+use App\Form\LinePaginationType;
 use App\Items\Line;
 use App\Manager\LineManager;
 use App\Manager\TimetableManager;
@@ -38,13 +38,14 @@ class LineController extends AbstractController
      */
     public function manage(Request $request, LineManager $manager): Response
     {
-
-        $form = $this->createForm(LinesType::class, $manager->getDataManager(), ['action' => $this->generateUrl('lines')]);
+        $form = $this->createForm(LinePaginationType::class, $manager, ['action' => $this->generateUrl('lines')]);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && !$form->isValid()) {
             $manager->setSaveOnTerminate(false);
+        } else if ($form->isSubmitted() && $form->isValid()) {
+            $manager->setGrade($form->get('searchGrade')->getData() ?: '');
         }
 
         return $this->render('Lines/lines.html.twig', ['form' => $form->createView()]);

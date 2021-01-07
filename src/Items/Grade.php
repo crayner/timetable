@@ -91,6 +91,17 @@ class Grade implements DuplicateNameInterface, ProviderItemInterface
     }
 
     /**
+     * isEqualTo
+     * 6/01/2021 10:53
+     * @param Grade $grade
+     * @return bool
+     */
+    public function isEqualTo(Grade $grade): bool
+    {
+        return $grade->getId() === $this->getId();
+    }
+
+    /**
      * serialise
      * @return string[]
      * 14/12/2020 09:35

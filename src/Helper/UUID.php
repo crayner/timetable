@@ -15,6 +15,7 @@
  */
 
 namespace App\Helper;
+
 /**
  * Class UUID
  * @package App\Helper

@@ -33,6 +33,15 @@
                 {{ form_row(form.placementCount) }}
             </div>
         </div>
+        <div class="grid-x grid-margin-x grid-padding-x">
+            <div class="cell medium-4 medium-cell-block-y">
+                {{ form_row(form.doublePeriods) }}
+            </div>
+            <div class="cell medium-4 medium-cell-block-y">
+            </div>
+            <div class="cell medium-4 medium-cell-block-y">
+            </div>
+        </div>
         {% if form.classes|length > 0 %}
             <div class="grid-x grid-margin-x grid-padding-x">
                 <div class="cell medium-12 medium-cell-block-y text-center h3">
@@ -40,11 +49,14 @@
                 </div>
             </div>
             <div class="grid-x grid-margin-x grid-padding-x">
-                <div class="cell medium-4 medium-cell-block-y text-center expanded callout secondary">
+                <div class="cell medium-2 medium-cell-block-y align-flex-center callout small">
                     {{ 'Class Name'|trans }}
                 </div>
-                <div class="cell medium-4 medium-cell-block-y text-center expanded callout secondary">
+                <div class="cell medium-2 medium-cell-block-y align-flex-center callout small">
                     {{ 'Capacity'|trans }}
+                </div>
+                <div class="cell medium-8 medium-cell-block-y align-flex-center callout small">
+                    {{ 'Actions'|trans }}
                 </div>
             </div>
             {% set capacity = getManager().getCapacityWarning(form.vars.value) %}

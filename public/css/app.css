@@ -53,3 +53,6 @@ body {
 .labels-inline div:last-child {
      max-height: inherit;
 }
+.font-size-85 {
+    font-size: 85%;
+}

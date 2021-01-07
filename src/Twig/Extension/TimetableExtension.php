@@ -53,7 +53,7 @@ class TimetableExtension extends AbstractExtension
 
     /**
      * getManager
-     * 4/01/2021 13:16
+     * 7/01/2021 10:18
      * @return LineManager
      */
     public function getManager(): LineManager
