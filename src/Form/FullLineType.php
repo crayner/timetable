@@ -19,6 +19,7 @@ use App\Form\Transform\ItemTransForm;
 use App\Items\Day;
 use App\Items\Grade;
 use App\Items\Line;
+use App\Items\Period;
 use App\Manager\TimetableManager;
 use App\Provider\ProviderFactory;
 use Symfony\Component\Form\AbstractType;
@@ -117,12 +118,17 @@ class FullLineType extends AbstractType
                 [
                     'label' => 'Periods in Timetable',
                     'help' => 'Limit placement in the timetable to the selected periods. No selection = full selection.',
-                    'choices' => $this->getPeriodList(),
+                    'choices' => ProviderFactory::create(Period::class)->all(),
                     'expanded' => true,
                     'required' => false,
                     'multiple' => true,
                     'choice_translation_domain' => false,
-                    'attr' => ['class' => 'text-right labels-inline'],
+                    'attr' => [
+                        'class' => 'text-right labels-inline',
+                        'onChange' => 'this.form.submit()',
+                    ],
+                    'choice_label' => 'name',
+                    'choice_value' => 'id',
                 ]
             )
             ->add('placementCount', IntegerType::class,
@@ -168,19 +174,5 @@ class FullLineType extends AbstractType
                 'data_class' => Line::class,
             ]
         );
-    }
-
-    /**
-     * getPeriodList
-     * 3/01/2021 10:52
-     * @return array
-     */
-    private function getPeriodList(): array
-    {
-        $result = [];
-        for ($i=1; $i<=$this->manager->getDataManager()->getMaxDayPeriods(); $i++) {
-            $result[$i] = $i;
-        }
-        return $result;
     }
 }

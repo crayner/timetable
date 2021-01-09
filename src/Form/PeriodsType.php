@@ -2,49 +2,57 @@
 /**
  * Created by PhpStorm.
  *
- * Timetable Creator
- * (c) 2020-2020 Craig Rayner <craig@craigrayner.com>
+ * timetable
+ * (c) 2021 Craig Rayner <craig@craigrayner.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Licence: MIT
- * User: Craig Rayner
- * Date: 15/12/2020
- * Time: 08:29
+ * User: craig
+ * Date: 8/01/2021
+ * Time: 10:44
  */
 namespace App\Form;
 
-use App\Items\Staff;
+use App\Manager\DataManager;
 use App\Validator\DuplicateItem;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class StaffType
+ * Class PeriodsType
+ *
  * @package App\Form
  * @author Craig Rayner <craig@craigrayner.com>
+ * 8/01/2021 10:45
  */
-class StaffType extends AbstractType
+class PeriodsType extends AbstractType
 {
     /**
      * buildForm
-     * 15/12/2020 08:42
+     * 8/01/2021 11:00
+     *
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('id', HiddenType::class)
-            ->add('name', TextType::class,
+            ->add('periods', CollectionType::class,
                 [
+                    'entry_type' => PeriodType::class,
                     'constraints' => [
                         new DuplicateItem(),
+                        new DuplicateItem(['fields' => ['sequence']]),
                     ],
+                ]
+            )
+            ->add('savePeriods', SubmitType::class,
+                [
+                    'label' => 'Save Periods',
                 ]
             )
         ;
@@ -52,7 +60,8 @@ class StaffType extends AbstractType
 
     /**
      * configureOptions
-     * 15/12/2020 08:39
+     * 8/01/2021 11:00
+     *
      * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
@@ -61,7 +70,7 @@ class StaffType extends AbstractType
             ->setDefaults(
                 [
                     'translation_domain' => 'messages',
-                    'data_class' => Staff::class,
+                    'data_class' => DataManager::class,
                 ]
             )
         ;

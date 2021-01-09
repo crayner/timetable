@@ -18,7 +18,7 @@ namespace App\Form;
 use App\Items\Grade;
 use App\Manager\LineManager;
 use App\Provider\ProviderFactory;
-use App\Validator\DuplicateName;
+use App\Validator\DuplicateItem;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;

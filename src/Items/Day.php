@@ -15,7 +15,11 @@
 namespace App\Items;
 
 use App\Helper\UUID;
+use App\Manager\ItemSerialiser;
+use App\Provider\ProviderFactory;
 use App\Provider\ProviderItemInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class Day
@@ -35,9 +39,9 @@ class Day implements DuplicateNameInterface, ProviderItemInterface
     private string $name;
 
     /**
-     * @var int
+     * @var ArrayCollection
      */
-    private int $periods = 6;
+    private ArrayCollection $periods;
 
     /**
      * getId
@@ -80,22 +84,32 @@ class Day implements DuplicateNameInterface, ProviderItemInterface
     }
 
     /**
-     * @return int
+     * getPeriods
+     *
+     * 9/01/2021 10:45
+     * @param bool $serialise
+     * @return ArrayCollection
      */
-    public function getPeriods(): int
+    public function getPeriods(bool $serialise = false): ArrayCollection
     {
+        $this->periods = isset($this->periods) ? $this->periods : new ArrayCollection();
+        if ($serialise && $this->periods->count() === ProviderFactory::create(Period::class)->all()->count()) $this->periods = new ArrayCollection();
+
+        if (!$serialise and $this->periods->count() === 0) $this->periods = ProviderFactory::create(Period::class)->all();
+
         return $this->periods;
     }
 
     /**
-     * Periods.
+     * setPeriods
+     * 9/01/2021 10:46
      *
-     * @param int $periods
+     * @param ArrayCollection $periods
      * @return Day
      */
-    public function setPeriods(int $periods): Day
+    public function setPeriods(ArrayCollection $periods): Day
     {
-        $this->periods = $periods > 0 ? $periods : $this->periods;
+        $this->periods = $periods;
         return $this;
     }
 
@@ -109,21 +123,39 @@ class Day implements DuplicateNameInterface, ProviderItemInterface
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),
-            'periods' => $this->getPeriods(),
+            'periods' => ItemSerialiser::serialise($this->getPeriods(true)),
         ];
     }
 
     /**
      * deserialise
+     * 8/01/2021 10:16
+     *
      * @param array $data
      * @return Day
-     * 14/12/2020 10:43
      */
     public function deserialise(array $data): Day
     {
+        $resolver = new OptionsResolver();
+        $resolver
+            ->setRequired(
+                [
+                    'id',
+                    'name',
+                ]
+            )
+            ->setDefaults(
+                [
+                    'periods' => [],
+                ]
+            )
+            ->setAllowedTypes('id', 'string')
+            ->setAllowedTypes('name', 'string')
+            ->setAllowedTypes('periods', 'array')
+        ;
         $this->id = $data['id'];
         $this->name = $data['name'];
-        $this->periods = $data['periods'];
+        $this->periods = ItemSerialiser::deserialise(Period::class, $data['periods']);
         return $this;
     }
 }

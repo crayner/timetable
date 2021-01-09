@@ -56,15 +56,16 @@ class BasicSettingsType extends AbstractType
             ->add('dayCount', IntegerType::class,
                 [
                     'label' => 'Number of Days in the Timetable',
+                    'disabled' => true,
                 ]
             )
-            ->add('periods', IntegerType::class,
+            ->add('periodCount', IntegerType::class,
                 [
-                    'label' => 'Periods in a Day',
-                    'help' => 'If changed, this value is applied to all days.',
+                    'label' => 'Default Periods in a Day',
                     'constraints' => [
                         new Range(['min' => 1]),
                     ],
+                    'disabled' => true,
                 ]
             )
             ->add('studentsPerGrade', IntegerType::class,

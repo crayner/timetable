@@ -26,7 +26,7 @@ use Symfony\Component\Validator\ConstraintValidator;
  * @package App\Validator
  * @author Craig Rayner <craig@craigrayner.com>
  */
-class DuplicateNameValidator extends ConstraintValidator
+class DuplicateItemValidator extends ConstraintValidator
 {
     /**
      * validate
@@ -38,17 +38,29 @@ class DuplicateNameValidator extends ConstraintValidator
     {
         if (!$value instanceof ArrayCollection) return;
 
+        $fields = $constraint->fields;
         foreach ($value as $q=>$item)
         {
-            $duplicates = $value->filter(function(DuplicateNameInterface $day) use ($item) {
-                if ($day !== $item && $item->getName() === $day->getName()) return $day;
+            $duplicates = $value->filter(function(DuplicateNameInterface $datum) use ($item, $fields) {
+                if ($datum->getId() !== $item->getId()) {
+                    $duplicate = true;
+                    foreach ($fields as $name) {
+                        $method = 'is' . ucfirst($name);
+                        if (!method_exists($datum, $method)) {
+                            $method = 'get' . ucfirst($name);
+                        }
+                        if (!method_exists($datum, $method)) throw new \InvalidArgumentException(sprintf('The property "%s" does not have a valid getter in "%s".', $name, get_class($datum)));
+                        if ($item->$method() !== $datum->$method()) $duplicate = false;
+                    }
+                    if ($duplicate) return $datum;
+                }
             });
 
             if ($duplicates->count() > 0) {
                 $key = $value->indexOf($duplicates->first());
                 if ($q < $key) {
                     $this->context->buildViolation($constraint->message)
-                        ->setCode(DuplicateName::DUPLICATE_NAME_ERROR)
+                        ->setCode(DuplicateItem::DUPLICATE_NAME_ERROR)
                         ->setTranslationDomain('messages')
                         ->atPath('[' . $key . '].name')
                         ->addViolation();
