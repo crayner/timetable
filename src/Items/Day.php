@@ -102,8 +102,8 @@ class Day implements DuplicateNameInterface, ProviderItemInterface
 
     /**
      * setPeriods
+     * 9/01/2021 10:46
      *
-     * 9/01/2021 11:30
      * @param ArrayCollection $periods
      * @return Day
      */
