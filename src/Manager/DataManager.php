@@ -20,6 +20,7 @@ use App\Items\ClassDetail;
 use App\Items\Day;
 use App\Items\Grade;
 use App\Items\Line;
+use App\Items\Period;
 use App\Items\Room;
 use App\Items\Staff;
 use App\Provider\ProviderFactory;
@@ -59,9 +60,9 @@ class DataManager
     private int $roomCapacity = 30;
 
     /**
-     * @var int
+     * @var ArrayCollection
      */
-    private int $periods = 6;
+    private ArrayCollection $periods;
 
     /**
      * @var ArrayCollection
@@ -126,6 +127,7 @@ class DataManager
             ->setDays(new ArrayCollection())
             ->setLines(new ArrayCollection())
             ->setClasses(new ArrayCollection())
+            ->setPeriods(new ArrayCollection())
         ;
     }
 
@@ -246,33 +248,65 @@ class DataManager
     }
 
     /**
-     * @return int
+     * getPeriods
+     * 8/01/2021 09:59
+     *
+     * @param bool $serialise
+     * @return ArrayCollection
      */
-    public function getPeriods(): int
+    public function getPeriods(bool $serialise = false): ArrayCollection
     {
+        if ($this->periods->count() === 0) {
+            $this->readFile();
+        }
+        if ($serialise) {
+            $list = new ArrayCollection();
+            foreach ($this->periods as $period) {
+                $list->add($period->serialise());
+            }
+            return $list;
+        }
+
+        $iterator = $this->periods->getIterator();
+        $iterator->uasort(
+            function (Period $a, Period $b) {
+                return $a->getSequence() > $b->getSequence() ? 1 : -1 ;
+            }
+        );
+        $this->setPeriods(new ArrayCollection(iterator_to_array($iterator, false)));
+
         return $this->periods;
     }
 
     /**
-     * getMaxDayPeriods
-     * 3/01/2021 10:10
+     * getPeriodCount
+     * 8/01/2021 10:29
      * @return int
      */
-    public function getMaxDayPeriods(): int
+    public function getPeriodCount(): int
     {
-        $periods = 0;
-        foreach ($this->getDays() as $day){
-            $periods = $day->getPeriods() > $periods ? $day->getPeriods() : $periods;
-        }
-        return $periods;
+        return $this->getPeriods()->count();
     }
 
     /**
-     * @param int $periods
+     * setPeriods
+     * 8/01/2021 10:00
+     *
+     * @param ArrayCollection $periods
+     * @param bool            $deSerialise
      * @return DataManager
      */
-    public function setPeriods(int $periods): DataManager
+    public function setPeriods(ArrayCollection $periods, bool $deSerialise = false): DataManager
     {
+        if ($deSerialise) {
+            $new = new ArrayCollection();
+            foreach ($periods as $item) {
+                $member = new Period();
+                $member->deserialise($item);
+                $new->add($member);
+            }
+            $periods = $new;
+        }
         $this->periods = $periods;
         return $this;
     }
@@ -632,53 +666,6 @@ class DataManager
     }
 
     /**
-     * serialise
-     * 18/12/2020 08:45
-     */
-    public function serialise(): array
-    {
-        return [
-            'name' => $this->getName(),
-            'password' => $this->getPassword(),
-            'secret' => $this->getSecret(),
-            'created_on' => date('c'),
-            'staff' => $this->getStaff(true)->toArray(),
-            'studentsPerGrade' => $this->getStudentsPerGrade(),
-            'roomCapacity' => $this->getRoomCapacity(),
-            'rooms' => $this->getRooms(true)->toArray(),
-            'periods' => $this->getPeriods(),
-            'days' => $this->getDays(true)->toArray(),
-            'grades' => $this->getGrades(true)->toArray(),
-            'lines' => $this->getLines(true)->toArray(),
-            'classes' => $this->getClasses(true)->toArray(),
-        ];
-    }
-
-    /**
-     * deSerialise
-     * 18/12/2020 08:45
-     * @param array $data
-     * @return DataManager
-     */
-    public function deSerialise(array $data): DataManager
-    {
-        return $this->setName($data['name'])
-            ->setPassword($data['password'])
-            ->setCreatedOn(new \DateTimeImmutable($data['created_on']))
-            ->setStudentsPerGrade($data['studentsPerGrade'])
-            ->setRoomCapacity($data['roomCapacity'])
-            ->setPeriods($data['periods'])
-            ->setRooms(new ArrayCollection($data['rooms']), true)
-            ->setDays(new ArrayCollection($data['days']), true)
-            ->setGrades(new ArrayCollection($data['grades']), true)
-            ->setSecret($data['secret'], false)
-            ->setStaff(new ArrayCollection($data['staff']), true)
-            ->setLines(new ArrayCollection($data['lines']), true)
-            ->setClasses(new ArrayCollection($data['classes']), true)
-        ;
-    }
-
-    /**
      * @return SecurityEncoder
      */
     public function getEncoder(): SecurityEncoder
@@ -990,4 +977,53 @@ class DataManager
         return $this;
     }
 
+    /**
+     * serialise
+     * 8/01/2021 10:07
+     * @return array
+     */
+    public function serialise(): array
+    {
+        return [
+            'name' => $this->getName(),
+            'password' => $this->getPassword(),
+            'secret' => $this->getSecret(),
+            'created_on' => date('c'),
+            'staff' => $this->getStaff(true)->toArray(),
+            'studentsPerGrade' => $this->getStudentsPerGrade(),
+            'roomCapacity' => $this->getRoomCapacity(),
+            'rooms' => $this->getRooms(true)->toArray(),
+            'periods' => $this->getPeriods(true)->toArray(),
+            'days' => $this->getDays(true)->toArray(),
+            'grades' => $this->getGrades(true)->toArray(),
+            'lines' => $this->getLines(true)->toArray(),
+            'classes' => $this->getClasses(true)->toArray(),
+        ];
+    }
+
+    /**
+     * deSerialise
+     * 8/01/2021 10:07
+     *
+     * @param array $data
+     * @return DataManager
+     * @throws \Exception
+     */
+    public function deSerialise(array $data): DataManager
+    {
+        return $this->setName($data['name'])
+            ->setPassword($data['password'])
+            ->setCreatedOn(new \DateTimeImmutable($data['created_on']))
+            ->setStudentsPerGrade($data['studentsPerGrade'])
+            ->setRoomCapacity($data['roomCapacity'])
+            ->setPeriods(new ArrayCollection($data['periods']), true)
+            ->setRooms(new ArrayCollection($data['rooms']), true)
+            ->setDays(new ArrayCollection($data['days']), true)
+            ->setGrades(new ArrayCollection($data['grades']), true)
+            ->setSecret($data['secret'], false)
+            ->setStaff(new ArrayCollection($data['staff']), true)
+            ->setLines(new ArrayCollection($data['lines']), true)
+            ->setClasses(new ArrayCollection($data['classes']), true)
+            ;
+    }
 }

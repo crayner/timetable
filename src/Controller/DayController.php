@@ -15,7 +15,10 @@
 namespace App\Controller;
 
 use App\Form\DaysType;
+use App\Items\Day;
 use App\Manager\TimetableManager;
+use App\Provider\ProviderFactory;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -89,13 +92,39 @@ class DayController extends AbstractController
      * @param string $day
      * @param Request $request
      * @param TimetableManager $manager
-     * @return Response
      * @Route("/day/{day}/delete/",name="day_delete")
+     * @return Response
      */
     public function delete(string $day, Request $request, TimetableManager $manager): Response
     {
         $manager->getDataManager()->removeDay($day);
 
+        return $this->forward(DayController::class.'::days',['request' => $request, 'TimetableManager' => $manager]);
+    }
+
+    /**
+     * invertPeriods
+     *
+     * 9/01/2021 11:10
+     * @param string           $day
+     * @param Request          $request
+     * @param TimetableManager $manager
+     * @Route("/day/{day}/period/inverse/",name="day_periods_inverse")
+     * @return Response
+     */
+    public function invertPeriods(string $day, Request $request, TimetableManager $manager): Response
+    {
+        $day = ProviderFactory::create(Day::class)->find($day);
+        if ($day instanceof Day) {
+            $periods = $manager->getDataManager()->getPeriods();
+            $new = new ArrayCollection();
+            foreach ($periods as $period) {
+                if (!$day->getPeriods()->contains($period)) {
+                    $new->add($period);
+                }
+            }
+            $day->setPeriods($new);
+        }
         return $this->forward(DayController::class.'::days',['request' => $request, 'TimetableManager' => $manager]);
     }
 }

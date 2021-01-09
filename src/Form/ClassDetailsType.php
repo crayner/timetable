@@ -17,7 +17,7 @@ namespace App\Form;
 
 use App\Manager\DataManager;
 use App\Manager\LineManager;
-use App\Validator\DuplicateName;
+use App\Validator\DuplicateItem;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -44,7 +44,7 @@ class ClassDetailsType extends AbstractType
                 [
                     'entry_type' => ClassDetailType::class,
                     'constraints' => [
-                        new DuplicateName(),
+                        new DuplicateItem(),
                     ],
                 ]
             )

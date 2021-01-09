@@ -3,34 +3,37 @@
  * Created by PhpStorm.
  *
  * timetable
- * (c) 2020 Craig Rayner <craig@craigrayner.com>
+ * (c) 2021 Craig Rayner <craig@craigrayner.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
  * User: craig
- * Date: 14/12/2020
- * Time: 12:17
+ * Date: 8/01/2021
+ * Time: 10:44
  */
 namespace App\Form;
 
 use App\Form\Transform\ItemTransForm;
-use App\Items\Day;
 use App\Items\Period;
 use App\Provider\ProviderFactory;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Range;
 
 /**
- * Class DayType
+ * Class PeriodType
+ *
  * @package App\Form
  * @author Craig Rayner <craig@craigrayner.com>
+ * 8/01/2021 11:16
  */
-class DayType extends AbstractType
+class PeriodType extends AbstractType
 {
     /**
      * buildForm
@@ -43,22 +46,26 @@ class DayType extends AbstractType
         $builder
             ->add('id', HiddenType::class)
             ->add('name', TextType::class)
-            ->add('periods', ChoiceType::class,
+            ->add('sequence', IntegerType::class,
                 [
-                    'choices' => ProviderFactory::create(Period::class)->all(),
+                    'constraints' => [
+                        new Range(['min' => 1]),
+                    ],
+                ]
+            )
+            ->add('doubleWith', ChoiceType::class,
+                [
+                    'label' => 'Double with Period',
                     'choice_label' => 'name',
-                    'multiple' => true,
-                    'expanded' => true,
                     'choice_value' => 'id',
-                    'required' => false,
                     'choice_translation_domain' => false,
-                    'attr' => ['class' => 'text-right labels-inline'],
-                    'label' => 'Periods in a Day',
-                    'help' => 'No selection = All Selected',
+                    'multiple' => true,
+                    'required' => false,
+                    'choices' => ProviderFactory::create(Period::class)->all(),
                 ]
             )
         ;
-        $builder->get('periods')->addModelTransformer(new ItemTransForm(Period::class, true));
+        $builder->get('doubleWith')->addModelTransformer(new ItemTransForm(Period::class, true));
     }
 
     /**
@@ -72,7 +79,7 @@ class DayType extends AbstractType
             ->setDefaults(
                 [
                     'translation_domain' => 'messages',
-                    'data_class' => Day::class,
+                    'data_class' => Period::class,
                 ]
             )
         ;

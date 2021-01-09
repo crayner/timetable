@@ -16,7 +16,7 @@
 namespace App\Form;
 
 use App\Manager\DataManager;
-use App\Validator\DuplicateName;
+use App\Validator\DuplicateItem;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -43,7 +43,7 @@ class StaffMemberType extends AbstractType
                 [
                     'entry_type' => StaffType::class,
                     'constraints' => [
-                        new DuplicateName(),
+                        new DuplicateItem(),
                     ],
                 ]
             )

@@ -29,7 +29,8 @@
                 {{ form_row(form.roomCapacity) }}
             </div>
             <div class="cell medium-4">
-                {{ form_row(form.periods) }}
+                {{ form_row(form.periodCount) }}
+                <a href="{{ path('periods') }}" title="{{ 'Manage Period Details'|trans }}">{{ 'Manage Period Details'|trans }}</a>
             </div>
             <div class="cell medium-4 align-flex-center">
                 {{ form_row(form.studentsPerGrade) }}
