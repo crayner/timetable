@@ -22,6 +22,7 @@ use App\Items\Grade;
 use App\Items\Line;
 use App\Items\Period;
 use App\Items\Room;
+use App\Items\Slot;
 use App\Items\Staff;
 use App\Provider\ProviderFactory;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -115,6 +116,11 @@ class DataManager
     private bool $saveOnTerminate = true;
 
     /**
+     * @var ArrayCollection
+     */
+    private ArrayCollection $slots;
+
+    /**
      * DataManager constructor.
      * @param string $name
      */
@@ -128,6 +134,7 @@ class DataManager
             ->setLines(new ArrayCollection())
             ->setClasses(new ArrayCollection())
             ->setPeriods(new ArrayCollection())
+            ->setSlots(new ArrayCollection())
         ;
     }
 
@@ -960,6 +967,69 @@ class DataManager
     }
 
     /**
+     * @return ArrayCollection
+     */
+    public function getSlots(bool $serialise = false): ArrayCollection
+    {
+        if ($this->slots->count() === 0) {
+            $this->readFile();
+        }
+        if ($this->slots->count() !== $this->getPeriodCount() * $this->getDayCount()) {
+            $this->slots = isset($this->slots) ? $this->slots : new ArrayCollection();
+            foreach ($this->getDays() as $day) {
+                foreach ($this->getPeriods() as $period) {
+                    $slots = $this->slots->filter(function (Slot $item) use($day, $period) {
+                        if ($day->isEqualTo($item->getDay()) && $period->isEqualTo($item->getPeriod())) return $item;
+                    });
+                    if (!$slots->first()) {
+                        $slot = new Slot($day, $period);
+                        $this->slots->add($slot);
+                    }
+                }
+            }
+            $iterator = $this->slots->getIterator();
+
+            $iterator->uasort(
+                function (Slot $a, Slot $b) {
+                    return $a->getDay()->getName().str_pad($a->getPeriod()->getSequence(), 3, '0', STR_PAD_LEFT) > $b->getDay()->getName().str_pad($b->getPeriod()->getSequence(), 3, '0', STR_PAD_LEFT) ? 1 : -1 ;
+                }
+            );
+
+            $this->setSlots(new ArrayCollection(iterator_to_array($iterator, false)));
+        }
+        if ($serialise) {
+            $list = new ArrayCollection();
+            foreach ($this->getSlots() as $slot) {
+                $list->add($slot->serialise());
+            }
+            return $list;
+        }
+        return $this->slots;
+    }
+
+    /**
+     * setSlots
+     *
+     * 11/01/2021 09:46
+     * @param ArrayCollection $slots
+     * @return DataManager
+     */
+    public function setSlots(ArrayCollection $slots, bool $deSerialise = false): DataManager
+    {
+        if ($deSerialise) {
+            $new = new ArrayCollection();
+            foreach ($slots as $item) {
+                $member = new Slot();
+                $member->deserialise($item);
+                $new->add($member);
+            }
+            $slots = $new;
+        }
+        $this->slots = $slots;
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function isSaveOnTerminate(): bool
@@ -998,6 +1068,7 @@ class DataManager
             'grades' => $this->getGrades(true)->toArray(),
             'lines' => $this->getLines(true)->toArray(),
             'classes' => $this->getClasses(true)->toArray(),
+            'slots' => $this->getSlots(true)->toArray(),
         ];
     }
 
@@ -1024,6 +1095,7 @@ class DataManager
             ->setStaff(new ArrayCollection($data['staff']), true)
             ->setLines(new ArrayCollection($data['lines']), true)
             ->setClasses(new ArrayCollection($data['classes']), true)
+            ->setSlots(new ArrayCollection($data['slots']), true)
             ;
     }
 }

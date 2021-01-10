@@ -134,6 +134,18 @@ class Period implements DuplicateNameInterface, ProviderItemInterface
     }
 
     /**
+     * isEqualTo
+     *
+     * 11/01/2021 10:09
+     * @param Period $period
+     * @return bool
+     */
+    public function isEqualTo(Period $period): bool
+    {
+        return $period->getId() === $this->getId();
+    }
+
+    /**
      * serialise
      * 8/01/2021 09:29
      * @return array

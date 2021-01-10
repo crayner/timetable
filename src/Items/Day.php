@@ -114,6 +114,18 @@ class Day implements DuplicateNameInterface, ProviderItemInterface
     }
 
     /**
+     * isEqualTo
+     *
+     * 11/01/2021 10:08
+     * @param Day $day
+     * @return bool
+     */
+    public function isEqualTo(Day $day): bool
+    {
+        return $day->getId() === $this->getId();
+    }
+
+    /**
      * serialise
      * @return array
      * 14/12/2020 10:15
