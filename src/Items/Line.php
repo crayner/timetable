@@ -54,9 +54,9 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
     private ArrayCollection $days;
 
     /**
-     * @var array
+     * @var ArrayCollection
      */
-    private array $periods;
+    private ArrayCollection $periods;
 
     /**
      * @var int
@@ -246,11 +246,14 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
     }
 
     /**
-     * @return array
+     * getPeriods
+     *
+     * 10/01/2021 10:08
+     * @return ArrayCollection
      */
-    public function getPeriods(): array
+    public function getPeriods(): ArrayCollection
     {
-        return $this->periods = isset($this->periods) ? $this->periods : [];
+        return $this->periods = isset($this->periods) ? $this->periods : new ArrayCollection();
     }
     
     /**
@@ -262,15 +265,18 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
     {
         $result = [];
         foreach ($this->getPeriods() as $period)
-            $result[] = $period;
+            $result[] = $period->getName();
         return implode(', ', $result);
     }
-    
+
     /**
-     * @param array $periods
+     * setPeriods
+     *
+     * 10/01/2021 10:08
+     * @param ArrayCollection $periods
      * @return Line
      */
-    public function setPeriods(array $periods): Line
+    public function setPeriods(ArrayCollection $periods): Line
     {
         $this->periods = $periods;
         return $this;
@@ -335,7 +341,7 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
             'name' => $this->getName(),
             'grades' => ItemSerialiser::serialise($this->getGrades()),
             'days' => ItemSerialiser::serialise($this->getDays()),
-            'periods' => $this->getPeriods(),
+            'periods' => ItemSerialiser::serialise($this->getPeriods()),
             'placementCount' => $this->getPlacementCount(),
             'doublePeriods' => $this->getDoublePeriods(),
         ];
@@ -380,7 +386,7 @@ class Line implements DuplicateNameInterface, ProviderItemInterface
         $this->doublePeriods = $data['doublePeriods'];
         $this->days = ItemSerialiser::deserialise(Day::class, $data['days']);
         $this->grades = ItemSerialiser::deserialise(Grade::class, $data['grades']);
-        $this->periods = $data['periods'];
+        $this->periods = ItemSerialiser::deserialise(Period::class, $data['periods']);
         return $this;
     }
 }

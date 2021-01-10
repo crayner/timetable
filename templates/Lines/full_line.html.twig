@@ -19,7 +19,7 @@
                 {{ form_row(form.grades) }}
             </div>
             <div class="cell medium-4 medium-cell-block-y">
-                {{ form_row(form.classCount) }}
+                {{ form_row(form.doublePeriods) }}
             </div>
         </div>
         <div class="grid-x grid-margin-x grid-padding-x">
@@ -32,22 +32,24 @@
             <div class="cell medium-4 medium-cell-block-y">
                 {{ form_row(form.placementCount) }}
             </div>
+        </div>        <div class="grid-x grid-margin-x grid-padding-x">
+            <div class="cell medium-offset-6 medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('basic_settings') }}" class="button" title="{{ 'Update Basic Settings'|trans }}">{{ 'Settings: Basic'|trans }}</a>
+            </div>
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                <a href="{{ path('lines') }}" class="button" title="{{ 'Manage Lines'|trans }}">{{ 'Manage Lines'|trans }}</a>
+            </div>
+            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+                {{ form_row(form.saveLine) }}
+            </div>
         </div>
+
         <div class="grid-x grid-margin-x grid-padding-x">
-            <div class="cell medium-4 medium-cell-block-y">
-                {{ form_row(form.doublePeriods) }}
-            </div>
-            <div class="cell medium-4 medium-cell-block-y">
-            </div>
-            <div class="cell medium-4 medium-cell-block-y">
+            <div class="cell medium-12 medium-cell-block-y text-center h3">
+                {{ 'Classes in Line'|trans({count: form.classes|length}) }}
             </div>
         </div>
         {% if form.classes|length > 0 %}
-            <div class="grid-x grid-margin-x grid-padding-x">
-                <div class="cell medium-12 medium-cell-block-y text-center h3">
-                    {{ 'Classes in Line'|trans }}
-                </div>
-            </div>
             <div class="grid-x grid-margin-x grid-padding-x">
                 <div class="cell medium-2 medium-cell-block-y align-flex-center callout small">
                     {{ 'Class Name'|trans }}
@@ -89,19 +91,13 @@
         {% do form.classes.setRendered %}
         <div class="grid-x grid-margin-x grid-padding-x">
             <div class="cell medium-2 medium-cell-block-y align-flex-center">
-                <a href="{{ path('line_add', {line: getManager().line.id}) }}" class="button secondary" title="{{ 'Add Line'|trans }}">{{ 'Add Line'|trans }}</a>
+                <a href="{{ path('class_add', {line: getManager().line.id}) }}" class="button secondary" title="{{ 'Add Class'|trans }}">{{ 'Add Class'|trans }}</a>
             </div>
             <div class="cell medium-2 medium-cell-block-y align-flex-center">
-                <a href="{{ path('line_remove', {line: getManager().line.id}) }}" class="button secondary" title="{{ 'Remove Line'|trans }}">{{ 'Remove Line'|trans }}</a>
+                <a href="{{ path('class_remove', {line: getManager().line.id}) }}" class="button secondary" title="{{ 'Remove Class'|trans }}">{{ 'Remove Class'|trans }}</a>
             </div>
-            <div class="cell medium-offset-2 medium-2 medium-cell-block-y align-flex-center">
-                <a href="{{ path('basic_settings') }}" class="button" title="{{ 'Update Basic Settings'|trans }}">{{ 'Settings: Basic'|trans }}</a>
-            </div>
-            <div class="cell medium-2 medium-cell-block-y align-flex-center">
-                <a href="{{ path('lines') }}" class="button" title="{{ 'Manage Lines'|trans }}">{{ 'Manage Lines'|trans }}</a>
-            </div>
-            <div class="cell medium-2 medium-cell-block-y align-flex-center">
-                {{ form_row(form.saveLine) }}
+            <div class="cell medium-offset-6 medium-2 medium-cell-block-y align-flex-center">
+                {{ form_row(form.saveLine2) }}
             </div>
         </div>
     </div>

@@ -59,54 +59,56 @@ class ClassDetailController extends AbstractController
     /**
      * add
      * 1/01/2021 11:42
-     * @param string $line
-     * @param Request $request
+     *
+     * @param string      $line
      * @param LineManager $manager
-     * @return Response
      * @Route("/class/{line}/add/",name="class_add")
+     * @return Response
      */
-    public function add(string $line, Request $request, LineManager $manager): Response
+    public function add(string $line, LineManager $manager): Response
     {
         $class = new ClassDetail();
         $manager->setLine($line);
-        $class->setName('CL'. str_pad(strval($manager->getDataManager()->getClasses()->count() + 1), 4, '0', STR_PAD_LEFT));
+        $class->setName($manager->getLine()->getName() . str_pad(strval($manager->getLine()->getClasses()->count() + 1), 2, '0', STR_PAD_LEFT))
+            ->setLine($manager->getLine());
         $classes = $manager->getDataManager()->getClasses();
         $classes->add($class);
         $manager->getDataManager()->setClasses($classes);
 
-        return $this->forward(ClassDetailController::class.'::details',['request' => $request, 'LineManager' => $manager]);
+        return $this->redirectToRoute('line_details', ['line' => $line]);
     }
 
     /**
      * remove
      * 1/01/2021 12:13
-     * @param Request $request
+     *
+     * @param string      $line
      * @param LineManager $manager
-     * @return Response
      * @Route("/class/{line}/remove/",name="class_remove")
+     * @return Response
      */
-    public function remove(string $line, Request $request, LineManager $manager): Response
+    public function remove(string $line, LineManager $manager): Response
     {
         $manager->setLine($line);
         $classes = $manager->getClasses();
         if ($classes->count() > 0) {
             $last = $classes->last();
-            $classes->removeElement($last);
-            $manager->setClasses($classes);
+            $manager->removeClass($last);
         }
 
-        return $this->forward(ClassDetailController::class.'::details',['request' => $request, 'LineManager' => $manager]);
+        return $this->redirectToRoute('line_details', ['line' => $line]);
     }
 
     /**
      * delete
      * 5/01/2021 12:29
-     * @param string $line
-     * @param string $class
-     * @param Request $request
+     *
+     * @param string      $line
+     * @param string      $class
+     * @param Request     $request
      * @param LineManager $manager
-     * @return Response
      * @Route("/class/{line}/{class}/delete/",name="class_delete")
+     * @return Response
      */
     public function delete(string $line, string $class, Request $request, LineManager $manager)
     {

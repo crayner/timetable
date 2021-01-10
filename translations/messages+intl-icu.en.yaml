@@ -213,7 +213,12 @@ Limit placement in the timetable to the selected periods. No selection = full se
 Periods in Timetable: Periods in Timetable
 Placement Count: Placement Count
 How many times will this line be placed in the timetable.: How many times will this line be placed in the timetable.
-Classes in Line: Classes in Line
+Classes in Line: >-
+    { count, plural,
+        =0      { Class Details: No classes are attached to this line. }
+        one     { Class Details: One class is attached to this line. }
+        other   { Class Details: # classes are attached to this line. }
+    }
 Save Line: Save Line
 Details: Details
 Class Details: Class Details
@@ -248,3 +253,20 @@ How many times will this line have a double period in the timetable. Zero = no d
 Allow Double Periods: Allow Double Periods
 All Forms/Grades/Years: All Grades
 Manage Period Details: Manage Period Details
+line_classes: >-
+    { count, plural,
+        =0      { No classes attached to this line. }
+        one     { Students are in one class. }
+        other   { Students are in # classes. }
+    }
+Change this number for the system to add Rooms.: Change this number for the system to add Rooms.
+Change this nuber for the system to add Years/Grades/Forms.: Change this nuber for the system to add Years/Grades/Forms.
+If changed, this value is applied to all rooms. A room with zero capacity is ignored in student number checks.: If changed, this value is applied to all rooms. A room with zero capacity is ignored in student number checks.
+Default Periods in a Day: Default Periods in a Day
+Change this number for the system to add Staff.: Change this number for the system to add Staff.
+timetable_slots: >-
+    { count, plural,
+        =0      { No timetable slots. }
+        one     { One timetable slot. Really! }
+        other   { There are # timetable slots. }
+    }

@@ -52,7 +52,8 @@
         {% if getManager().isReadyToMap %}
             <div class="grid-x grid-margin-x grid-padding-x">
                 <div class="cell medium-12 medium-cell-block-y callout secondary">
-                    {{ 'timetable_ready'|trans }}
+                    <p>{{ 'timetable_ready'|trans }}</p>
+                    <p>{{ 'timetable_slots'|trans({count: getManager().dataManager.periodCount * getManager().dataManager.dayCount}) }}</p>
                 </div>
             </div>
         {% endif %}

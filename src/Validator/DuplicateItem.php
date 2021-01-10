@@ -39,4 +39,6 @@ class DuplicateItem extends Constraint
      * @var array|string[]
      */
     public array $fields = ['name'];
+
+    public string $errorPath = 'name';
 }

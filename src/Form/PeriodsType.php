@@ -46,7 +46,7 @@ class PeriodsType extends AbstractType
                     'entry_type' => PeriodType::class,
                     'constraints' => [
                         new DuplicateItem(),
-                        new DuplicateItem(['fields' => ['sequence']]),
+                        new DuplicateItem(['fields' => ['sequence'], 'errorPath' => 'sequence']),
                     ],
                 ]
             )

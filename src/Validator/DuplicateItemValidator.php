@@ -62,7 +62,7 @@ class DuplicateItemValidator extends ConstraintValidator
                     $this->context->buildViolation($constraint->message)
                         ->setCode(DuplicateItem::DUPLICATE_NAME_ERROR)
                         ->setTranslationDomain('messages')
-                        ->atPath('[' . $key . '].name')
+                        ->atPath('[' . $key . '].'.$constraint->errorPath)
                         ->addViolation();
                 }
             }

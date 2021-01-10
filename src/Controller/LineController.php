@@ -136,10 +136,6 @@ class LineController extends AbstractController
 
         if ($form->isSubmitted() && !$form->isValid()) {
             $manager->setSaveOnTerminate(false);
-        } else if ($form->isSubmitted() && $form->isValid()) {
-            if ($manager->validateClassDetails($manager->getLine(), intval($form->get('classCount')->getData()))) {
-                return $this->redirectToRoute('line_details', ['line' => $manager->getLine()->getId()]);
-            }
         }
 
         return $this->render('Lines/full_line.html.twig', ['form' => $form->createView()]);

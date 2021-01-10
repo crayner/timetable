@@ -9,13 +9,10 @@
         </div>
     </div>
     {{ form_start(form) }}
-    <div class="cell medium-auto medium-cell-block-container">
+    <div class="cell medium-auto medium-cell-block-container striped">
         {% for key,class in form.classes %}
             <div class="grid-x grid-margin-x grid-padding-x">
-                <div class="cell medium-2 medium-cell-block-y align-flex-center h4 justify-left">
-                    {{ class.name.vars.value|default('New Class'|trans) }}
-                </div>
-                <div class="cell medium-8 medium-cell-block-y">
+                <div class="cell medium-10 medium-cell-block-y">
                     <div class="grid-x grid-margin-x grid-padding-x">
                         <div class="cell medium-6 medium-cell-block-y">
                             {{ form_row(class.name) }}

@@ -126,6 +126,20 @@ class LineManager extends TimetableManager
     }
 
     /**
+     * removeClass
+     *
+     * 10/01/2021 09:45
+     * @param ClassDetail $detail
+     * @return LineManager
+     */
+    public function removeClass(ClassDetail $detail): LineManager
+    {
+        $this->line->getClasses()->removeElement($detail);
+        $this->getDataManager()->getClasses()->removeElement($detail);
+        return $this;
+    }
+
+    /**
      * getGrade
      * 6/01/2021 10:40
      * @return Grade|null

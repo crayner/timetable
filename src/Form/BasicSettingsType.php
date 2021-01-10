@@ -41,16 +41,19 @@ class BasicSettingsType extends AbstractType
             ->add('staffCount', IntegerType::class,
                 [
                     'label' => 'Staff Count',
+                    'help' => 'Change this number for the system to add Staff.'
                 ]
             )
             ->add('roomCount', IntegerType::class,
                 [
                     'label' => 'Room Count',
+                    'help' => 'Change this number for the system to add Rooms.'
                 ]
             )
             ->add('gradeCount', IntegerType::class,
                 [
                     'label' => 'Grade/Year/Form Count',
+                    'help' => 'Change this nuber for the system to add Years/Grades/Forms.'
                 ]
             )
             ->add('dayCount', IntegerType::class,
@@ -80,7 +83,7 @@ class BasicSettingsType extends AbstractType
             ->add('roomCapacity', IntegerType::class,
                 [
                     'label' => 'Student Capacity per Room',
-                    'help' => 'If changed, this value is applied to all rooms. Set this value to zero to stop checks of student numbers in assigned rooms.',
+                    'help' => 'If changed, this value is applied to all rooms. A room with zero capacity is ignored in student number checks.',
                     'constraints' => [
                         new Range(['min' => 0]),
                     ],

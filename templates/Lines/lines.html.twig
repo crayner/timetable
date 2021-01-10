@@ -45,6 +45,7 @@
                         {{ 'line_days'|trans({count: line.days|length, '{days}': line.getDaysString()}) }}<br/>
                         {{ 'line_periods'|trans({count: line.periods|length, '{periods}': line.getPeriodsString()}) }}<br/>
                         {{ 'line_double_periods'|trans({count: line.doublePeriods}) }}<br/>
+                        {{ 'line_classes'|trans({count: line.classes|length }) }}
                     </div>
                     <div class="cell medium-4 medium-cell-block-y align-flex-center">
                         <a href="{{ path('line_details', {line: line.id}) }}" class="success button" title="{{ 'Details'|trans }}">{{ 'Details'|trans }}</a>

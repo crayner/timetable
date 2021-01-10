@@ -91,15 +91,6 @@ class FullLineType extends AbstractType
                     'expanded' => true,
                 ]
             )
-            ->add('classCount', IntegerType::class,
-                [
-                    'label' => 'Class Count',
-                    'help' => 'Create the classes for this line by changing this number.',
-                    'attr' => [
-                        'onChange' => 'this.form.submit()'
-                    ],
-                ]
-            )
             ->add('days', ChoiceType::class,
                 [
                     'label' => 'Days in Timetable',
@@ -155,9 +146,15 @@ class FullLineType extends AbstractType
                     'label' => 'Save Line',
                 ]
             )
+            ->add('saveLine2', SubmitType::class,
+                [
+                    'label' => 'Save Line',
+                ]
+            )
         ;
         $builder->get('grades')->addModelTransformer(new ItemTransForm(Grade::class, true));
         $builder->get('days')->addModelTransformer(new ItemTransForm(Day::class, true));
+        $builder->get('periods')->addModelTransformer(new ItemTransForm(Period::class, true));
         ;
     }
 
