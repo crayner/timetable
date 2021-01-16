@@ -9,7 +9,6 @@
  * Date: 11/01/2021
  * Time: 09:22
  */
-
 namespace App\Items;
 
 use App\Helper\UUID;
@@ -125,9 +124,6 @@ class Slot implements ProviderItemInterface
     }
 
     /**
-     * setPeriod
-     *
-     * 11/01/2021 09:25
      * @param Period $period
      * @return Slot
      */
@@ -158,9 +154,9 @@ class Slot implements ProviderItemInterface
     {
         return [
             'id' => $this->getId(),
-            'lines' => ItemSerialiser::serialise($this->getLines()),
-            'period' => ItemSerialiser::serialise($this->getPeriod()),
             'day' => ItemSerialiser::serialise($this->getDay()),
+            'period' => ItemSerialiser::serialise($this->getPeriod()),
+            'lines' => ItemSerialiser::serialise($this->getLines()),
         ];
     }
 

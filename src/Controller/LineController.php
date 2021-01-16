@@ -20,32 +20,40 @@ use App\Form\LinePaginationType;
 use App\Items\Line;
 use App\Manager\LineManager;
 use App\Manager\TimetableManager;
-use App\Provider\ProviderFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Class LineController
+ * @package App\Controller
+ * @author  Craig Rayner <craig@craigrayner.com>
+ * 12/01/2021 13:01
+ */
 class LineController extends AbstractController
 {
     /**
      * manage
      * 23/12/2020 14:41
-     * @param Request $request
+     *
+     * @param Request     $request
      * @param LineManager $manager
-     * @Route("/lines/",name="lines")
      * @return Response
+     * @Route("/lines/",name="lines")
      */
     public function manage(Request $request, LineManager $manager): Response
     {
-        $form = $this->createForm(LinePaginationType::class, $manager, ['action' => $this->generateUrl('lines')]);
+        $grade = $request->getSession()->has('searchGrade') ? $request->getSession()->get('searchGrade') : null;
+        $form = $this->createForm(LinePaginationType::class, $manager, ['action' => $this->generateUrl('lines', ), 'grade' => $grade]);
 
+        $manager->setGrade($grade);
         $form->handleRequest($request);
-
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $manager->setSaveOnTerminate(false);
-        } else if ($form->isSubmitted() && $form->isValid()) {
-            $manager->setGrade($form->get('searchGrade')->getData() ?: '');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $grade = $form->get('searchGrade')->getData() ?: null;
+            $request->getSession()->set('searchGrade', $grade);
+            $manager->setGrade($grade);
+            $form = $this->createForm(LinePaginationType::class, $manager, ['action' => $this->generateUrl('lines', ), 'grade' => $grade]);
         }
 
         return $this->render('Lines/lines.html.twig', ['form' => $form->createView()]);

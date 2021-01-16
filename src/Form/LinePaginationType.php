@@ -49,6 +49,7 @@ class LinePaginationType extends AbstractType
                     'placeholder' => 'All Forms/Grades/Years',
                     'choice_label' => 'name',
                     'choice_value' => 'id',
+                    'data' => $options['grade'],
                     'attr' => [
                         'onChange' => 'this.form.submit()',
                     ],
@@ -70,6 +71,7 @@ class LinePaginationType extends AbstractType
                 [
                     'translation_domain' => 'messages',
                     'data_class' => LineManager::class,
+                    'grade' => null,
                 ]
             )
         ;

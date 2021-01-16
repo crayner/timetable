@@ -48,8 +48,8 @@
                         {{ 'line_classes'|trans({count: line.classes|length }) }}
                     </div>
                     <div class="cell medium-4 medium-cell-block-y align-flex-center">
-                        <a href="{{ path('line_details', {line: line.id}) }}" class="success button" title="{{ 'Details'|trans }}">{{ 'Details'|trans }}</a>
-                        <a href="{{ path('line_delete', {line: line.id}) }}" class="warning button" title="{{ 'Delete Line'|trans }}">{{ 'Delete Line'|trans }}</a>
+                        <p class="text-center"><a href="{{ path('line_details', {line: line.id}) }}" title="{{ 'Details'|trans }}">{{ 'Details'|trans }}</a><br />
+                            <a href="{{ path('line_delete', {line: line.id}) }}" title="{{ 'Delete Line'|trans }}">{{ 'Delete Line'|trans }}</a></p>
                     </div>
                 </div>
             {% endfor %}
