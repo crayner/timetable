@@ -23,6 +23,16 @@
                 {% block header %}
                     <div class="cell shrink header medium-cell-block-container text-center h1">{{ 'Timetable Creator by Craig Rayner'|trans }}</div>
                 {% endblock header %}
+                {% block mainMenu %}
+                    <ul class="menu">
+                        <li><a href="{{ path('basic_settings') }}" title="{{ 'Basic Settings' }}">{{ 'Basic Settings'|trans }}</a></li>
+                        {% if getManager().isReadyToMap() %}
+                        <li><a href="{{ path('lines') }}" title="{{ 'Manage Line Details'|trans }}">{{ 'Line Details'|trans }}</a></li>
+                        {% endif %}
+                        <li><a href="{{ path('download') }}" title="{{ 'Download Timetable File'|trans }}">{{ 'Download File'|trans }}</a></li>
+                        <li><a href="{{ path('close') }}" title="{{ 'Close'|trans }}">{{ 'Close'|trans }}</a></li>
+                    </ul>
+                {% endblock mainMenu %}
                 <div class="cell medium-auto medium-cell-block-container">
                     <div class="grid-x grid-padding-x">
                         <div class="cell medium-12 medium-cell-block-y">
@@ -37,12 +47,6 @@
                             <div class="cell medium-4 medium-cell-block-y text-left"></div>
                             <div class="cell medium-4 medium-cell-block-y text-center">{{ 'Created by'|trans }} Craig Rayner<br />
                                 &copy; 2020 - {{ 'now'|date('Y') }}
-                            </div>
-                            <div class="cell medium-4 medium-cell-block-y align-flex-center">
-                                {% if getManager().isFileValid() %}
-                                    <a class="button primary" type="button" href="{{ path('download') }}">{{ 'Download Timetable File'|trans }}</a>
-                                    <a class="button warning" type="button" href="{{ path('close') }}">{{ 'Close'|trans }}</a>
-                                {% endif %}
                             </div>
                         </div>
                         <div style="min-height: 30px; background-color: transparent">&nbsp;</div>

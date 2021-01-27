@@ -18,6 +18,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 /**
  * Class SlotController
  * @package App\Controller
+ * @author  Craig Rayner <craig@craigrayner.com>
+ * 17/01/2021 09:55
  */
 class SlotController extends AbstractController
 {

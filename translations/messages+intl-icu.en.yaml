@@ -260,7 +260,7 @@ line_classes: >-
         other   { Students are in # classes. }
     }
 Change this number for the system to add Rooms.: Change this number for the system to add Rooms.
-Change this nuber for the system to add Years/Grades/Forms.: Change this nuber for the system to add Years/Grades/Forms.
+Change this number for the system to add Years/Grades/Forms.: Change this number for the system to add Years/Grades/Forms.
 If changed, this value is applied to all rooms. A room with zero capacity is ignored in student number checks.: If changed, this value is applied to all rooms. A room with zero capacity is ignored in student number checks.
 Default Periods in a Day: Default Periods in a Day
 Change this number for the system to add Staff.: Change this number for the system to add Staff.
@@ -270,3 +270,6 @@ timetable_slots: >-
         one     { One timetable slot. Really! }
         other   { There are # timetable slots. }
     }
+Line Details: Line Details
+Basic Settings: Basic Settings
+Download File: Download File

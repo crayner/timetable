@@ -32,7 +32,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
-
 /**
  * Class DefaultController
  * @package App\Controller

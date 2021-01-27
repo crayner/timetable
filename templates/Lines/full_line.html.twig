@@ -32,14 +32,9 @@
             <div class="cell medium-4 medium-cell-block-y">
                 {{ form_row(form.placementCount) }}
             </div>
-        </div>        <div class="grid-x grid-margin-x grid-padding-x">
-            <div class="cell medium-offset-6 medium-2 medium-cell-block-y align-flex-center">
-                <a href="{{ path('basic_settings') }}" class="button" title="{{ 'Update Basic Settings'|trans }}">{{ 'Settings: Basic'|trans }}</a>
-            </div>
-            <div class="cell medium-2 medium-cell-block-y align-flex-center">
-                <a href="{{ path('lines') }}" class="button" title="{{ 'Manage Lines'|trans }}">{{ 'Manage Lines'|trans }}</a>
-            </div>
-            <div class="cell medium-2 medium-cell-block-y align-flex-center">
+        </div>
+        <div class="grid-x grid-margin-x grid-padding-x">
+            <div class="cell medium-offset-10 medium-2 medium-cell-block-y align-flex-center">
                 {{ form_row(form.saveLine) }}
             </div>
         </div>

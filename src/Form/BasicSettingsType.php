@@ -53,7 +53,7 @@ class BasicSettingsType extends AbstractType
             ->add('gradeCount', IntegerType::class,
                 [
                     'label' => 'Grade/Year/Form Count',
-                    'help' => 'Change this nuber for the system to add Years/Grades/Forms.'
+                    'help' => 'Change this number for the system to add Years/Grades/Forms.'
                 ]
             )
             ->add('dayCount', IntegerType::class,
